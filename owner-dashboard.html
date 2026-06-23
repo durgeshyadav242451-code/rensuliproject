@@ -788,79 +788,77 @@
         <div id="inner-rent-manual" class="inner-tab-content" style="display: none;">
           <div class="invoice-layout mb-lg">
             <div class="card">
-              <h3 class="card-title mb-lg">Select Room & Calculate Bill</h3>
+              <h3 class="card-title mb-lg">Record Cash Payment</h3>
+
+              <!-- Unpaid tenant count badge -->
+              <div id="calc-unpaid-info" style="display:none; background: rgba(253,203,110,0.1); border: 1px solid #fdcb6e; border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 16px; font-size: var(--font-xs); color: #e17055; display: flex; align-items: center; gap: 8px;">
+                <svg class="svg-icon" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span id="calc-unpaid-info-text"></span>
+              </div>
 
               <div class="form-group">
-                <label class="form-label">Select Tenant / Room</label>
+                <label class="form-label">Select Unpaid Tenant / Room</label>
                 <select class="form-input form-select" id="calc-tenant-select" onchange="onCalcTenantChange()">
-                  <option value="">— Select —</option>
+                  <option value="">— Select Tenant —</option>
                 </select>
+                <div id="calc-no-unpaid" style="display:none; margin-top: 8px; font-size: var(--font-xs); color: var(--success); font-weight: 500;">
+                  ✅ All tenants have paid for this billing cycle!
+                </div>
               </div>
 
+              <!-- Billing Month Display -->
+              <div id="calc-billing-month-row" style="display:none; background: var(--primary-bg); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 16px; font-size: var(--font-xs);">
+                <span style="color: var(--text-muted);">Billing For Month:</span>
+                <strong id="calc-billing-month" style="color: var(--primary-light); margin-left: 8px;">—</strong>
+              </div>
+
+              <!-- Meter Readings — only Current Reading is editable -->
               <div class="form-row">
                 <div class="form-group">
-                  <label class="form-label">Previous Reading</label>
-                  <input class="form-input" type="number" id="calc-prev" value="0" oninput="calculateBill()" />
+                  <label class="form-label">Previous Reading <span style="font-size:10px;color:var(--text-muted);">(auto)</span></label>
+                  <input class="form-input" type="number" id="calc-prev" value="0" readonly style="background: var(--bg-elevated); color: var(--text-muted); cursor: not-allowed;" />
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Current Reading</label>
-                  <input class="form-input" type="number" id="calc-curr" value="0" oninput="calculateBill()" />
+                  <label class="form-label" style="color: var(--primary-light); font-weight: 600;">Current Reading <span style="color: var(--danger);">*</span></label>
+                  <input class="form-input" type="number" id="calc-curr" value="" placeholder="Enter meter reading" oninput="calculateBill()" style="border-color: var(--primary);" />
                 </div>
               </div>
 
+              <!-- Pre-filled read-only fields from room settings -->
               <div class="form-row">
                 <div class="form-group">
-                  <label class="form-label">Electricity Rate (₹/unit)</label>
-                  <input class="form-input" type="number" id="calc-rate" value="10" oninput="calculateBill()" />
+                  <label class="form-label">Electricity Rate (₹/unit) <span style="font-size:10px;color:var(--text-muted);">(from room)</span></label>
+                  <input class="form-input" type="number" id="calc-rate" value="10" readonly style="background: var(--bg-elevated); color: var(--text-muted); cursor: not-allowed;" />
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Base Rent (₹)</label>
-                  <input class="form-input" type="number" id="calc-rent" value="8000" oninput="calculateBill()" />
+                  <label class="form-label">Base Rent (₹) <span style="font-size:10px;color:var(--text-muted);">(from room)</span></label>
+                  <input class="form-input" type="number" id="calc-rent" value="8000" readonly style="background: var(--bg-elevated); color: var(--text-muted); cursor: not-allowed;" />
                 </div>
               </div>
 
-              <!-- Subsidy Controls for Manual Calculator -->
-              <div class="form-row" style="align-items: flex-end; gap: 12px; margin-bottom: 12px;">
-                <div class="form-group" style="display: flex; align-items: center; min-width: 130px; padding-bottom: 8px; box-sizing: border-box; height: 38px; margin-bottom: 0;">
-                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
-                    <input type="checkbox" id="calc-subsidy-mode" onchange="toggleCalcSubsidyFields()" />
-                    <span class="form-label" style="margin-bottom: 0; font-size: 13px; white-space: nowrap;">Subsidy Mode</span>
-                  </label>
-                </div>
-              </div>
-              <div id="calc-subsidy-row" class="form-row" style="display: none; align-items: flex-end; gap: 12px; margin-bottom: 16px;">
-                <div class="form-group" style="flex: 1; min-width: 100px; margin-bottom: 0;">
-                  <label class="form-label">Subsidy Limit (Units)</label>
-                  <input class="form-input" type="number" id="calc-subsidy-units" value="1" min="1" oninput="calculateBill()" />
-                </div>
-                <div class="form-group" style="flex: 1; min-width: 100px; margin-bottom: 0;">
-                  <label class="form-label">Subsidy Rate (₹/unit)</label>
-                  <input class="form-input" type="number" id="calc-subsidy-rate" value="0" min="0" oninput="calculateBill()" />
-                </div>
-              </div>
+              <!-- Hidden subsidy fields — auto-populated from room settings via JS -->
+              <input type="hidden" id="calc-subsidy-mode" value="false" />
+              <input type="hidden" id="calc-subsidy-units" value="1" />
+              <input type="hidden" id="calc-subsidy-rate" value="0" />
 
               <div class="form-group">
-                <label class="form-label">Maintenance (₹)</label>
-                <input class="form-input" type="number" id="calc-maint" value="500" oninput="calculateBill()" />
+                <label class="form-label">Maintenance (₹) <span style="font-size:10px;color:var(--text-muted);">(from room)</span></label>
+                <input class="form-input" type="number" id="calc-maint" value="500" readonly style="background: var(--bg-elevated); color: var(--text-muted); cursor: not-allowed;" />
               </div>
 
-              <!-- Payment Type Selector (Cash vs UPI) -->
+              <!-- Cash payment mode indicator -->
               <div class="form-group">
-                <label class="form-label">Payment Collection Mode</label>
-                <div style="display: flex; gap: 12px;">
-                  <label style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--bg-input); border: 1px solid var(--border-input); border-radius: var(--radius-sm); cursor: pointer; flex: 1;">
-                    <input type="radio" name="payment-method-type" value="UPI" checked onchange="togglePaymentCollectionMode()" />
-                    <span style="font-size: var(--font-xs); font-weight: 500; display: inline-flex; align-items: center; gap: 4px;"><svg class="svg-icon" style="width:1.2em; height:1.2em; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg> Online UPI</span>
-                  </label>
-                  <label style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--bg-input); border: 1px solid var(--border-input); border-radius: var(--radius-sm); cursor: pointer; flex: 1;">
-                    <input type="radio" name="payment-method-type" value="Cash" onchange="togglePaymentCollectionMode()" />
-                    <span style="font-size: var(--font-xs); font-weight: 500; display: inline-flex; align-items: center; gap: 4px;"><svg class="svg-icon" style="width:1.2em; height:1.2em; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><line x1="6" y1="12" x2="6.01" y2="12"></line><line x1="18" y1="12" x2="18.01" y2="12"></line></svg> Direct Cash</span>
-                  </label>
+                <label class="form-label">Payment Mode</label>
+                <div style="background: rgba(0,196,140,0.1); border: 1px solid var(--success); border-radius: var(--radius-sm); padding: 12px 16px; display: flex; align-items: center; gap: 10px;">
+                  <svg class="svg-icon" style="width:18px;height:18px;stroke:var(--success);fill:none;stroke-width:2;flex-shrink:0;" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><line x1="6" y1="12" x2="6.01" y2="12"></line><line x1="18" y1="12" x2="18.01" y2="12"></line></svg>
+                  <span style="font-size: var(--font-xs); font-weight: 600; color: var(--success);">Direct Cash Payment — Approved Instantly ✓</span>
                 </div>
+                <!-- Hidden radio for JS compatibility -->
+                <input type="radio" name="payment-method-type" value="Cash" checked style="display:none;" />
               </div>
 
-              <button class="btn btn-primary btn-full" id="btn-collect-payment" onclick="collectRentPayment()">
-                <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Send Invoice on WhatsApp
+              <button class="btn btn-success btn-full" id="btn-collect-payment" onclick="collectRentPayment()">
+                <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg> Record Cash Payment
               </button>
             </div>
 
@@ -872,7 +870,7 @@
               </div>
 
               <div class="invoice-row"><span>Base Rent</span><strong id="inv-rent">₹0</strong></div>
-              <div class="invoice-row" style="background: var(--bg-elevated); padding: 8px; border-radius: var(--radius-xs); margin: 4px 0;">
+              <div id="inv-elec-row" class="invoice-row" style="background: var(--bg-elevated); padding: 8px; border-radius: var(--radius-xs); margin: 4px 0;">
                 <span style="font-size: var(--font-xs);">Electricity (<span id="inv-units">0</span> units × ₹<span id="inv-rate">0</span>)</span>
                 <strong id="inv-elec">₹0</strong>
               </div>
@@ -885,6 +883,11 @@
 
               <div style="background: var(--primary-bg); padding: 12px; border-radius: var(--radius-sm); margin-top: var(--space-base); font-size: var(--font-xs); color: var(--text-secondary);">
                 <strong style="color: var(--primary-light);">UPI:</strong> <span id="inv-upi">—</span>
+              </div>
+
+              <!-- Electricity included notice -->
+              <div id="inv-elec-included-notice" style="display:none; margin-top: 12px; padding: 8px 12px; background: rgba(0,196,140,0.1); border-radius: var(--radius-xs); font-size: 11px; color: var(--success);">
+                ⚡ Electricity is included in rent for this room — no meter reading needed
               </div>
             </div>
           </div>

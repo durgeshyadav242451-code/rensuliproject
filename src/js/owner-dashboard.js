@@ -2806,25 +2806,70 @@ window.removeTenant = async function (tenantId) {
 };
 
 // ═══════════════ RENT CALCULATOR ═══════════════
+// Helper: compute the next billing month for a tenant (same logic as tenant side)
+function getTenantTargetMonth(tenant) {
+  const joinDate = tenant.join_date ? new Date(tenant.join_date) : new Date();
+  const tenantPayments = allPayments.filter(p =>
+    p.tenant_id === tenant.id &&
+    (p.status === 'approved' || p.status === 'pending')
+  );
+  const submittedPaymentsCount = tenantPayments.length;
+  const targetDate = new Date(joinDate);
+  targetDate.setMonth(targetDate.getMonth() + submittedPaymentsCount);
+  return targetDate.toISOString().slice(0, 7); // e.g. '2026-06'
+}
+
 function initRentCalculator() {
   const sel = document.getElementById('calc-tenant-select');
-  sel.innerHTML = '<option value="">— Select Tenant —</option>';
-  allTenants.filter(t => t.status === 'active' || t.status === 'vacating').forEach(t => {
-    sel.innerHTML += `<option value="${t.id}">Room ${t.room_number} — ${t.name} (${t.building_name || ''})</option>`;
+  const unpaidInfoEl = document.getElementById('calc-unpaid-info');
+  const unpaidInfoTextEl = document.getElementById('calc-unpaid-info-text');
+  const noUnpaidEl = document.getElementById('calc-no-unpaid');
+
+  // Find all active/vacating tenants who haven't paid their target billing month yet
+  const activeTenants = allTenants.filter(t => t.status === 'active' || t.status === 'vacating');
+  const unpaidTenants = activeTenants.filter(t => {
+    const targetMonth = getTenantTargetMonth(t);
+    return !allPayments.some(p =>
+      p.tenant_id === t.id &&
+      p.month_year === targetMonth &&
+      (p.status === 'approved' || p.status === 'pending')
+    );
   });
+
+  sel.innerHTML = '<option value="">— Select Tenant —</option>';
+  unpaidTenants.forEach(t => {
+    const targetMonth = getTenantTargetMonth(t);
+    sel.innerHTML += `<option value="${t.id}">Room ${t.room_number} — ${t.name} (${t.building_name || ''}) · ${formatMonthYear(targetMonth + '-01')}</option>`;
+  });
+
+  // Show/hide status badge
+  if (unpaidTenants.length === 0) {
+    if (unpaidInfoEl) unpaidInfoEl.style.display = 'none';
+    if (noUnpaidEl) noUnpaidEl.style.display = 'block';
+  } else {
+    if (noUnpaidEl) noUnpaidEl.style.display = 'none';
+    if (unpaidInfoEl) {
+      unpaidInfoEl.style.display = 'flex';
+      if (unpaidInfoTextEl) unpaidInfoTextEl.textContent = `${unpaidTenants.length} tenant${unpaidTenants.length !== 1 ? 's' : ''} pending cash payment`;
+    }
+  }
 }
 
 window.onCalcTenantChange = function () {
   const tenantId = document.getElementById('calc-tenant-select').value;
   const tenant = allTenants.find(t => t.id === tenantId);
-  if (!tenant) return;
+
+  // Reset form if no tenant selected
+  if (!tenant) {
+    document.getElementById('calc-billing-month-row').style.display = 'none';
+    document.getElementById('inv-room').textContent = '—';
+    document.getElementById('inv-tenant').textContent = '—';
+    return;
+  }
 
   const building = buildings.find(b => b.id === tenant.building_id);
 
-  document.getElementById('calc-rent').value = tenant.rent || 8000;
-  document.getElementById('calc-rate').value = building?.electricity_rate || 10;
-  document.getElementById('calc-maint').value = building?.maintenance_charge || 500;
-
+  // Find room data
   let room = null;
   if (building) {
     for (const floor of (building.floors || [])) {
@@ -2833,20 +2878,58 @@ window.onCalcTenantChange = function () {
     }
   }
 
+  // Pre-fill rent from room (same as tenant side)
+  const rent = room ? room.rent : (tenant.rent || 8000);
+  const rate = room && room.electricity_rate !== undefined && room.electricity_rate !== null ? room.electricity_rate : (building?.electricity_rate || 10);
+  const maint = (room && room.maintenance_included) ? 0 :
+    (room && room.maintenance_charge !== undefined && room.maintenance_charge !== null ? room.maintenance_charge : (building?.maintenance_charge || 500));
+  const electricityIncluded = (room && room.electricity_included) || (building && building.electricity_included) || false;
+
+  document.getElementById('calc-rent').value = rent;
+  document.getElementById('calc-rate').value = rate;
+  document.getElementById('calc-maint').value = maint;
+
+  // Auto-fill subsidy settings from room (hidden inputs)
   const subsidyModeInput = document.getElementById('calc-subsidy-mode');
   const subsidyUnitsInput = document.getElementById('calc-subsidy-units');
   const subsidyRateInput = document.getElementById('calc-subsidy-rate');
   if (subsidyModeInput && subsidyUnitsInput && subsidyRateInput) {
-    subsidyModeInput.checked = room ? room.electricity_subsidy_mode : false;
+    subsidyModeInput.value = room ? (room.electricity_subsidy_mode ? 'true' : 'false') : 'false';
     subsidyUnitsInput.value = room ? (room.electricity_subsidy_units !== undefined ? room.electricity_subsidy_units : 1) : 1;
     subsidyRateInput.value = room ? (room.electricity_subsidy_rate !== undefined ? room.electricity_subsidy_rate : 0) : 0;
-    toggleCalcSubsidyFields();
   }
-  // Use current_meter_reading (updated on each approved payment) as the baseline previous reading
-  // Fall back to initial_meter_reading if no payments have been approved yet
-  const prevReading = tenant.current_meter_reading || tenant.initial_meter_reading || 0;
+
+  // Previous reading: use last approved payment curr_reading, fall back to initial_meter_reading
+  const approvedPayments = allPayments.filter(p =>
+    p.tenant_id === tenant.id &&
+    p.room_id === tenant.room_id &&
+    p.status === 'approved'
+  );
+  const lastApproved = approvedPayments.sort((a, b) => new Date(b.payment_date || b.created_at) - new Date(a.payment_date || a.created_at))[0];
+  const prevReading = lastApproved ? lastApproved.curr_reading : (tenant.initial_meter_reading || tenant.current_meter_reading || 0);
   document.getElementById('calc-prev').value = prevReading;
-  document.getElementById('calc-curr').value = prevReading + 120; // default estimate +120 units
+  document.getElementById('calc-curr').value = ''; // Force owner to enter current reading
+
+  // Compute & show billing month
+  const targetMonth = getTenantTargetMonth(tenant);
+  const billingMonthRow = document.getElementById('calc-billing-month-row');
+  const billingMonthEl = document.getElementById('calc-billing-month');
+  if (billingMonthRow && billingMonthEl) {
+    billingMonthRow.style.display = 'block';
+    billingMonthEl.textContent = formatMonthYear(targetMonth + '-01');
+  }
+
+  // Handle electricity included: hide electricity row and meter reading section
+  const meterSection = document.querySelectorAll('#inner-rent-manual .form-row');
+  const elecIncludedNotice = document.getElementById('inv-elec-included-notice');
+  const elecInvRow = document.getElementById('inv-elec-row');
+  // Hide/show prev reading row based on electricity_included
+  const prevReadingRow = document.getElementById('calc-prev')?.closest('.form-row');
+  if (prevReadingRow) prevReadingRow.style.display = electricityIncluded ? 'none' : '';
+  const rateReadingRow = document.getElementById('calc-rate')?.closest('.form-row');
+  if (rateReadingRow) rateReadingRow.style.display = electricityIncluded ? 'none' : '';
+  if (elecInvRow) elecInvRow.style.display = electricityIncluded ? 'none' : '';
+  if (elecIncludedNotice) elecIncludedNotice.style.display = electricityIncluded ? 'block' : 'none';
 
   document.getElementById('inv-room').textContent = tenant.room_number;
   document.getElementById('inv-tenant').textContent = tenant.name;
@@ -2877,23 +2960,27 @@ window.calculateBill = function () {
     }
   }
 
+  // Check electricity_included
+  const building = tenant ? buildings.find(b => b.id === tenant.building_id) : null;
+  const electricityIncluded = (room && room.electricity_included) || (building && building.electricity_included) || false;
+
   const effectiveUnits = (room && room.rent_split_enabled && room.beds_occupied > 0)
     ? Math.round(units / room.beds_occupied)
     : units;
 
   let elecBill = 0;
-  const subsidyMode = document.getElementById('calc-subsidy-mode')?.checked || false;
-  const subsidyUnits = parseFloat(document.getElementById('calc-subsidy-units')?.value) || 1;
-  const subsidyRate = parseFloat(document.getElementById('calc-subsidy-rate')?.value) || 0;
+  if (!electricityIncluded) {
+    // Read subsidy from hidden inputs (not checkboxes anymore)
+    const subsidyModeVal = document.getElementById('calc-subsidy-mode')?.value;
+    const subsidyMode = subsidyModeVal === 'true';
+    const subsidyUnits = parseFloat(document.getElementById('calc-subsidy-units')?.value) || 1;
+    const subsidyRate = parseFloat(document.getElementById('calc-subsidy-rate')?.value) || 0;
 
-  if (subsidyMode) {
-    if (effectiveUnits <= subsidyUnits) {
-      elecBill = effectiveUnits * subsidyRate;
+    if (subsidyMode) {
+      elecBill = effectiveUnits <= subsidyUnits ? effectiveUnits * subsidyRate : effectiveUnits * rate;
     } else {
       elecBill = effectiveUnits * rate;
     }
-  } else {
-    elecBill = effectiveUnits * rate;
   }
 
   const total = rent + elecBill + maint;
@@ -2923,105 +3010,116 @@ window.collectRentPayment = async function () {
   const tenant = allTenants.find(t => t.id === tenantId);
   if (!tenant) { showToast('Select Tenant', 'Please select a tenant first', 'warning'); return; }
 
-  const mode = document.querySelector('input[name="payment-method-type"]:checked').value;
+  // Gather room & building info
+  const building = buildings.find(b => b.id === tenant.building_id);
+  let room = null;
+  if (building) {
+    for (const floor of (building.floors || [])) {
+      room = (floor.rooms || []).find(r => r.id === tenant.room_id);
+      if (room) break;
+    }
+  }
+  const electricityIncluded = (room && room.electricity_included) || (building && building.electricity_included) || false;
+
   const rent = parseFloat(document.getElementById('calc-rent').value) || 0;
   const prev = parseFloat(document.getElementById('calc-prev').value) || 0;
-  const curr = parseFloat(document.getElementById('calc-curr').value) || 0;
-  const rate = parseFloat(document.getElementById('calc-rate').value) || 0;
   const maint = parseFloat(document.getElementById('calc-maint').value) || 0;
+
+  let curr = prev;
+  if (!electricityIncluded) {
+    curr = parseFloat(document.getElementById('calc-curr').value);
+    if (isNaN(curr) || curr < prev) {
+      showToast('Invalid Reading', `Current meter reading must be ≥ previous reading (${prev}).`, 'error');
+      return;
+    }
+  }
+
   const totalStr = document.getElementById('inv-total').textContent;
   const total = parseFloat(totalStr.replace(/[^\d.-]/g, '')) || 0;
   const electricityAmount = parseFloat(document.getElementById('inv-elec').textContent.replace(/[^\d.-]/g, '')) || 0;
 
-  const currentMonthStr = getCurrentMonthYear();
+  // Compute correct billing month (same logic as tenant side)
+  const targetMonth = getTenantTargetMonth(tenant);
 
-  if (mode === 'Cash') {
-    const localDateStr = (() => {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    })();
+  // Check if payment for this month already recorded
+  const alreadyPaid = allPayments.some(p =>
+    p.tenant_id === tenant.id &&
+    p.month_year === targetMonth &&
+    (p.status === 'approved' || p.status === 'pending')
+  );
+  if (alreadyPaid) {
+    showToast('Already Recorded', `A payment for ${formatMonthYear(targetMonth + '-01')} already exists for ${tenant.name}.`, 'warning');
+    return;
+  }
 
-    try {
-      const { error } = await supabase.from('payments').insert({
-        owner_id: ownerData.id,
-        tenant_id: tenant.id,
-        building_id: tenant.building_id,
-        room_id: tenant.room_id,
-        tenant_name: tenant.name,
-        room_number: tenant.room_number,
-        building_name: tenant.building_name,
-        month_year: currentMonthStr,
-        rent_amount: rent,
-        electricity_amount: electricityAmount,
-        maintenance_amount: maint,
-        total_amount: total,
-        prev_reading: prev,
-        curr_reading: curr,
-        units_consumed: curr - prev,
-        payment_method: 'Cash',
-        status: 'approved',
-        payment_date: localDateStr
-      });
+  const btn = document.getElementById('btn-collect-payment');
+  const originalBtnText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `${ICONS.pending()} Recording...`;
 
-      if (error) throw error;
+  const localDateStr = (() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  })();
 
-      await logOwnerActivity(`Recorded Direct Cash Payment of ${formatCurrency(total)} from ${tenant.name} (Room ${tenant.room_number})`);
-      showToast('Cash Recorded', `Cash payment of ${formatCurrency(total)} approved instantly!`, 'success');
+  try {
+    const { error } = await supabase.from('payments').insert({
+      owner_id: ownerData.id,
+      tenant_id: tenant.id,
+      building_id: tenant.building_id,
+      room_id: tenant.room_id,
+      tenant_name: tenant.name,
+      room_number: tenant.room_number,
+      building_name: tenant.building_name,
+      month_year: targetMonth,
+      rent_amount: rent,
+      electricity_amount: electricityAmount,
+      maintenance_amount: maint,
+      total_amount: total,
+      prev_reading: prev,
+      curr_reading: curr,
+      units_consumed: electricityIncluded ? 0 : (curr - prev),
+      payment_method: 'Cash',
+      status: 'approved',
+      payment_date: localDateStr
+    });
 
+    if (error) throw error;
+
+    // Update tenant's current meter reading so next payment has correct prev reading
+    if (!electricityIncluded) {
       await supabase.from('tenants').update({ current_meter_reading: curr }).eq('id', tenant.id);
-
-      await loadRealData();
-      refreshActiveViews();
-    } catch (err) {
-      console.error('Error saving cash payment:', err);
-      showToast('Error', 'Failed to record payment: ' + err.message, 'error');
     }
-  } else {
-    const msg = `Hello ${tenant.name},\n\nYour rent bill for Room ${tenant.room_number} is ready.\n\nTotal Due: ${totalStr}\nUPI: ${ownerData.upi_id || 'N/A'}\n\nPlease pay and send payment proof.\n\n— PG Builders`;
-    sendWhatsAppReminder(tenant.phone, msg);
 
-    try {
-      const localDateStr = (() => {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-      })();
+    await logOwnerActivity(`Recorded Cash Payment of ${formatCurrency(total)} from ${tenant.name} (Room ${tenant.room_number}) for ${formatMonthYear(targetMonth + '-01')}`);
+    showToast('Cash Recorded ✓', `₹${total.toLocaleString('en-IN')} cash payment for ${tenant.name} approved for ${formatMonthYear(targetMonth + '-01')}!`, 'success');
 
-      const { error } = await supabase.from('payments').insert({
-        owner_id: ownerData.id,
-        tenant_id: tenant.id,
-        building_id: tenant.building_id,
-        room_id: tenant.room_id,
-        tenant_name: tenant.name,
-        room_number: tenant.room_number,
-        building_name: tenant.building_name,
-        month_year: currentMonthStr,
-        rent_amount: rent,
-        electricity_amount: electricityAmount,
-        maintenance_amount: maint,
-        total_amount: total,
-        prev_reading: prev,
-        curr_reading: curr,
-        units_consumed: curr - prev,
-        payment_method: 'UPI',
-        status: 'pending',
-        payment_date: localDateStr
-      });
+    // Reload data and re-init the calculator to refresh the unpaid list
+    await loadRealData();
+    refreshActiveViews();
+    initRentCalculator();
 
-      if (error) throw error;
+    // Clear the form
+    document.getElementById('calc-tenant-select').value = '';
+    document.getElementById('calc-billing-month-row').style.display = 'none';
+    document.getElementById('calc-curr').value = '';
+    document.getElementById('calc-prev').value = '0';
+    document.getElementById('inv-room').textContent = '—';
+    document.getElementById('inv-tenant').textContent = '—';
+    document.getElementById('inv-total').textContent = '₹0';
+    document.getElementById('inv-rent').textContent = '₹0';
+    document.getElementById('inv-elec').textContent = '₹0';
+    document.getElementById('inv-maint').textContent = '₹0';
 
-      await logOwnerActivity(`Dispatched UPI Rent Invoice of ${formatCurrency(total)} to ${tenant.name} (Room ${tenant.room_number})`);
-      await loadRealData();
-      refreshActiveViews();
-      showToast('Invoice Dispatched', `WhatsApp invoice sent to ${tenant.name}`, 'success');
-    } catch (err) {
-      console.error('Error creating pending payment:', err);
-    }
+  } catch (err) {
+    console.error('Error saving cash payment:', err);
+    showToast('Error', 'Failed to record payment: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalBtnText;
   }
 };
 
