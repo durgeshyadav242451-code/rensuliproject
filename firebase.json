@@ -1,0 +1,58 @@
+{
+  "hosting": [
+    {
+      "target": "main-app",
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**",
+        "superadmin.html"
+      ],
+      "headers": [
+        {
+          "source": "/pg-builders-app.txt",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "text/plain"
+            },
+            {
+              "key": "Cache-Control",
+              "value": "public, max-age=86400"
+            }
+          ]
+        }
+      ],
+      "rewrites": [
+        { "source": "/privacy-policy", "destination": "/privacy-policy.html" },
+        { "source": "/privacy-policy.html", "destination": "/privacy-policy.html" },
+        { "source": "/terms-conditions", "destination": "/terms-conditions.html" },
+        { "source": "/terms-conditions.html", "destination": "/terms-conditions.html" },
+        { "source": "/refund-policy", "destination": "/refund-policy.html" },
+        { "source": "/refund-policy.html", "destination": "/refund-policy.html" },
+        { "source": "**", "destination": "/index.html" }
+      ]
+    },
+    {
+      "target": "admin-app",
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**",
+        "index.html",
+        "owner-dashboard.html",
+        "tenant-dashboard.html",
+        "owner-register.html",
+        "tenant-register.html"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/superadmin.html"
+        }
+      ]
+    }
+  ]
+}

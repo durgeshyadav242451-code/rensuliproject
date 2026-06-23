@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "pgbuilderss-f0957"
+  },
+  "targets": {
+    "pgbuilderss-f0957": {
+      "hosting": {
+        "main-app": [
+          "pgbuilderss-f0957"
+        ],
+        "admin-app": [
+          "pgbuilderss-admin"
+        ]
+      }
+    }
+  }
+}

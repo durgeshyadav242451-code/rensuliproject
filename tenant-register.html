@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tenant Login — PG Builders</title>
+  <meta name="description" content="Tenant login for PG Builders. Quick one-tap Google login to access your rental dashboard." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/css/common.css" />
+  <link rel="stylesheet" href="/src/css/landing.css" />
+  <style>
+    .step-indicator { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 28px; }
+    .step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border-color); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .step-dot.active { width: 24px; border-radius: 4px; background: var(--primary); }
+    .step-dot.done { background: var(--success); }
+    .quick-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: var(--success-bg); border: 1px solid var(--success-border); border-radius: 20px; font-size: 11px; font-weight: 600; color: var(--success-light); margin-bottom: 12px; }
+    .member-card { background: rgba(255, 255, 255, 0.015); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 10px; position: relative; box-shadow: var(--shadow-sm); }
+    .member-card .remove-btn { position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; padding: 2px 6px; border-radius: 4px; transition: all 0.2s; }
+    .member-card .remove-btn:hover { background: var(--danger); color: white; }
+    .split-rent-badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; background: rgba(99, 102, 241, 0.08); border: 1px solid var(--primary-border); border-radius: 20px; font-size: var(--font-xs); font-weight: 600; color: var(--primary-light); }
+  </style>
+</head>
+<body class="landing-page auth-page">
+  <div class="bg-gradient"></div>
+  <div class="grid-pattern"></div>
+
+  <div class="auth-container" style="max-width: 520px;">
+    <a class="auth-logo" href="/">
+      <div class="logo-icon" style="background: transparent; font-size: 24px; color: var(--primary);">
+        <svg style="width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="16"></line><line x1="15" y1="22" x2="15" y2="16"></line></svg>
+      </div>
+      <span class="logo-text">PG <span>Builders</span></span>
+    </a>
+
+    <!-- Step Indicator -->
+    <div class="step-indicator" id="step-indicator">
+      <div class="step-dot active" id="dot-0"></div>
+      <div class="step-dot" id="dot-1"></div>
+      <div class="step-dot" id="dot-2"></div>
+      <div class="step-dot" id="dot-3"></div>
+    </div>
+
+    <!-- ═══ STEP 0: One-Tap Google Login ═══ -->
+    <div class="auth-card" id="step-login">
+      <div class="auth-header">
+        <h1>Tenant Login</h1>
+        <p>Sign in with Google to access your PG dashboard</p>
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg" onclick="handleGoogleLogin()" id="btn-google" style="display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 16px;">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#fff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+
+      <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+        <p style="font-size: var(--font-xs); color: var(--text-muted); text-align: center; line-height: 1.7;">
+          First time? After login, we'll check if you have an existing account.<br>
+          If yes — no re-registration needed!
+        </p>
+      </div>
+
+      <div class="auth-footer">
+        Are you a property owner? <a href="/owner-register.html">Register here</a>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 1: Personal Details (only for NEW tenants) ═══ -->
+    <div class="auth-card hidden" id="step-details">
+      <div class="auth-header">
+        <div class="quick-tag">New Tenant Registration</div>
+        <h1>Your Details</h1>
+        <p>Fill in your personal information once — we'll remember it forever!</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="info-name">Full Name *</label>
+        <input class="form-input" type="text" id="info-name" placeholder="Your full name" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="info-phone">Mobile Number *</label>
+          <input class="form-input" type="tel" id="info-phone" placeholder="9876543210" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="info-alt-phone">Another Number</label>
+          <input class="form-input" type="tel" id="info-alt-phone" placeholder="Optional" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="info-email">Email *</label>
+        <input class="form-input" type="email" id="info-email" placeholder="your@gmail.com" readonly style="background: var(--bg-elevated); cursor: not-allowed;" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="info-aadhaar">Aadhaar Card Number *</label>
+        <input class="form-input" type="text" id="info-aadhaar" placeholder="1234 5678 9012" maxlength="14" />
+      </div>
+
+      <div class="form-group" style="margin: 16px 0; text-align: left;">
+        <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; color: var(--text-secondary); font-size: 13px; line-height: 1.5;">
+          <input type="checkbox" id="info-terms-privacy" style="margin-top: 3px; width: 16px; height: 16px; min-width: 16px; accent-color: var(--primary);" />
+          <span>I agree to the <a href="/terms-conditions.html" target="_blank" style="color: var(--primary-light); text-decoration: underline;">Terms & Conditions</a>, <a href="/privacy-policy.html" target="_blank" style="color: var(--primary-light); text-decoration: underline;">Privacy Policy</a> & <a href="/refund-policy.html" target="_blank" style="color: var(--primary-light); text-decoration: underline;">Refund Policy</a></span>
+        </label>
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg" onclick="goToKeyStep()">
+        Continue — Enter Owner Key →
+      </button>
+    </div>
+
+    <!-- ═══ STEP 2: Owner Key ═══ -->
+    <div class="auth-card hidden" id="step-key">
+      <div class="auth-header">
+        <div id="returning-tag" class="quick-tag hidden">Returning Tenant — Quick Login!</div>
+        <h1>Owner Key</h1>
+        <p id="key-step-desc">Enter the Owner Key provided by your new landlord</p>
+      </div>
+
+      <!-- Returning tenant profile preview -->
+      <div id="returning-profile" class="hidden" style="background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 14px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;">
+        <div style="width: 44px; height: 44px; border-radius: 50%; background: var(--primary-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: var(--primary-light);" id="ret-avatar">—</div>
+        <div>
+          <div style="font-weight: 700; font-size: var(--font-sm);" id="ret-name">—</div>
+          <div style="font-size: var(--font-xs); color: var(--text-muted);" id="ret-phone">—</div>
+        </div>
+        <span class="badge badge-success" style="margin-left: auto;">Verified</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="tenant-key">Owner Key *</label>
+        <input class="form-input" type="text" id="tenant-key" placeholder="e.g. PGB-RMSH-7X4K"
+          style="text-transform: uppercase; letter-spacing: 2px; font-weight: 700; text-align: center; font-size: 18px;" />
+        <p class="form-hint">Ask your PG / Hostel owner for this key</p>
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg" id="btn-find" onclick="handleFindOwner()">
+        Find Buildings →
+      </button>
+      <button class="btn btn-ghost btn-full mt-base" onclick="goBackFromKey()">← Back</button>
+    </div>
+
+    <!-- ═══ STEP 3: Select Building & Room ═══ -->
+    <div class="auth-card hidden" id="step-select">
+      <div class="auth-header">
+        <h1>Select Room</h1>
+        <p>Owner: <strong id="owner-name-display"></strong></p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Select Building</label>
+        <select class="form-input form-select" id="sel-building" onchange="onBuildingChange()">
+          <option value="">— Choose Building —</option>
+        </select>
+      </div>
+
+      <div class="form-group hidden" id="floor-group">
+        <label class="form-label">Select Floor</label>
+        <select class="form-input form-select" id="sel-floor" onchange="onFloorChange()">
+          <option value="">— Choose Floor —</option>
+        </select>
+      </div>
+
+      <div class="form-group hidden" id="room-group">
+        <label class="form-label">Select Room</label>
+        <select class="form-input form-select" id="sel-room" onchange="onRoomChange()">
+          <option value="">— Choose Room —</option>
+        </select>
+      </div>
+
+      <div id="bed-info" class="hidden" style="background: var(--primary-bg); border: 1px solid var(--primary-border); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 16px;">
+        <div style="font-size: var(--font-sm); color: var(--text-secondary);">
+          Beds Available: <strong id="beds-available">0</strong> / <strong id="beds-total">0</strong>
+        </div>
+        <div class="room-beds-info" id="bed-dots" style="margin-top: 8px;"></div>
+      </div>
+
+      <div id="room-details" class="hidden" style="background: var(--bg-elevated); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+          <span style="color: var(--text-muted); font-size: var(--font-sm);">Your Rent</span>
+          <strong id="room-rent" style="color: var(--success);">₹0</strong>
+        </div>
+        <div id="split-rent-row" class="hidden" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+          <span style="color: var(--text-muted); font-size: var(--font-xs);">Split Rent (per bed)</span>
+          <span class="split-rent-badge" id="room-per-bed-rent">₹0/bed</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+          <span style="color: var(--text-muted); font-size: var(--font-sm);">Security Deposit</span>
+          <strong id="room-advance">₹0</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;" id="room-maint-row">
+          <span style="color: var(--text-muted); font-size: var(--font-sm);">Maintenance</span>
+          <strong id="room-maint">₹0</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted); font-size: var(--font-sm);">Type</span>
+          <span class="badge badge-primary" id="room-type">Room</span>
+        </div>
+      </div>
+
+      <div class="form-group hidden" id="info-meter-group">
+        <label class="form-label" for="info-meter">Initial Electricity Reading</label>
+        <input class="form-input" type="number" id="info-meter" placeholder="e.g. 1030" />
+        <p class="form-hint">Enter the current meter reading at the time of joining</p>
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg" onclick="goToMembersStep()">
+        Continue →
+      </button>
+      <button class="btn btn-ghost btn-full mt-base" onclick="goBack('step-key', 'step-select')">← Back</button>
+    </div>
+
+    <!-- ═══ STEP 4: Members (optional) + Submit ═══ -->
+    <div class="auth-card hidden" id="step-members">
+      <div class="auth-header">
+        <h1>Room Members</h1>
+        <p>Add only members sharing your room (optional)</p>
+      </div>
+
+      <!-- Living type -->
+      <div class="form-group">
+        <label class="form-label">Living Type</label>
+        <div style="display: flex; gap: 12px;">
+          <label style="display: flex; align-items: center; gap: 8px; padding: 12px 20px; background: var(--bg-input); border: 1px solid var(--border-input); border-radius: var(--radius-sm); cursor: pointer; flex: 1; transition: all 0.2s;">
+            <input type="radio" name="living-type" value="alone" checked onchange="toggleMembersSection()" />
+            <span style="font-size: var(--font-sm); font-weight: 500;">Alone</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; padding: 12px 20px; background: var(--bg-input); border: 1px solid var(--border-input); border-radius: var(--radius-sm); cursor: pointer; flex: 1; transition: all 0.2s;">
+            <input type="radio" name="living-type" value="family" onchange="toggleMembersSection()" />
+            <span style="font-size: var(--font-sm); font-weight: 500;">With Others</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Members section -->
+      <div id="members-section" class="hidden">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <label class="form-label" style="margin: 0;">Members (परिवार / दोस्त)</label>
+          <button class="btn btn-sm btn-secondary" onclick="addMemberRow()">+ Add Member</button>
+        </div>
+        <div id="members-list"></div>
+        <p style="font-size: 11px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; display: flex; align-items: flex-start; gap: 4px;">
+          <svg class="svg-icon" style="width: 14px; height: 14px; color: var(--accent); flex-shrink: 0; margin-top: 2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A7 7 0 0 0 4 8c0 1 .5 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5h8Z"></path><path d="M9 18h6M10 22h4"></path></svg>
+          <span>Members stay with your profile permanently — they move with you even if you shift rooms or buildings.</span>
+        </p>
+      </div>
+
+
+
+      <button class="btn btn-primary btn-full btn-lg" onclick="handleSubmitRegistration()" id="btn-submit">
+        Submit Registration Request →
+      </button>
+      <button class="btn btn-ghost btn-full mt-base" onclick="goBack('step-select', 'step-members')">← Back</button>
+    </div>
+
+    <!-- ═══ STEP: Pending / Success ═══ -->
+    <div class="auth-card hidden" id="step-pending">
+      <div class="auth-header">
+        <h1>Request Submitted!</h1>
+        <p>Your registration has been sent to the owner for approval.</p>
+      </div>
+
+      <div style="background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: var(--radius); padding: var(--space-lg); text-align: center; margin-bottom: var(--space-lg);">
+        <div style="font-size: 36px; margin-bottom: 12px; color: var(--warning); display: flex; justify-content: center;">
+          <svg style="width:48px; height:48px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        </div>
+        <p style="font-size: var(--font-sm); color: var(--text-secondary); line-height: 1.6;">
+          Owner will review your details and approve your request.
+          You'll get full access to the Tenant Dashboard once approved.
+        </p>
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg" onclick="window.location.href='/tenant-dashboard.html'">
+        Go to Dashboard →
+      </button>
+    </div>
+  </div>
+
+  <script type="module" src="/src/js/tenant-register.js"></script>
+</body>
+</html>

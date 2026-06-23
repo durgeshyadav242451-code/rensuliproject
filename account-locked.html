@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Locked — PG Builders</title>
+  <meta name="description" content="Landlord account manual activation pending." />
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Core and Component Styles -->
+  <link rel="stylesheet" href="/src/css/variables.css" />
+  <link rel="stylesheet" href="/src/css/common.css" />
+
+  <style>
+    body {
+      background: var(--bg-body);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-base);
+      font-family: var(--font-family);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .bg-gradient {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.05) 0%, transparent 40%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .grid-pattern {
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      background-size: 50px 50px;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .lock-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 24px 20px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: var(--shadow-card);
+      backdrop-filter: var(--backdrop-blur);
+      -webkit-backdrop-filter: var(--backdrop-blur);
+      z-index: 1;
+      box-sizing: border-box;
+      animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .lock-icon {
+      font-size: 56px;
+      margin-bottom: 24px;
+      filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.25));
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    .lock-title {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--text-primary) 30%, var(--primary-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .lock-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .key-box {
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 24px;
+      box-sizing: border-box;
+    }
+
+    .key-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .key-value {
+      font-size: 22px;
+      font-family: monospace;
+      font-weight: 800;
+      color: var(--primary-light);
+      letter-spacing: 1.5px;
+      margin-bottom: 12px;
+    }
+
+    .instruction-box {
+      text-align: left;
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+    }
+
+    .instruction-title {
+      font-weight: 700;
+      color: var(--warning);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all var(--transition-base);
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, var(--primary) 0%, var(--primary-hover) 100%);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-light);
+    }
+
+    .logo-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+      text-decoration: none;
+    }
+
+    .logo-container img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .logo-text span {
+      color: var(--primary-light);
+    }
+
+    .toast-notif {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--success);
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: var(--shadow-md);
+      font-weight: 600;
+      font-size: 13px;
+      z-index: 1000;
+      display: none;
+      animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-gradient"></div>
+  <div class="grid-pattern"></div>
+
+  <div class="lock-card">
+    <a class="logo-container" href="/">
+      <span style="font-size: 24px; color: var(--primary); display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px;">
+        <svg style="width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="16"></line><line x1="15" y1="22" x2="15" y2="16"></line></svg>
+      </span>
+      <span class="logo-text">PG <span>Builders</span></span>
+    </a>
+
+    <div class="lock-icon" style="display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+      <svg class="svg-icon" style="width: 56px; height: 56px; color: var(--primary-light); stroke-width: 1.5; filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.4));" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+    </div>
+    <h2 class="lock-title">Account Locked</h2>
+    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">खाता लॉक है</div>
+    
+    <p class="lock-subtitle">
+      Your account is currently locked, waiting for manual approval by the Super Admin.<br/>
+      <span style="font-size: 12px; opacity: 0.85;">(आपका खाता वर्तमान में लॉक है, सुपर एडमिन द्वारा मंजूरी की प्रतीक्षा है।)</span>
+    </p>
+ 
+    <div class="key-box">
+      <div class="key-label">Your Unique Owner Key (आपका ओनर कोड)</div>
+      <div class="key-value" id="lock-owner-key">—</div>
+      <button class="btn btn-secondary" id="btn-copy-key" style="padding: 8px 16px; font-size: 12px; width: auto; margin: 0 auto; height: auto; display: inline-flex; align-items: center; gap: 6px;">
+        <svg class="svg-icon" style="width: 14px; height: 14px;" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+        Copy Owner Key (कॉपी करें)
+      </button>
+    </div>
+ 
+    <div class="instruction-box">
+      <div class="instruction-title" style="display: inline-flex; align-items: center; gap: 6px;">
+        <svg class="svg-icon" style="width: 14px; height: 14px; color: var(--warning);" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        Activation Instructions (सक्रिय करने के निर्देश):
+      </div>
+      <ol style="margin: 0; padding-left: 16px; margin-top: 8px;">
+        <li>Share your <strong>Owner Key</strong> above with the Super Admin.</li>
+        <li>The admin will manually review and activate your subscription plan.</li>
+        <li>This page will <strong>automatically unlock</strong> and redirect you the instant activation is complete.</li>
+      </ol>
+    </div>
+ 
+    <div class="button-group">
+      <button class="btn btn-primary" id="btn-check-status" style="display: inline-flex; align-items: center; gap: 8px; justify-content: center;">
+        <svg class="svg-icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+        Check Status Now (सक्रियता की जांच करें)
+      </button>
+      <button class="btn btn-secondary" id="btn-logout" style="display: inline-flex; align-items: center; gap: 8px; justify-content: center;">
+        <svg class="svg-icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        Logout (लॉगआउट)
+      </button>
+    </div>
+  </div>
+
+  <div class="toast-notif" id="success-toast">
+    Account unlocked successfully! Redirecting...
+  </div>
+
+  <!-- Supabase & App Config script -->
+  <script type="module">
+    import { supabase, getSession, signOut } from '/src/js/supabase-config.js';
+
+    let currentUserId = null;
+    let realtimeChannel = null;
+
+    // Toast function
+    function triggerToast(text) {
+      const toast = document.getElementById('success-toast');
+      toast.textContent = text;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+    // Load session and verify status
+    async function init() {
+      try {
+        const session = await getSession();
+        if (!session) {
+          window.location.href = '/';
+          return;
+        }
+
+        currentUserId = session.user.id;
+        await checkAccountStatus();
+        
+        // Listen to realtime updates
+        setupRealtimeListener();
+      } catch (err) {
+        console.error('Initialization error:', err);
+      }
+    }
+
+    // Check account status in database
+    async function checkAccountStatus() {
+      if (!currentUserId) return;
+
+      const { data: owner, error } = await supabase
+        .from('owners')
+        .select('*')
+        .eq('id', currentUserId)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Failed to fetch account status:', error);
+        return;
+      }
+
+      if (!owner) {
+        // No profile exists, log out
+        await signOut();
+        window.location.href = '/';
+        return;
+      }
+
+      // Display key
+      document.getElementById('lock-owner-key').textContent = owner.owner_key || '—';
+
+      // Check status
+      if (owner.status === 'Active' || owner.status === 'Suspended') {
+        // Account unlocked!
+        triggerToast('Account unlocked successfully! Redirecting...');
+        setTimeout(() => {
+          window.location.href = '/owner-dashboard.html';
+        }, 1200);
+      }
+    }
+
+    // Real-time table listener
+    function setupRealtimeListener() {
+      if (!currentUserId) return;
+
+      realtimeChannel = supabase
+        .channel('locked-owner-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'owners',
+            filter: `id=eq.${currentUserId}`
+          },
+          (payload) => {
+            const updated = payload.new;
+            if (updated && (updated.status === 'Active' || updated.status === 'Suspended')) {
+              triggerToast('Account unlocked successfully! Redirecting...');
+              if (realtimeChannel) {
+                realtimeChannel.unsubscribe();
+              }
+              setTimeout(() => {
+                window.location.href = '/owner-dashboard.html';
+              }, 1200);
+            }
+          }
+        )
+        .subscribe();
+    }
+
+    // Button Bindings
+    document.getElementById('btn-check-status').addEventListener('click', async () => {
+      const btn = document.getElementById('btn-check-status');
+      btn.disabled = true;
+      btn.textContent = 'Checking...';
+      await checkAccountStatus();
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<svg class="svg-icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Check Status Now (सक्रियता की जांच करें)';
+      }, 1000);
+    });
+
+    document.getElementById('btn-logout').addEventListener('click', async () => {
+      const confirmLogout = confirm("Are you sure you want to logout? / क्या आप लॉगआउट करना चाहते हैं?");
+      if (!confirmLogout) return;
+      if (realtimeChannel) {
+        realtimeChannel.unsubscribe();
+      }
+      await signOut();
+      localStorage.removeItem('pgb_user_role');
+      window.location.href = '/';
+    });
+
+    document.getElementById('btn-copy-key').addEventListener('click', () => {
+      const keyVal = document.getElementById('lock-owner-key').textContent;
+      if (keyVal && keyVal !== '—') {
+        navigator.clipboard.writeText(keyVal).then(() => {
+          triggerToast('Owner Key copied to clipboard!');
+        }).catch(() => {
+          // Fallback
+          const input = document.createElement('input');
+          input.value = keyVal;
+          document.body.appendChild(input);
+          input.select();
+          document.execCommand('copy');
+          input.remove();
+          triggerToast('Owner Key copied to clipboard!');
+        });
+      }
+    });
+
+    // Start
+    init();
+  </script>
+</body>
+</html>

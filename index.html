@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PG Builders — Smart PG & Hostel Management Platform</title>
+  <meta name="description" content="PG Builders is India's smartest PG and hostel management SaaS platform. Automate rent collection, electricity billing, tenant management, and more. ₹499/month." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/css/common.css" />
+  <link rel="stylesheet" href="/src/css/landing.css" />
+</head>
+<body class="landing-page">
+  <div class="bg-gradient"></div>
+  <div class="grid-pattern"></div>
+
+  <!-- Ambient Vector Decorators -->
+  <div class="ambient-vector fv-1"></div>
+  <div class="ambient-vector fv-2"></div>
+
+  <!-- ═══════════════ NAVIGATION ═══════════════ -->
+  <nav class="nav" id="main-nav">
+    <a class="nav-logo" href="/" style="justify-self: start;">
+      <div class="logo-icon" style="background: transparent; display: flex; align-items: center; justify-content: center;">
+        <svg class="svg-icon" style="width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="16"></line><line x1="15" y1="22" x2="15" y2="16"></line></svg>
+      </div>
+      <span class="logo-text">PG <span>Builders</span></span>
+    </a>
+    <div class="nav-links" id="nav-links">
+      <button class="nav-pill" onclick="scrollToSection('hero')">Home</button>
+      <button class="nav-pill" onclick="scrollToSection('features')">Features</button>
+      <button class="nav-pill" onclick="scrollToSection('faq')">FAQ</button>
+      <span class="nav-pill" style="opacity: 0.5; cursor: not-allowed; color: var(--text-muted); font-size: var(--font-sm); font-weight: 600; padding: 8px 18px; display: inline-block; white-space: nowrap;">Affiliate Program (Coming Soon)</span>
+    </div>
+    <div class="nav-spacer" style="justify-self: end;"></div>
+    <!-- Hamburger — only visible on mobile -->
+    <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Nav Drawer -->
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay" onclick="closeMobileMenu()"></div>
+  <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+    <div class="mobile-nav-header">
+      <span class="logo-text">PG <span>Builders</span></span>
+      <button class="mobile-nav-close" onclick="closeMobileMenu()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <nav class="mobile-nav-links">
+      <button onclick="closeMobileMenu(); scrollToSection('hero')">🏠 Home</button>
+      <button onclick="closeMobileMenu(); scrollToSection('features')">⚡ Features</button>
+      <button onclick="closeMobileMenu(); scrollToSection('faq')">❓ FAQ</button>
+      <button onclick="closeMobileMenu(); scrollToSection('affiliate')" style="opacity:0.5; cursor:not-allowed;" disabled>🤝 Affiliate (Coming Soon)</button>
+    </nav>
+    <div class="mobile-nav-footer">
+      <p>© 2026 PG Builders</p>
+    </div>
+  </div>
+ 
+  <!-- ═══════════════ HERO SECTION ═══════════════ -->
+  <section class="hero" id="hero">
+    <div>
+      <div class="hero-badge" style="display: inline-flex; align-items: center; gap: 6px; margin-bottom: 28px;">
+        <span class="pulse-dot"></span>
+        <svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+        India's #1 PG Management Platform
+      </div>
+      <h1 style="margin-bottom: 28px;">
+        The Future of <span class="gradient-text">Rental Properties</span><br/>
+        Management Starts Here
+      </h1>
+      <p class="hero-desc" style="margin-bottom: 36px; max-width: 520px;">
+        Built for the next generation of Property owners. Manage everything from one intelligent platform.
+      </p>
+      
+      <!-- Statistics Row below buttons -->
+      <div class="hero-stats-grid">
+        <div class="stat-card" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; display: flex; align-items: center; gap: 12px; box-sizing: border-box;">
+          <div class="stat-icon-wrapper" style="width: 40px; height: 40px; background: rgba(99, 102, 241, 0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <svg class="svg-icon" style="width: 20px; height: 20px; color: var(--primary-light); fill: none; stroke: currentColor; stroke-width: 2;" viewBox="0 0 24 24"><path d="M3 21h18"></path><path d="M3 7v1a3 3 0 0 0 6 0v-1m0 0V3h12v18H3V7h6"></path></svg>
+          </div>
+          <div style="display: flex; flex-direction: column; text-align: left;">
+            <span class="stat-num" style="font-size: 18px; font-weight: 800; color: #ffffff; line-height: 1.2;">2,400+</span>
+            <span class="stat-label" style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">Active PGs</span>
+          </div>
+        </div>
+
+        <div class="stat-card" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; display: flex; align-items: center; gap: 12px; box-sizing: border-box;">
+          <div class="stat-icon-wrapper" style="width: 40px; height: 40px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <svg class="svg-icon" style="width: 20px; height: 20px; color: var(--success-light); fill: none; stroke: currentColor; stroke-width: 2;" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          </div>
+          <div style="display: flex; flex-direction: column; text-align: left;">
+            <span class="stat-num" style="font-size: 18px; font-weight: 800; color: #ffffff; line-height: 1.2;">₹18Cr+</span>
+            <span class="stat-label" style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">Rent Collected</span>
+          </div>
+        </div>
+
+        <div class="stat-card" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; display: flex; align-items: center; gap: 12px; box-sizing: border-box;">
+          <div class="stat-icon-wrapper" style="width: 40px; height: 40px; background: rgba(14, 165, 233, 0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <svg class="svg-icon" style="width: 20px; height: 20px; color: var(--accent-light); fill: none; stroke: currentColor; stroke-width: 2;" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+          </div>
+          <div style="display: flex; flex-direction: column; text-align: left;">
+            <span class="stat-num" style="font-size: 18px; font-weight: 800; color: #ffffff; line-height: 1.2;">98%</span>
+            <span class="stat-label" style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">Happy Owners</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Right Column: Login & Live Vector Preview ── -->
+    <div class="hero-right-col">
+      <div class="login-section" id="login-section" style="width: 100%; box-sizing: border-box;">
+        <div class="login-tabs">
+          <button class="login-tab active" id="tab-owner" onclick="switchLoginTab('owner')" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            Owner Login
+          </button>
+          <button class="login-tab" id="tab-tenant" onclick="switchLoginTab('tenant')" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Tenant Login
+          </button>
+        </div>
+
+        <!-- Owner Login Card -->
+        <div class="login-card active" id="card-owner" style="width: 100%; box-sizing: border-box;">
+          <div class="login-card-header">
+            <div class="icon icon-owner">
+              <svg class="svg-icon" style="width: 28px; height: 28px; color: var(--primary-light);" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            </div>
+            <h3>Owner Portal</h3>
+            <p>Dashboard, Billing, Reports & Analytics</p>
+          </div>
+          <button class="btn btn-primary btn-full btn-lg" onclick="handleGoogleLoginOwner()" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%;">
+            <svg class="svg-icon" style="width: 18px; height: 18px;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            Continue with Google
+          </button>
+        </div>
+
+        <!-- Tenant Login Card -->
+        <div class="login-card" id="card-tenant" style="width: 100%; box-sizing: border-box;">
+          <div class="login-card-header">
+            <div class="icon icon-tenant">
+              <svg class="svg-icon" style="width: 28px; height: 28px; color: #10b981;" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <h3>Tenant Portal</h3>
+            <p>View Bills, Pay Rent & Track Complaints</p>
+          </div>
+          <button class="btn btn-full btn-lg btn-tenant-google" onclick="handleGoogleLogin()" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: linear-gradient(180deg, #10b981 0%, #059669 100%); border: none; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25); transition: all var(--transition-base);">
+            <svg class="svg-icon" style="width: 18px; height: 18px;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            Continue with Google
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Live Dashboard Mockup ── -->
+      <div class="dashboard-mockup" style="width: 100%; box-sizing: border-box;">
+        <div class="mockup-header">
+          <div class="mockup-dots">
+            <span class="m-dot red"></span>
+            <span class="m-dot yellow"></span>
+            <span class="m-dot green"></span>
+          </div>
+          <div class="mockup-tab">pg-builders-grid.svg</div>
+        </div>
+        <div class="mockup-content">
+          <!-- Widget 1: Revenue mini graph -->
+          <div class="mockup-widget graph-widget">
+            <div class="widget-header">
+              <span class="widget-title">Monthly Collections</span>
+              <span class="widget-value">₹1,85,400 <span class="trend-up">▲ 12%</span></span>
+            </div>
+            <div class="widget-body">
+              <svg class="mockup-chart" viewBox="0 0 240 70">
+                <defs>
+                  <linearGradient id="chart-glow" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.25"/>
+                    <stop offset="100%" stop-color="var(--primary)" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0 50 C30 45, 60 55, 90 35 C120 15, 150 25, 180 12 C210 0, 240 5, 240 5 L240 70 L0 70 Z" fill="url(#chart-glow)"/>
+                <path d="M0 50 C30 45, 60 55, 90 35 C120 15, 150 25, 180 12 C210 0, 240 5, 240 5" fill="none" stroke="var(--primary-light)" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="90" cy="35" r="4" fill="var(--primary)"/>
+                <circle cx="180" cy="12" r="4" fill="var(--accent-light)"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Widget 2: Occupied Grid -->
+          <div class="mockup-widget grid-widget">
+            <div class="widget-header">
+              <span class="widget-title">Beds Grid</span>
+              <span class="widget-stats" style="display: inline-flex; align-items: center; gap: 6px;"><span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--success);"></span> 8 / 12 occupied</span>
+            </div>
+            <div class="mockup-beds-grid">
+              <div class="mock-bed occupied"></div>
+              <div class="mock-bed occupied"></div>
+              <div class="mock-bed vacant"></div>
+              <div class="mock-bed occupied"></div>
+              <div class="mock-bed partial"></div>
+              <div class="mock-bed occupied"></div>
+              <div class="mock-bed occupied"></div>
+              <div class="mock-bed vacant"></div>
+              <div class="mock-bed partial"></div>
+              <div class="mock-bed occupied"></div>
+              <div class="mock-bed occupied"></div>
+              <div class="mock-bed vacant"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ FEATURES ═══════════════ -->
+  <section class="features-section" id="features">
+    <div class="section-badge scroll-reveal" style="display: inline-flex; align-items: center; gap: 4px;"><svg class="svg-icon" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> Features</div>
+    <h2 class="section-title scroll-reveal">Everything you need to run a modern PG</h2>
+    <p class="section-desc scroll-reveal">Spend less time managing and more time growing. Rensuli takes care of the daily chaos so you can focus on your business.</p>
+    <div class="features-grid">
+      <div class="feature-card fc-blue scroll-reveal stagger-delay-1">
+        <div class="feature-icon" style="color: var(--accent);">
+          <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        </div>
+        <h4>No More Manual Calculations</h4>
+        <p>Generate rent and electricity bills automatically. Say goodbye to calculators and spreadsheets.</p>
+      </div>
+      <div class="feature-card fc-green scroll-reveal stagger-delay-2">
+        <div class="feature-icon" style="color: var(--success);">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-14h.9a8.38 8.38 0 0 1 3.8.9L21 3l-1.9 5.7a8.38 8.38 0 0 1 .9 3.8z"></path></svg>
+        </div>
+        <h4>Stop Chasing Rent Payments</h4>
+        <p>Send WhatsApp reminders in seconds and keep track of pending dues effortlessly.</p>
+      </div>
+      <div class="feature-card fc-purple scroll-reveal stagger-delay-3">
+        <div class="feature-icon" style="color: var(--primary-light);">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        </div>
+        <h4>Forget Paper Registers</h4>
+        <p>Store tenant details, documents and payment history securely in one place.</p>
+      </div>
+      <div class="feature-card fc-red scroll-reveal stagger-delay-4">
+        <div class="feature-icon" style="color: #f43f5e;">
+          <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        </div>
+        <h4>Never Miss Important Dates</h4>
+        <p>Get timely reminders for rent cycles, tenant move-outs and other key events so nothing slips through the cracks.</p>
+      </div>
+      <div class="feature-card fc-teal scroll-reveal stagger-delay-5">
+        <div class="feature-icon" style="color: #0ea5e9;">
+          <svg class="svg-icon" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="16"></line><line x1="15" y1="22" x2="15" y2="16"></line></svg>
+        </div>
+        <h4>Manage Multiple Properties Easily</h4>
+        <p>Control all your PGs, hostels and apartments from a single dashboard.</p>
+      </div>
+      <div class="feature-card fc-purple scroll-reveal stagger-delay-6">
+        <div class="feature-icon" style="color: var(--primary-light);">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3M15.5 7.5L18 5"></path></svg>
+        </div>
+        <h4>No More Tenant Entry Hassles</h4>
+        <p>Share your owner key and let tenants register themselves digitally.</p>
+      </div>
+      <div class="feature-card fc-amber scroll-reveal stagger-delay-7">
+        <div class="feature-icon" style="color: var(--warning-dark);">
+          <svg class="svg-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        </div>
+        <h4>Understand Your Business Better</h4>
+        <p>Track income, expenses and performance with easy-to-read reports.</p>
+      </div>
+      <div class="feature-card fc-blue scroll-reveal stagger-delay-8">
+        <div class="feature-icon" style="color: var(--accent);">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
+        </div>
+        <h4>Access Everything, Anytime</h4>
+        <p>Your data is securely stored in the cloud and available whenever you need it.</p>
+      </div>
+    </div>
+  </section>
+ 
+
+  <!-- ═══════════════ HOW IT WORKS ═══════════════ -->
+  <section class="how-section" id="how">
+    <div class="section-badge scroll-reveal" style="display: inline-flex; align-items: center; gap: 4px;"><svg class="svg-icon" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> How it works</div>
+    <h2 class="section-title scroll-reveal">Up and running in minutes</h2>
+    <div class="steps-grid">
+      <div class="step-card scroll-reveal stagger-delay-1">
+        <div class="step-num" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+          <svg class="svg-icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+          1
+        </div>
+        <h4>Register & Get Key</h4>
+        <p>Sign up as owner, verify email, get your unique Owner Key instantly</p>
+      </div>
+      <div class="step-card scroll-reveal stagger-delay-2">
+        <div class="step-num" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+          <svg class="svg-icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="16"></line><line x1="15" y1="22" x2="15" y2="16"></line></svg>
+          2
+        </div>
+        <h4>Add Buildings</h4>
+        <p>Add your PG, hostel or apartment. Set rooms, floors, rent & electricity rate</p>
+      </div>
+      <div class="step-card scroll-reveal stagger-delay-3">
+        <div class="step-num" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+          <svg class="svg-icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          3
+        </div>
+        <h4>Tenants Register</h4>
+        <p>Share your key — tenants register themselves. You just approve them</p>
+      </div>
+      <div class="step-card scroll-reveal stagger-delay-4">
+        <div class="step-num" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+          <svg class="svg-icon" style="width: 16px; height: 16px;" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          4
+        </div>
+        <h4>Collect & Track</h4>
+        <p>Auto-bills, payment tracking, receipts, reports — everything on autopilot</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ FAQ SECTION ═══════════════ -->
+  <section class="faq-section" id="faq" style="padding: 70px 24px; max-width: var(--max-content); margin: 0 auto; text-align: center; position: relative; z-index: 1;">
+    <div class="section-badge scroll-reveal" style="display: inline-flex; align-items: center; gap: 4px;">
+      <svg class="svg-icon" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> FAQ
+    </div>
+    <h2 class="section-title scroll-reveal">Frequently Asked Questions</h2>
+    <p class="section-desc scroll-reveal" style="margin: 0 auto 32px;">Got questions about PG Builders? We've got answers. If you need more help, reach out to support.</p>
+    
+    <div class="faq-list">
+      <div class="faq-item scroll-reveal stagger-delay-1">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span>How does pricing work?</span>
+          <span class="faq-icon-wrapper">
+            <svg class="svg-icon chevron-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </span>
+        </button>
+        <div class="faq-answer-wrapper">
+          <div class="faq-answer">
+            <p>Pgbuilderss charges ₹498/month per building. You can also choose yearly billing and get 12 months of access by paying for only 11 months. GST is charged additionally.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item scroll-reveal stagger-delay-2">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span>Is there any setup fee or hidden charges?</span>
+          <span class="faq-icon-wrapper">
+            <svg class="svg-icon chevron-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </span>
+        </button>
+        <div class="faq-answer-wrapper">
+          <div class="faq-answer">
+            <p>No. There are no setup fees or hidden charges. You only pay for the buildings you manage.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item scroll-reveal stagger-delay-3">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span>I'm currently using paper registers. Is switching difficult?</span>
+          <span class="faq-icon-wrapper">
+            <svg class="svg-icon chevron-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </span>
+        </button>
+        <div class="faq-answer-wrapper">
+          <div class="faq-answer">
+            <p>Not at all. Pgbuilderss is designed to be simple and easy to use, even if you're managing everything manually today.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item scroll-reveal stagger-delay-4">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span>Can I manage multiple buildings?</span>
+          <span class="faq-icon-wrapper">
+            <svg class="svg-icon chevron-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </span>
+        </button>
+        <div class="faq-answer-wrapper">
+          <div class="faq-answer">
+            <p>Yes. You can manage multiple rental properties from a single dashboard.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item scroll-reveal stagger-delay-5">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span>Can I generate bills and reports?</span>
+          <span class="faq-icon-wrapper">
+            <svg class="svg-icon chevron-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </span>
+        </button>
+        <div class="faq-answer-wrapper">
+          <div class="faq-answer">
+            <p>Yes. You can create digital rent and electricity bills, download PDF reports and access your transaction history anytime.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item scroll-reveal stagger-delay-6">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span>Will my data be secure?</span>
+          <span class="faq-icon-wrapper">
+            <svg class="svg-icon chevron-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </span>
+        </button>
+        <div class="faq-answer-wrapper">
+          <div class="faq-answer">
+            <p>Absolutely. Your data is securely stored in the cloud and can be accessed anytime from your phone or computer.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-item scroll-reveal stagger-delay-7">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          <span>Does Pgbuilderss work on mobile devices?</span>
+          <span class="faq-icon-wrapper">
+            <svg class="svg-icon chevron-icon" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </span>
+        </button>
+        <div class="faq-answer-wrapper">
+          <div class="faq-answer">
+            <p>Yes. Pgbuilderss works seamlessly on mobile phones, tablets and desktops.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ AFFILIATE PROGRAM SECTION ═══════════════ -->
+  <section class="affiliate-section" id="affiliate" style="padding: 70px 24px; max-width: var(--max-content); margin: 0 auto; text-align: center; position: relative; z-index: 1;">
+    <div class="scroll-reveal" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.05) 100%); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 16px; padding: 48px 32px; box-shadow: var(--shadow-glow), var(--shadow-card); max-width: 800px; margin: 0 auto; box-sizing: border-box; backdrop-filter: var(--backdrop-blur);">
+      <div class="section-badge" style="display: inline-flex; align-items: center; gap: 4px; margin-bottom: 16px;">
+        <svg class="svg-icon" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Earn Money
+      </div>
+      <h2 class="section-title" style="margin-bottom: 12px;">Join Our Affiliate Program</h2>
+      <p class="section-desc" style="margin: 0 auto 24px; max-width: 580px;">Recommend PG Builders to other hostel or PG owners. Earn a recurring <strong>20% commission</strong> for every active subscription referred by you, paid out monthly.</p>
+      <button class="btn btn-primary" disabled style="padding: 12px 28px; font-size: 14px; font-weight: 700; height: auto; display: inline-flex; align-items: center; gap: 8px; opacity: 0.5; cursor: not-allowed; background: var(--text-muted); border-color: transparent;">
+        Coming Soon
+      </button>
+    </div>
+  </section>
+
+  <!-- ═══════════════ FOOTER ═══════════════ -->
+  <footer class="site-footer">
+    <div class="footer-main">
+      <div class="footer-brand scroll-reveal stagger-delay-1">
+        <span class="logo-text">PG <span>Builders</span></span>
+        <h5 class="footer-brand-title">The operating system for modern PGs.</h5>
+        <p class="footer-brand-desc">Manage rent, tenants, electricity bills and daily operations — all from one place.</p>
+      </div>
+
+      <div class="footer-divider-mobile"></div>
+
+      <div class="footer-grid-container">
+        <!-- PRODUCT Column -->
+        <div class="footer-col-premium scroll-reveal stagger-delay-2">
+          <div class="footer-col-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          </div>
+          <h5>Product</h5>
+          <div class="footer-col-links align-center">
+            <a href="javascript:void(0)" onclick="scrollToSection('features')">Features</a>
+            <a href="javascript:void(0)" onclick="scrollToSection('faq')">FAQ</a>
+          </div>
+        </div>
+
+        <!-- COMPANY Column -->
+        <div class="footer-col-premium scroll-reveal stagger-delay-3">
+          <div class="footer-col-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+          <h5>Company</h5>
+          <div class="footer-col-links align-center">
+            <a href="mailto:support@pgbuilderss.online">Contact</a>
+            <a href="/privacy-policy.html">Privacy Policy</a>
+            <a href="/terms-conditions.html">Terms of Service</a>
+            <a href="/refund-policy.html">Refund Policy</a>
+          </div>
+        </div>
+
+        <!-- CONNECT Column -->
+        <div class="footer-col-premium scroll-reveal stagger-delay-4">
+          <div class="footer-col-icon">
+            <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          </div>
+          <h5>Connect</h5>
+          <div class="footer-col-links align-left">
+            <a href="mailto:support@pgbuilderss.online" class="link-with-icon">
+              <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              Email Support
+            </a>
+            <a href="https://wa.me/91xxxxxxxxxx" target="_blank" class="link-with-icon">
+              <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+              WhatsApp
+            </a>
+            <a href="https://instagram.com/" target="_blank" class="link-with-icon">
+              <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+              Instagram
+            </a>
+            <a href="https://linkedin.com/" target="_blank" class="link-with-icon">
+              <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+              LinkedIn
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom scroll-reveal stagger-delay-5">
+      <p>© 2026 PG BUILDERS. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/js/landing.js"></script>
+</body>
+</html>

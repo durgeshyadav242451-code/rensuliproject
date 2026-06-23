@@ -1,0 +1,2388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Owner Dashboard — PG Builders</title>
+  <meta name="description" content="Owner dashboard for managing PG, hostel and apartment properties. Track rent, manage tenants, generate reports." />
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#6C5CE7" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="PG Builders" />
+  
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/css/common.css" />
+  <link rel="stylesheet" href="/src/css/dashboard.css" />
+  <!-- Theme Manager -->
+  <script src="/theme-manager.js"></script>
+  <!-- QRCode.js Library for Tenant Registration Link QR Codes -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+</head>
+
+<body class="dashboard-body">
+
+  <!-- Mobile Sidebar Toggle -->
+  <button class="sidebar-toggle" id="sidebar-toggle"><svg class="svg-icon" style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- ═══════════════ SIDEBAR ═══════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <a class="sidebar-brand" href="/">
+      <div class="brand-icon" style="background: transparent; display: flex; align-items: center; justify-content: center;">
+        <svg class="svg-icon" style="width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="16"></line><line x1="15" y1="22" x2="15" y2="16"></line></svg>
+      </div>
+      <span class="brand-text">PG <span>Builders</span></span>
+    </a>
+
+    <div class="sidebar-menu">
+      <button class="menu-item active" data-tab="dashboard" onclick="switchTab('dashboard', this)">
+        <span class="icon">
+          <svg class="svg-icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        </span>
+        <span>Dashboard</span>
+      </button>
+      <button class="menu-item" data-tab="buildings" onclick="switchTab('buildings', this)">
+        <span class="icon">
+          <svg class="svg-icon" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="16"></line><line x1="15" y1="22" x2="15" y2="16"></line></svg>
+        </span>
+        <span>Properties</span>
+      </button>
+      <button class="menu-item" data-tab="tenants" onclick="switchTab('tenants', this)">
+        <span class="icon">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </span>
+        <span>Tenants (Kirayedar)</span>
+      </button>
+      <button class="menu-item" data-tab="rent" onclick="switchTab('rent', this)">
+        <span class="icon">
+          <svg class="svg-icon" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+        </span>
+        <span>Rent Revenue</span>
+      </button>
+      <button class="menu-item" data-tab="broadcast" onclick="switchTab('broadcast', this)">
+        <span class="icon">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+        </span>
+        <span>Broadcast</span>
+      </button>
+      <button class="menu-item" data-tab="history" onclick="switchTab('history', this)">
+        <span class="icon">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+        </span>
+        <span>History</span>
+      </button>
+      <button class="menu-item" data-tab="expenses" onclick="switchTab('expenses', this)">
+        <span class="icon">
+          <svg class="svg-icon" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12" y2="6"></line><path d="M15 9h-4.5a1.5 1.5 0 0 0 0 3h3a1.5 1.5 0 0 1 0 3H9"></path></svg>
+        </span>
+        <span>Staff & Expenses</span>
+      </button>
+      <button class="menu-item" data-tab="complaints" onclick="switchTab('complaints', this)">
+        <span class="icon">
+          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </span>
+        <span>Complaints</span>
+        <span id="complaints-badge" style="display:none; background: var(--danger); color: #fff; font-size: 10px; font-weight: 700; border-radius: 9999px; padding: 1px 6px; margin-left: auto;"></span>
+      </button>
+      <button class="menu-item" data-tab="settings" onclick="switchTab('settings', this)">
+        <span class="icon">
+          <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </span>
+        <span>Settings & Help</span>
+      </button>
+      <button class="menu-item" data-tab="plan" onclick="switchTab('plan', this)">
+        <span class="icon">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        </span>
+        <span>Plan</span>
+      </button>
+      <button class="menu-item show-mobile flex" onclick="handleLogout()" style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: 12px;">
+        <span class="icon">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </span>
+        <span>Logout</span>
+      </button>
+      <button class="menu-item show-mobile flex" onclick="window.downloadAPK(this)" style="margin-top: 8px; margin-bottom: 8px;">
+        <span class="icon">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        </span>
+        <span>Download APK</span>
+      </button>
+    </div>
+
+    <!-- Owner Key Section -->
+    <div class="sidebar-key-section" style="padding: 16px 20px; border-top: 1px solid var(--border-color); margin-top: auto;">
+      <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 8px; font-weight: 700;">Owner Key</div>
+      <div id="sidebar-owner-key" style="font-family: monospace; font-size: 13px; font-weight: 700; color: var(--primary-light); background: var(--bg-input); padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); text-align: center; margin-bottom: 8px; letter-spacing: 1.5px;">—</div>
+      <button class="btn btn-secondary btn-sm" id="btn-copy-owner-key" onclick="copyOwnerKey()" style="width: 100%; font-size: 11px; justify-content: center; padding: 6px; gap: 6px;"><svg class="svg-icon" style="width:1.2em; height:1.2em; vertical-align:middle; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:inline-block;" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Copy Key</button>
+    </div>
+
+
+    <div class="sidebar-footer" style="padding: 12px 20px;">
+      <!-- Install App button -->
+      <button id="sidebar-install-btn" onclick="handleInstallApp()" style="width:100%;background:linear-gradient(135deg,#6C5CE7,#00D2FF);border:none;color:white;font-weight:700;font-size:12px;padding:10px;border-radius:8px;cursor:pointer;text-align:center">
+        <svg class="svg-icon" style="width:1.2em; height:1.2em; vertical-align:middle; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:inline-block; margin-right:4px;" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line><line x1="12" y1="6" x2="12" y2="12"></line><polyline points="9 9 12 12 15 9"></polyline></svg> Install App
+      </button>
+    </div>
+  </aside>
+
+
+  <!-- ═══════════════ MAIN CONTENT ═══════════════ -->
+  <main class="main-content">
+    <!-- Top Bar -->
+    <header class="topbar" style="gap: 10px;">
+
+      <!-- Left: All Buildings dropdown -->
+      <select class="building-select" id="building-select" onchange="onBuildingSwitch()" style="flex-shrink:0;max-width:130px;">
+        <option value="all">All Buildings</option>
+      </select>
+
+      <!-- Search Button (icon only) -->
+      <button class="btn btn-ghost btn-sm" onclick="window.openGlobalSearch()" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;padding:0;font-size:16px;" title="Search room/tenant">
+        <svg class="svg-icon" style="width:1.2em;height:1.2em;margin-right:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </button>
+
+      <!-- Spacer -->
+      <div style="flex:1;"></div>
+
+      <!-- Right: Live Sync + Theme + Logout -->
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <div class="sync-indicator">
+          <span class="sync-dot"></span>
+          <span class="sync-label">Live Sync</span>
+        </div>
+        <!-- Theme Toggle Switcher -->
+        <button id="theme-toggle-btn" onclick="toggleTheme()" class="btn btn-ghost btn-sm" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;padding:0;font-size:16px;" title="Switch Theme">
+          <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+        <!-- Download App Button -->
+        <button class="btn btn-ghost btn-sm" onclick="window.downloadAPK(this)" style="display:flex;align-items:center;gap:4px;" title="Download Android APK">
+          <svg class="svg-icon" style="width:1.2em;height:1.2em;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span class="hide-mobile">Download App</span>
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="handleLogout()" style="display:flex;align-items:center;gap:4px;">
+          <svg class="svg-icon" style="width:1.2em;height:1.2em;margin-right:0;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          <span class="hide-mobile">Logout</span>
+        </button>
+      </div>
+    </header>
+
+    <script>
+      // Global hotkey to open Spotlight search (Cmd+K or Ctrl+K)
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (typeof window.openGlobalSearch === 'function') window.openGlobalSearch();
+        }
+        if (e.key === 'Escape') {
+          if (typeof window.closeGlobalSearch === 'function') window.closeGlobalSearch();
+        }
+      });
+    </script>
+
+
+    <div class="content-area">
+
+      <!-- ═══════════════ TAB: DASHBOARD ═══════════════ -->
+      <section class="tab-content active" id="tab-dashboard">
+        <div class="section-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h2 class="section-title-main">Dashboard Overview</h2>
+            <p class="section-subtitle" id="dash-date"></p>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <div id="dashboard-plan-expiry-pill" class="hidden" style="background: var(--danger, #ff4c4c); color: #ffffff; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; align-items: center; justify-content: center; gap: 6px; border: 1px solid rgba(255,255,255,0.1); height: 36px; white-space: nowrap;"></div>
+            <select id="dashboard-month-filter" class="form-input form-select" style="width: auto; padding: 6px 12px; font-size: var(--font-sm); height: 36px; margin: 0;" onchange="onMonthFilterChange(this.value)">
+              <!-- Dynamic -->
+            </select>
+          </div>
+        </div>
+
+        <!-- Super Notification (SaaS announcements) -->
+        <div id="super-notifications-container" class="mb-lg hidden" style="background: var(--primary-bg); border: 1px solid var(--primary-border); padding: 14px 20px; border-radius: var(--radius); color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between; gap: var(--space-base);">
+          <div style="display: flex; align-items: center; gap: var(--space-sm);">
+            <span style="color: var(--primary-light); display: flex; align-items: center;"><svg class="svg-icon" style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg></span>
+            <div>
+              <strong style="color: var(--primary-light); font-size: var(--font-xs);" id="super-notice-title">Notice Title</strong>
+              <p style="font-size: var(--font-xs); margin-top: 2px;" id="super-notice-message">Notice Message...</p>
+            </div>
+          </div>
+          <button onclick="this.closest('#super-notifications-container').classList.add('hidden')" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px;"><svg class="svg-icon" style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+        </div>
+
+        <!-- Pending Approvals (Approval Notice on top) -->
+        <div class="card mb-lg card-accordion" id="dashboard-approvals-card">
+          <div class="card-header" onclick="toggleAccordion(this)">
+            <h3 class="card-title" style="display: flex; align-items: center; gap: 6px;"><svg class="svg-icon" style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Pending Tenant Approvals</h3>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="badge badge-warning" id="pending-count">0 pending</span>
+              <span class="accordion-chevron"><svg class="svg-icon" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2.5; display: block;" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+            </div>
+          </div>
+          <div class="accordion-wrapper">
+            <div class="accordion-content">
+              <div class="accordion-inner" id="approvals-container" style="padding: 0;">
+                <div class="empty-state">
+                  <div class="empty-state-icon" style="color: var(--text-muted);"><svg class="svg-icon" style="width: 36px; height: 36px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg></div>
+                  <div class="empty-state-title">No pending requests</div>
+                  <div class="empty-state-desc">New tenant registrations will appear here for your approval</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+          <!-- 1. Total Rent Collected -->
+          <div class="kpi-card">
+            <div class="kpi-icon">
+              <svg class="svg-icon" style="color: var(--success);" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+            </div>
+            <div class="kpi-label">Total Rent Collected</div>
+            <div class="kpi-value" id="kpi-rent-collected">₹0</div>
+          </div>
+          <!-- 2. Active Deposits -->
+          <div class="kpi-card">
+            <div class="kpi-icon">
+              <svg class="svg-icon" style="color: #6C5CE7;" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            </div>
+            <div class="kpi-label">Active Deposits</div>
+            <div class="kpi-value" id="kpi-active-deposits" style="color: #6C5CE7;">₹0</div>
+            <div class="kpi-trend">Security deposits held</div>
+          </div>
+          <!-- 3. Electricity Collected -->
+          <div class="kpi-card">
+            <div class="kpi-icon">
+              <svg class="svg-icon" style="color: #FDCB6E;" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            </div>
+            <div class="kpi-label">Electricity Collected</div>
+            <div class="kpi-value" id="kpi-electricity-collected" style="color: #FDCB6E;">₹0</div>
+          </div>
+          <!-- 4. Maintenance Collected -->
+          <div class="kpi-card">
+            <div class="kpi-icon">
+              <svg class="svg-icon" style="color: #00B894;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </div>
+            <div class="kpi-label">Maintenance Collected</div>
+            <div class="kpi-value" id="kpi-maintenance-collected" style="color: #00B894;">₹0</div>
+          </div>
+          <!-- 5. Total Expenses -->
+          <div class="kpi-card">
+            <div class="kpi-icon">
+              <svg class="svg-icon" style="color: var(--danger);" viewBox="0 0 24 24"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>
+            </div>
+            <div class="kpi-label">Total Expenses</div>
+            <div class="kpi-value" id="kpi-total-expenses-dash" style="color: var(--danger);">₹0</div>
+            <div class="kpi-trend down">Outflow (Staff + Expenses)</div>
+          </div>
+          <!-- 6. Filled Rooms -->
+          <div class="kpi-card">
+            <div class="kpi-icon">
+              <svg class="svg-icon" style="color: var(--primary-light);" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            </div>
+            <div class="kpi-label">Filled Rooms</div>
+            <div class="kpi-value" id="kpi-filled">0</div>
+            <div class="kpi-trend" id="kpi-filled-sub">0 total rooms</div>
+          </div>
+          <!-- 7. Empty Rooms -->
+          <div class="kpi-card">
+            <div class="kpi-icon">
+              <svg class="svg-icon" style="color: var(--warning-dark);" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            </div>
+            <div class="kpi-label">Empty Rooms</div>
+            <div class="kpi-value" id="kpi-open" style="color: var(--warning-dark);">0</div>
+            <div class="kpi-trend">Available rooms</div>
+          </div>
+          <!-- 8. Due Rent -->
+          <div class="kpi-card">
+            <div class="kpi-icon">
+              <svg class="svg-icon" style="color: var(--danger);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <div class="kpi-label">Due Rent</div>
+            <div class="kpi-value" id="kpi-due" style="color: var(--danger);">₹0</div>
+            <div class="kpi-trend down">Pending collection</div>
+          </div>
+          <!-- 9. Total Tenants -->
+          <div class="kpi-card">
+            <div class="kpi-icon">
+              <svg class="svg-icon" style="color: #0984E3;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <div class="kpi-label">Total Tenants</div>
+            <div class="kpi-value" id="kpi-total-tenants" style="color: #0984E3;">0</div>
+            <div class="kpi-trend">Active tenants</div>
+          </div>
+        </div>
+
+
+
+      </section>
+
+      <!-- ═══════════════ TAB: BUILDINGS ═══════════════ -->
+      <section class="tab-content" id="tab-buildings">
+        <div class="section-header">
+          <h2 class="section-title-main" style="display:flex; align-items:center; gap:6px;"><svg class="svg-icon" style="width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="16"></line><line x1="15" y1="22" x2="15" y2="16"></line></svg> Buildings</h2>
+          <button class="btn btn-primary" onclick="openModal('modal-add-building')">+ Add Building</button>
+        </div>
+
+        <!-- Building Cards List -->
+        <div id="buildings-list" class="building-cards mb-lg">
+          <!-- Dynamic -->
+        </div>
+
+        <!-- Room Grid (shows when building selected) -->
+        <div id="room-grid-section" class="hidden">
+          <div class="section-header" style="flex-wrap: wrap; gap: 12px;">
+            <h3 class="section-title-main" id="room-grid-title" style="margin-bottom: 0;">Room Grid</h3>
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              <button class="btn btn-secondary btn-sm" id="btn-select-mode" onclick="toggleSelectMode()" style="display:inline-flex; align-items:center; gap:4px;"><svg class="svg-icon" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> Select Rooms</button>
+              <button class="btn btn-danger btn-sm hidden" id="btn-delete-selected" onclick="deleteSelectedRooms()" style="display:inline-flex; align-items:center; gap:4px;"
+                disabled><svg class="svg-icon" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Delete Selected</button>
+              <button class="btn btn-primary btn-sm" onclick="openAddFloorModal()" style="display:inline-flex; align-items:center; gap:4px;"><svg class="svg-icon" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Add Floor</button>
+              <button class="btn btn-primary btn-sm" onclick="openAddRoomModal()" style="display:inline-flex; align-items:center; gap:4px;"><svg class="svg-icon" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Add Room</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteActiveFloor()" style="display:inline-flex; align-items:center; gap:4px;"><svg class="svg-icon" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Delete Floor</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteActiveBuilding()"
+                style="background: var(--danger); border-color: var(--danger); display:inline-flex; align-items:center; gap:4px;"><svg class="svg-icon" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Delete Building</button>
+            </div>
+          </div>
+          <div class="room-filter-row" style="display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap;">
+            <span style="font-size: var(--font-xs); color: var(--text-muted); display: flex; align-items: center; margin-right: 8px;">Filter Grid:</span>
+            <button class="btn btn-ghost btn-sm active-pill" id="btn-filter-all" onclick="filterRoomStatus('all', this)" style="padding: 4px 10px; font-size: 11px;">Show All</button>
+            <button class="btn btn-ghost btn-sm" id="btn-filter-vacant" onclick="filterRoomStatus('vacant', this)" style="padding: 4px 10px; font-size: 11px; display:inline-flex; align-items:center; gap:4px;">Vacant <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--danger); vertical-align:middle;"></span></button>
+            <button class="btn btn-ghost btn-sm" id="btn-filter-occupied" onclick="filterRoomStatus('occupied', this)" style="padding: 4px 10px; font-size: 11px; display:inline-flex; align-items:center; gap:4px;">Occupied <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--success); vertical-align:middle;"></span></button>
+            <button class="btn btn-ghost btn-sm" id="btn-filter-partial" onclick="filterRoomStatus('partial', this)" style="padding: 4px 10px; font-size: 11px; display:inline-flex; align-items:center; gap:4px;">Partial <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--warning); vertical-align:middle;"></span></button>
+            <button class="btn btn-ghost btn-sm" id="btn-filter-maintenance" onclick="filterRoomStatus('maintenance', this)" style="padding: 4px 10px; font-size: 11px; display:inline-flex; align-items:center; gap:4px;">Maintenance <svg class="svg-icon" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button>
+          </div>
+          <div id="floor-tabs-row" class="floor-tabs-row"
+            style="display: flex; gap: 8px; margin: 16px 0; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; flex-wrap: wrap;">
+            <!-- Dynamic Floor Tabs -->
+          </div>
+          <div id="room-grid-content">
+            <!-- Dynamic floor groups with rooms -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ TAB: TENANTS ═══════════════ -->
+      <section class="tab-content" id="tab-tenants">
+        <div class="section-header">
+          <h2 class="section-title-main" style="display:flex; align-items:center; gap:6px;"><svg class="svg-icon" style="width:24px; height:24px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Tenants (Kirayedar)</h2>
+          <button class="btn btn-primary" onclick="openAddTenantModal()" style="display:inline-flex; align-items:center; gap:4px;"><svg class="svg-icon" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Add Tenant Manually</button>
+        </div>
+
+        <!-- Inner Sub-tabs Navigation -->
+        <div class="inner-tabs" style="display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 1px solid var(--border-light); padding-bottom: 8px; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
+          <button class="btn btn-ghost inner-tab-btn active" onclick="switchInnerTab('tenants-active', this)" style="border-radius: 0; border-bottom: 2px solid transparent; flex-shrink: 0; display:inline-flex; align-items:center; gap:4px;"><svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg> Active Tenants</button>
+          <button class="btn btn-ghost inner-tab-btn" onclick="switchInnerTab('tenants-requests', this)" style="border-radius: 0; border-bottom: 2px solid transparent; flex-shrink: 0; display:inline-flex; align-items:center; gap:4px;"><svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg> Requests <span class="badge badge-warning" id="total-requests-badge" style="margin-left: 6px;">0</span></button>
+          <button class="btn btn-ghost inner-tab-btn" onclick="switchInnerTab('tenants-verification', this)" style="border-radius: 0; border-bottom: 2px solid transparent; flex-shrink: 0; display:inline-flex; align-items:center; gap:4px;"><svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg> Aadhaar Verification <span class="badge badge-neutral" id="unverified-count-badge" style="margin-left: 6px; display:none;">0</span></button>
+          <button class="btn btn-ghost inner-tab-btn" onclick="switchInnerTab('tenants-archived', this)" style="border-radius: 0; border-bottom: 2px solid transparent; flex-shrink: 0; display:inline-flex; align-items:center; gap:4px;"><svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg> Archived</button>
+        </div>
+
+        <!-- SUB-TAB: ACTIVE TENANTS -->
+        <div id="inner-tenants-active" class="inner-tab-content active">
+          <div class="card mb-lg">
+            <h3 class="card-title mb-base" style="display:flex; align-items:center; gap:6px;"><svg class="svg-icon" style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Active Tenants</h3>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Building</th>
+                    <th>Floor</th>
+                    <th>Room</th>
+                    <th>Rent</th>
+                    <th>Deposit</th>
+                    <th>Members Count</th>
+                    <th>Aadhar Number</th>
+                    <th>Join Date</th>
+                    <th>Payment Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tenants-table-body">
+                  <tr>
+                    <td colspan="10" class="text-center text-muted" style="padding: 24px;">No tenants yet</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-TAB: AADHAAR VERIFICATION -->
+        <div id="inner-tenants-verification" class="inner-tab-content" style="display: none;">
+          <!-- Unverified Tenants (Pending Verification) -->
+          <div class="card mb-lg">
+            <div class="card-header" style="cursor: default;">
+              <h3 class="card-title" style="display:flex; align-items:center; gap:6px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: var(--danger); fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> Unverified Tenants (Verification Pending)</h3>
+              <span class="badge badge-danger" id="verification-pending-count">0 pending</span>
+            </div>
+            <div class="table-wrap mt-base">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Building</th>
+                    <th>Room</th>
+                    <th>Aadhar Number</th>
+                    <th>Join Date</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="tenants-unverified-table-body">
+                  <tr>
+                    <td colspan="7" class="text-center text-muted" style="padding: 24px;">No unverified tenants</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Verified Tenants -->
+          <div class="card">
+            <div class="card-header" style="cursor: default;">
+              <h3 class="card-title" style="display:flex; align-items:center; gap:6px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: var(--success); fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Verified Tenants</h3>
+              <span class="badge badge-success" id="verification-done-count">0 verified</span>
+            </div>
+            <div class="table-wrap mt-base">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Building</th>
+                    <th>Room</th>
+                    <th>Aadhar Number</th>
+                    <th>Join Date</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="tenants-verified-table-body">
+                  <tr>
+                    <td colspan="7" class="text-center text-muted" style="padding: 24px;">No verified tenants yet</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-TAB: REQUESTS -->
+        <div id="inner-tenants-requests" class="inner-tab-content" style="display: none;">
+          <!-- Pending Registration Requests -->
+          <div class="card mb-lg" id="tenants-pending-card">
+            <div class="card-header" style="cursor: default;">
+              <h3 class="card-title"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Registration Requests</h3>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="badge badge-warning" id="tenants-pending-count">0 pending</span>
+              </div>
+            </div>
+            <div class="table-wrap mt-base">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Number</th>
+                    <th>Building</th>
+                    <th>Floor</th>
+                    <th>Room</th>
+                    <th>Aadhaar</th>
+                    <th style="text-align: center;">Members</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="tenants-pending-table-body">
+                  <tr>
+                    <td colspan="8" class="text-center text-muted" style="padding: 24px;">No pending registration requests</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Rent Payment Requests -->
+          <div class="card mb-lg" id="tenants-rent-card">
+            <div class="card-header" style="cursor: default;">
+              <h3 class="card-title"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><line x1="6" y1="12" x2="6.01" y2="12"></line><line x1="18" y1="12" x2="18.01" y2="12"></line></svg> Rent Payment Requests</h3>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="badge badge-warning" id="tenants-rent-count">0 pending</span>
+              </div>
+            </div>
+            <div class="table-wrap mt-base">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Building</th>
+                    <th>Floor</th>
+                    <th>Room</th>
+                    <th>Full Date</th>
+                    <th>Total Amount</th>
+                    <th>Breakdown</th>
+                    <th>Method</th>
+                    <th>Transaction ID</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="tenants-rent-table-body">
+                  <tr>
+                    <td colspan="10" class="text-center text-muted" style="padding: 24px;">No pending payment requests</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Pending Vacate Requests -->
+          <div class="card mb-lg" id="tenants-vacate-card">
+            <div class="card-header" style="cursor: default;">
+              <h3 class="card-title"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Vacate Requests</h3>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="badge badge-warning" id="tenants-vacate-count">0 pending</span>
+              </div>
+            </div>
+            <div class="table-wrap mt-base">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Room</th>
+                    <th>Building</th>
+                    <th>Vacate Date</th>
+                    <th>Reason</th>
+                    <th>Refund Amount (Deposit)</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="tenants-vacate-table-body">
+                  <tr>
+                    <td colspan="7" class="text-center text-muted" style="padding: 24px;">No pending vacate requests</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- SUB-TAB: ARCHIVED TENANTS -->
+        <div id="inner-tenants-archived" class="inner-tab-content" style="display: none;">
+          <div class="card mb-lg">
+            <h3 class="card-title mb-base"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg> Archived Tenants</h3>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Room</th>
+                    <th>Building</th>
+                    <th>Phone</th>
+                    <th>Join Date</th>
+                    <th>Vacate Date</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="tenants-archived-table-body">
+                  <tr>
+                    <td colspan="8" class="text-center text-muted" style="padding: 24px;">No archived tenants</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ TAB: RENT REVENUE ═══════════════ -->
+      <section class="tab-content" id="tab-rent">
+        <div class="section-header">
+          <h2 class="section-title-main"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg> Rent Revenue Control</h2>
+          <div style="display: flex; gap: var(--space-sm); align-items: center;">
+            <label class="form-label" style="margin-bottom: 0; white-space: nowrap; font-size: var(--font-sm); color: var(--text-secondary);"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="16"></line><line x1="15" y1="22" x2="15" y2="16"></line></svg> Property Filter:</label>
+            <select class="form-input form-select" id="rent-building-select" onchange="onRentBuildingSwitch()" style="font-size: var(--font-xs); height: 36px; padding: 6px 36px 6px 12px; width: auto; min-width: 160px; margin-bottom: 0;">
+              <option value="all">All Properties (सभी)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Inner Sub-Tabs Navigation -->
+        <div class="inner-tabs" style="display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 1px solid var(--border-light); padding-bottom: 8px; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
+          <button class="btn btn-primary inner-tab-btn active" onclick="switchInnerTab('rent-overview', this)" style="border-radius: 0; border-bottom: 2px solid transparent; flex-shrink: 0;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg> Overview</button>
+          <button class="btn btn-ghost inner-tab-btn" onclick="switchInnerTab('rent-manual', this)" style="border-radius: 0; border-bottom: 2px solid transparent; flex-shrink: 0;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><line x1="6" y1="12" x2="6.01" y2="12"></line><line x1="18" y1="12" x2="18.01" y2="12"></line></svg> Manual Payment</button>
+          <button class="btn btn-ghost inner-tab-btn" onclick="switchInnerTab('rent-txns', this)" style="border-radius: 0; border-bottom: 2px solid transparent; flex-shrink: 0;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> Transactions</button>
+          <button class="btn btn-ghost inner-tab-btn" onclick="switchInnerTab('rent-dues', this)" style="border-radius: 0; border-bottom: 2px solid transparent; flex-shrink: 0;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Dues</button>
+          <button class="btn btn-ghost inner-tab-btn" onclick="switchInnerTab('rent-deposits', this)" style="border-radius: 0; border-bottom: 2px solid transparent; flex-shrink: 0;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Security Deposits</button>
+        </div>
+
+        <!-- SUB-TAB 1: OVERVIEW (Stats, Reports & Deposits) -->
+        <div id="inner-rent-overview" class="inner-tab-content active">
+          <style>
+            .time-range-pills {
+              display: flex;
+              gap: 6px;
+              background: var(--bg-input);
+              padding: 4px;
+              border-radius: var(--radius-sm);
+              border: 1px solid var(--border-color);
+              flex-wrap: wrap;
+            }
+            .btn-pill {
+              background: transparent;
+              border: none;
+              color: var(--text-muted);
+              padding: 6px 12px;
+              font-size: 11px;
+              font-weight: 600;
+              border-radius: var(--radius-xs);
+              cursor: pointer;
+              transition: all var(--transition-fast);
+            }
+            .btn-pill:hover {
+              color: var(--text-primary);
+              background: rgba(255, 255, 255, 0.04);
+            }
+            .btn-pill.active {
+              color: white;
+              background: var(--gradient-primary);
+              box-shadow: 0 2px 8px rgba(108, 92, 231, 0.2);
+            }
+            .progress-container {
+              width: 100%;
+              background: rgba(255, 255, 255, 0.05);
+              border-radius: var(--radius-full);
+              height: 8px;
+              margin-top: 10px;
+              overflow: hidden;
+              position: relative;
+            }
+            .progress-bar-fill {
+              height: 100%;
+              background: var(--gradient-primary);
+              border-radius: var(--radius-full);
+              width: 0%;
+              transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            @media (max-width: 600px) {
+              .time-range-pills {
+                overflow-x: auto;
+                flex-wrap: nowrap !important;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+                padding: 4px 6px;
+              }
+              .time-range-pills::-webkit-scrollbar {
+                display: none;
+              }
+              .btn-pill {
+                flex-shrink: 0;
+              }
+            }
+          </style>
+
+          <!-- Month-Year Dropdown Header -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; padding: 4px 0;">
+            <h3 class="card-title" style="margin-bottom: 0;">Expected Rent &amp; Occupancy Statistics</h3>
+            <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+              <select id="rent-overview-month-filter" class="form-input form-select" style="width: auto; padding: 6px 12px; font-size: var(--font-sm); height: 36px;" onchange="onMonthFilterChange(this.value)">
+                <!-- Dynamic -->
+              </select>
+              <button class="btn btn-secondary btn-sm" onclick="downloadReport()" style="display: inline-flex; align-items: center; gap: 6px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; vertical-align: middle;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> Download PDF Report</button>
+            </div>
+          </div>
+
+          <!-- Revenue KPI Cards (9 Cards) -->
+          <div class="kpi-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-base); margin-bottom: var(--space-lg);">
+
+            <!-- Card 1: Expected Rent -->
+            <div class="kpi-card" style="border-left: 4px solid var(--success); background: linear-gradient(135deg, rgba(0, 196, 140, 0.05), var(--bg-kpi-gradient-end)); position: relative; overflow: hidden; padding: var(--space-base); border-radius: var(--radius); box-shadow: var(--shadow-card);">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div class="kpi-label" style="font-size: var(--font-xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Expected Rent</div>
+                <span id="rent-stat-percent" style="font-size: var(--font-xs); font-weight: 700; color: var(--success); background: var(--success-bg); padding: 2px 8px; border-radius: 10px;">0%</span>
+              </div>
+              <div class="kpi-value" id="rent-stat-expected" style="color: var(--success); font-size: var(--font-lg); font-weight: 800; margin-top: 8px;">₹0 / ₹0</div>
+              <div class="progress-container">
+                <div class="progress-bar-fill" id="rent-stat-progress-bar"></div>
+              </div>
+              <div style="font-size: 10px; color: var(--text-muted); margin-top: 6px;">Collected vs Expected</div>
+              <div style="position: absolute; right: 10px; bottom: 6px; opacity: 0.08; pointer-events: none;"><svg style="width:36px; height:36px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></div>
+            </div>
+
+            <!-- Card 3: Overdue Revenue -->
+            <div class="kpi-card" style="border-left: 4px solid var(--danger); background: linear-gradient(135deg, rgba(255, 107, 107, 0.05), var(--bg-kpi-gradient-end)); position: relative; overflow: hidden; padding: var(--space-base); border-radius: var(--radius); box-shadow: var(--shadow-card);">
+              <div class="kpi-label" style="font-size: var(--font-xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Overdue Revenue</div>
+              <div class="kpi-value" id="rent-stat-overdue" style="color: var(--danger); font-size: var(--font-xl); font-weight: 800; margin-top: 8px;">₹0</div>
+              <div style="font-size: 10px; color: var(--danger-light, #ff8787); margin-top: 4px;"><svg class="svg-icon" style="width: 1em; height: 1em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> Due date cross ho chuki hai</div>
+              <div style="position: absolute; right: 10px; bottom: 6px; opacity: 0.08; pointer-events: none;"><svg style="width:36px; height:36px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div>
+            </div>
+
+            <!-- Card 4: Electricity Collected -->
+            <div class="kpi-card" style="border-left: 4px solid var(--accent); background: linear-gradient(135deg, rgba(0, 210, 255, 0.05), var(--bg-kpi-gradient-end)); position: relative; overflow: hidden; padding: var(--space-base); border-radius: var(--radius); box-shadow: var(--shadow-card);">
+              <div class="kpi-label" style="font-size: var(--font-xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Electricity Collected</div>
+              <div class="kpi-value" id="rent-stat-electricity" style="color: var(--accent); font-size: var(--font-xl); font-weight: 800; margin-top: 8px;">₹0</div>
+              <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Electricity bills collected</div>
+              <div style="position: absolute; right: 10px; bottom: 6px; opacity: 0.08; pointer-events: none;"><svg style="width:36px; height:36px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
+            </div>
+
+            <!-- Card 5: Maintenance Collected -->
+            <div class="kpi-card" style="border-left: 4px solid var(--primary-light); background: linear-gradient(135deg, rgba(162, 155, 254, 0.05), var(--bg-kpi-gradient-end)); position: relative; overflow: hidden; padding: var(--space-base); border-radius: var(--radius); box-shadow: var(--shadow-card);">
+              <div class="kpi-label" style="font-size: var(--font-xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Maintenance Collected</div>
+              <div class="kpi-value" id="rent-stat-maintenance" style="color: var(--primary-light); font-size: var(--font-xl); font-weight: 800; margin-top: 8px;">₹0</div>
+              <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Maintenance fees collected</div>
+              <div style="position: absolute; right: 10px; bottom: 6px; opacity: 0.08; pointer-events: none;"><svg style="width:36px; height:36px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg></div>
+            </div>
+
+            <!-- Card 6: Security Deposit Held -->
+            <div class="kpi-card" style="border-left: 4px solid var(--primary); background: linear-gradient(135deg, rgba(108, 92, 231, 0.05), var(--bg-kpi-gradient-end)); position: relative; overflow: hidden; padding: var(--space-base); border-radius: var(--radius); box-shadow: var(--shadow-card);">
+              <div class="kpi-label" style="font-size: var(--font-xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Security Deposit Held</div>
+              <div class="kpi-value" id="rent-stat-deposit" style="color: var(--primary-light); font-size: var(--font-xl); font-weight: 800; margin-top: 8px;">₹0</div>
+              <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Active tenants ke deposits</div>
+              <div style="position: absolute; right: 10px; bottom: 6px; opacity: 0.08; pointer-events: none;"><svg style="width:36px; height:36px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+            </div>
+
+            <!-- Card 7: Occupancy Rate -->
+            <div class="kpi-card" style="border-left: 4px solid var(--accent); background: linear-gradient(135deg, rgba(0, 210, 255, 0.05), var(--bg-kpi-gradient-end)); position: relative; overflow: hidden; padding: var(--space-base); border-radius: var(--radius); box-shadow: var(--shadow-card);">
+              <div class="kpi-label" style="font-size: var(--font-xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Occupancy Rate</div>
+              <div class="kpi-value" id="rent-stat-occupancy" style="color: var(--accent); font-size: 32px; font-weight: 900; margin-top: 4px; line-height: 1;">0%</div>
+              <div style="font-size: 11px; color: var(--text-secondary); margin-top: 6px; font-weight: 600;" id="rent-stat-occupancy-detail">0 / 0 Rooms Occupied</div>
+              <div style="position: absolute; right: 10px; bottom: 6px; opacity: 0.08; pointer-events: none;"><svg style="width:36px; height:36px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></div>
+            </div>
+
+            <!-- Card 8: Active Tenants -->
+            <div class="kpi-card" style="border-left: 4px solid var(--success); background: linear-gradient(135deg, rgba(0, 196, 140, 0.05), var(--bg-kpi-gradient-end)); position: relative; overflow: hidden; padding: var(--space-base); border-radius: var(--radius); box-shadow: var(--shadow-card);">
+              <div class="kpi-label" style="font-size: var(--font-xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Active Tenants</div>
+              <div class="kpi-value" id="rent-stat-active-tenants" style="color: var(--success); font-size: 32px; font-weight: 900; margin-top: 4px; line-height: 1;">0</div>
+              <div style="font-size: 10px; color: var(--text-muted); margin-top: 6px;">Currently staying tenants</div>
+              <div style="position: absolute; right: 10px; bottom: 6px; opacity: 0.08; pointer-events: none;"><svg style="width:36px; height:36px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
+            </div>
+
+            <!-- Card 9: Vacant Rooms -->
+            <div class="kpi-card" style="border-left: 4px solid var(--danger); background: linear-gradient(135deg, rgba(255, 107, 107, 0.05), var(--bg-kpi-gradient-end)); position: relative; overflow: hidden; padding: var(--space-base); border-radius: var(--radius); box-shadow: var(--shadow-card);">
+              <div class="kpi-label" style="font-size: var(--font-xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Vacant Rooms</div>
+              <div class="kpi-value" id="rent-stat-vacant" style="color: var(--danger); font-size: 32px; font-weight: 900; margin-top: 4px; line-height: 1;">0</div>
+              <div style="font-size: 10px; color: var(--text-muted); margin-top: 6px;">Available for new tenants</div>
+            </div>
+          </div>
+
+
+
+        </div>
+
+        <!-- SUB-TAB 2: MANUAL PAYMENT (Select Room & Calculator) -->
+        <div id="inner-rent-manual" class="inner-tab-content" style="display: none;">
+          <div class="invoice-layout mb-lg">
+            <div class="card">
+              <h3 class="card-title mb-lg">Select Room & Calculate Bill</h3>
+
+              <div class="form-group">
+                <label class="form-label">Select Tenant / Room</label>
+                <select class="form-input form-select" id="calc-tenant-select" onchange="onCalcTenantChange()">
+                  <option value="">— Select —</option>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Previous Reading</label>
+                  <input class="form-input" type="number" id="calc-prev" value="0" oninput="calculateBill()" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Current Reading</label>
+                  <input class="form-input" type="number" id="calc-curr" value="0" oninput="calculateBill()" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Electricity Rate (₹/unit)</label>
+                  <input class="form-input" type="number" id="calc-rate" value="10" oninput="calculateBill()" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Base Rent (₹)</label>
+                  <input class="form-input" type="number" id="calc-rent" value="8000" oninput="calculateBill()" />
+                </div>
+              </div>
+
+              <!-- Subsidy Controls for Manual Calculator -->
+              <div class="form-row" style="align-items: flex-end; gap: 12px; margin-bottom: 12px;">
+                <div class="form-group" style="display: flex; align-items: center; min-width: 130px; padding-bottom: 8px; box-sizing: border-box; height: 38px; margin-bottom: 0;">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+                    <input type="checkbox" id="calc-subsidy-mode" onchange="toggleCalcSubsidyFields()" />
+                    <span class="form-label" style="margin-bottom: 0; font-size: 13px; white-space: nowrap;">Subsidy Mode</span>
+                  </label>
+                </div>
+              </div>
+              <div id="calc-subsidy-row" class="form-row" style="display: none; align-items: flex-end; gap: 12px; margin-bottom: 16px;">
+                <div class="form-group" style="flex: 1; min-width: 100px; margin-bottom: 0;">
+                  <label class="form-label">Subsidy Limit (Units)</label>
+                  <input class="form-input" type="number" id="calc-subsidy-units" value="1" min="1" oninput="calculateBill()" />
+                </div>
+                <div class="form-group" style="flex: 1; min-width: 100px; margin-bottom: 0;">
+                  <label class="form-label">Subsidy Rate (₹/unit)</label>
+                  <input class="form-input" type="number" id="calc-subsidy-rate" value="0" min="0" oninput="calculateBill()" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Maintenance (₹)</label>
+                <input class="form-input" type="number" id="calc-maint" value="500" oninput="calculateBill()" />
+              </div>
+
+              <!-- Payment Type Selector (Cash vs UPI) -->
+              <div class="form-group">
+                <label class="form-label">Payment Collection Mode</label>
+                <div style="display: flex; gap: 12px;">
+                  <label style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--bg-input); border: 1px solid var(--border-input); border-radius: var(--radius-sm); cursor: pointer; flex: 1;">
+                    <input type="radio" name="payment-method-type" value="UPI" checked onchange="togglePaymentCollectionMode()" />
+                    <span style="font-size: var(--font-xs); font-weight: 500; display: inline-flex; align-items: center; gap: 4px;"><svg class="svg-icon" style="width:1.2em; height:1.2em; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg> Online UPI</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--bg-input); border: 1px solid var(--border-input); border-radius: var(--radius-sm); cursor: pointer; flex: 1;">
+                    <input type="radio" name="payment-method-type" value="Cash" onchange="togglePaymentCollectionMode()" />
+                    <span style="font-size: var(--font-xs); font-weight: 500; display: inline-flex; align-items: center; gap: 4px;"><svg class="svg-icon" style="width:1.2em; height:1.2em; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"></rect><circle cx="12" cy="12" r="2"></circle><line x1="6" y1="12" x2="6.01" y2="12"></line><line x1="18" y1="12" x2="18.01" y2="12"></line></svg> Direct Cash</span>
+                  </label>
+                </div>
+              </div>
+
+              <button class="btn btn-primary btn-full" id="btn-collect-payment" onclick="collectRentPayment()">
+                <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Send Invoice on WhatsApp
+              </button>
+            </div>
+
+            <!-- Invoice Preview -->
+            <div class="invoice-card">
+              <h4 style="font-size: var(--font-md); font-weight: 700; margin-bottom: var(--space-base);">Invoice Preview</h4>
+              <div style="font-size: var(--font-xs); color: var(--text-muted); margin-bottom: var(--space-lg);">
+                Room <span id="inv-room">—</span> • <span id="inv-tenant">—</span>
+              </div>
+
+              <div class="invoice-row"><span>Base Rent</span><strong id="inv-rent">₹0</strong></div>
+              <div class="invoice-row" style="background: var(--bg-elevated); padding: 8px; border-radius: var(--radius-xs); margin: 4px 0;">
+                <span style="font-size: var(--font-xs);">Electricity (<span id="inv-units">0</span> units × ₹<span id="inv-rate">0</span>)</span>
+                <strong id="inv-elec">₹0</strong>
+              </div>
+              <div class="invoice-row"><span>Maintenance</span><strong id="inv-maint">₹0</strong></div>
+
+              <div class="invoice-total">
+                <span>Grand Total</span>
+                <span class="gradient-text" id="inv-total">₹0</span>
+              </div>
+
+              <div style="background: var(--primary-bg); padding: 12px; border-radius: var(--radius-sm); margin-top: var(--space-base); font-size: var(--font-xs); color: var(--text-secondary);">
+                <strong style="color: var(--primary-light);">UPI:</strong> <span id="inv-upi">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-TAB 3: TRANSACTIONS (History, Filters, Approve/Receipts) -->
+        <div id="inner-rent-txns" class="inner-tab-content" style="display: none;">
+          <div class="card">
+            <div class="card-header" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;">
+              <h3 class="card-title" style="display: inline-flex; align-items: center; gap: 6px;"><svg class="svg-icon" style="width:1.2em; height:1.2em; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> Payment History &amp; Transactions</h3>
+              <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap; align-items: center; width: 100%; max-width: 650px; justify-content: flex-end;">
+                <!-- Search Input -->
+                <input type="text" id="txn-search-input" class="form-input" placeholder="Search tenant..." style="max-width: 180px; padding: 6px 12px; font-size: var(--font-xs); height: 36px;" oninput="renderTransactionsTable()" />
+                <!-- Building Filter -->
+                <select id="txn-building-filter" class="form-input form-select" style="max-width: 140px; padding: 6px 12px; font-size: var(--font-xs); height: 36px;" onchange="renderTransactionsTable()">
+                  <option value="all">All Buildings</option>
+                </select>
+                <!-- Status Filter -->
+                <select id="txn-status-filter" class="form-input form-select" style="max-width: 120px; padding: 6px 12px; font-size: var(--font-xs); height: 36px;" onchange="renderTransactionsTable()">
+                  <option value="all">All Statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+                <!-- Month Filter -->
+                <select id="txn-month-filter" class="form-input form-select" style="max-width: 120px; padding: 6px 12px; font-size: var(--font-xs); height: 36px;" onchange="onMonthFilterChange(this.value)">
+                  <option value="all">All Months</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-wrap" style="margin-top: var(--space-md); max-height: 500px; overflow: auto;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Building</th>
+                    <th>Floor</th>
+                    <th>Room</th>
+                    <th>Full Date</th>
+                    <th>Total Amount</th>
+                    <th>Breakdown</th>
+                    <th>Method</th>
+                    <th>Transaction ID</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="rent-txns-tbody">
+                  <tr><td colspan="11" class="text-center text-muted" style="padding: 24px;">No transactions found</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-TAB 4: DUES (Unpaid list, Overdue calculation, WhatsApp reminder) -->
+        <div id="inner-rent-dues" class="inner-tab-content" style="display: none;">
+          <div class="card">
+            <div class="card-header" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;">
+              <div>
+                <h3 class="card-title" style="color: var(--danger); display: inline-flex; align-items: center; gap: 6px;"><svg class="svg-icon" style="width:1.2em; height:1.2em; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Pending Dues &amp; Unpaid Tenants</h3>
+                <p style="font-size: var(--font-xs); color: var(--text-muted); margin-top: 4px;">Active tenants who do not have an approved payment recorded for the current month.</p>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="sendBulkReminder()"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Send WhatsApp Reminders to All</button>
+            </div>
+            <div class="table-wrap" style="margin-top: var(--space-md); max-height: 500px; overflow: auto;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Tenant</th>
+                    <th>Room &amp; Building</th>
+                    <th>Estimated Due</th>
+                    <th>Join Date</th>
+                    <th>Due Date</th>
+                    <th>Status / Overdue</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="rent-dues-tbody">
+                  <tr><td colspan="7" class="text-center text-muted" style="padding: 24px;">No dues pending</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-TAB 5: DEPOSITS (Active advance summary, Refund tracker, WhatsApp logs) -->
+        <div id="inner-rent-deposits" class="inner-tab-content" style="display: none;">
+          <!-- Deposit Summary KPI Cards -->
+          <div class="kpi-grid mb-lg" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+            <div class="kpi-card" style="position: relative; background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: var(--radius); padding: 20px;">
+              <div class="kpi-icon" style="position: absolute; right: 20px; top: 20px; opacity: 0.8; height: 24px; width: 24px;"><svg style="width:24px; height:24px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+              <div class="kpi-label" style="font-size: var(--font-xs); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Active Deposits</div>
+              <div class="kpi-value" id="dep-kpi-active" style="font-size: 28px; font-weight: 800; color: var(--text-primary); margin-top: 8px;">₹0</div>
+              <div class="kpi-trend" id="dep-kpi-active-sub" style="font-size: 11px; color: var(--text-secondary); margin-top: 6px;">0 active tenants</div>
+            </div>
+            <div class="kpi-card" style="position: relative; background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: var(--radius); padding: 20px;">
+              <div class="kpi-icon" style="position: absolute; right: 20px; top: 20px; opacity: 0.8; height: 24px; width: 24px;"><svg style="width:24px; height:24px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+              <div class="kpi-label" style="font-size: var(--font-xs); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Total Refunded</div>
+              <div class="kpi-value" id="dep-kpi-refunded" style="font-size: 28px; font-weight: 800; color: var(--success); margin-top: 8px;">₹0</div>
+              <div class="kpi-trend" id="dep-kpi-refunded-sub" style="font-size: 11px; color: var(--text-secondary); margin-top: 6px;">0 refunds processed</div>
+            </div>
+            <div class="kpi-card" style="position: relative; background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: var(--radius); padding: 20px;">
+              <div class="kpi-icon" style="position: absolute; right: 20px; top: 20px; opacity: 0.8; height: 24px; width: 24px;"><svg style="width:24px; height:24px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+              <div class="kpi-label" style="font-size: var(--font-xs); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Pending Refunds</div>
+              <div class="kpi-value" id="dep-kpi-pending" style="font-size: 28px; font-weight: 800; color: var(--warning-dark); margin-top: 8px;">₹0</div>
+              <div class="kpi-trend" id="dep-kpi-pending-sub" style="font-size: 11px; color: var(--text-secondary); margin-top: 6px;">0 pending checkouts</div>
+            </div>
+          </div>
+
+          <!-- Pending Refunds List Section -->
+          <div class="card mb-lg" style="margin-bottom: 24px;">
+            <h3 class="card-title mb-base" style="margin-bottom: 16px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Pending Deposit Refunds (वापस देने योग्य सिक्योरिटी डिपॉजिट राशि)</h3>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Tenant</th>
+                    <th>Room & Building</th>
+                    <th>Vacate Date</th>
+                    <th>Deposit Amount</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="dep-pending-tbody">
+                  <tr>
+                    <td colspan="5" class="text-center text-muted" style="padding: 24px;">No pending refunds</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Refunded History Section -->
+          <div class="card mb-lg">
+            <h3 class="card-title mb-base" style="margin-bottom: 16px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> Refund History (रिफंड इतिहास)</h3>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Tenant</th>
+                    <th>Room & Building</th>
+                    <th>Refund Date</th>
+                    <th>Refunded Amount</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="dep-history-tbody">
+                  <tr>
+                    <td colspan="5" class="text-center text-muted" style="padding: 24px;">No refund history yet</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ TAB: BROADCAST ═══════════════ -->
+      <section class="tab-content" id="tab-broadcast">
+        <div class="section-header">
+          <h2 class="section-title-main" style="display: flex; align-items: center; gap: 8px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg> Notice Board &amp; Announcements</h2>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: var(--space-lg);">
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: var(--space-lg);">
+            <!-- Permanent Notice Board -->
+            <div class="card">
+              <h3 class="card-title mb-lg"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><line x1="18" y1="8" x2="22" y2="12"></line><line x1="12" y1="2" x2="22" y2="12"></line><path d="M12 2 2 12h5l9 9 1-1-9-9V7l9-5Z"></path></svg> Permanent Notice Board (सूचना पट्ट)</h3>
+              <p style="font-size: var(--font-xs); color: var(--text-muted); margin-bottom: var(--space-base); line-height: 1.5;">
+                Write PG rules, regulations, or notifications that will remain permanently visible to all your tenants inside their personal login portal.
+              </p>
+              <div class="form-group">
+                <textarea class="form-input form-textarea" id="notice-board-text" rows="6" placeholder="e.g. 1. Rent must be paid by the 5th of every month.&#10;2. Gate timings: 10:00 PM close.&#10;3. Maintain hygiene in shared spaces."></textarea>
+              </div>
+              <button class="btn btn-primary btn-full" onclick="saveNoticeBoard()"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg> Save &amp; Publish Notice Board</button>
+            </div>
+
+            <!-- Push Notification Broadcast -->
+            <div class="card">
+              <h3 class="card-title mb-lg" style="display: flex; align-items: center; gap: 6px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg> Send Push Notification to Tenants</h3>
+              <p style="font-size: var(--font-xs); color: var(--text-muted); margin-bottom: var(--space-base); line-height: 1.5;">
+                Send an instant push notification directly to tenants' phones — even when they're not using the app. Notification will auto-expire in 5 days.
+              </p>
+              <div class="form-group">
+                <label class="form-label">Target Property</label>
+                <select class="form-input form-select" id="broadcast-building-target">
+                  <option value="all">All Buildings</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Notification Title</label>
+                <input type="text" class="form-input" id="broadcast-title-text" placeholder="e.g. Water Shortage Alert" maxlength="60" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Message</label>
+                <textarea class="form-input form-textarea" id="broadcast-message-text" rows="4" placeholder="e.g. Water tanker arriving at 4PM. Store water in advance."></textarea>
+              </div>
+              <button class="btn btn-primary btn-full" onclick="sendBroadcastAnnouncement()" id="broadcast-send-btn"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> Send Push Notification</button>
+              <div id="broadcast-status" style="margin-top:12px;display:none;"></div>
+            </div>
+          </div>
+
+          <!-- Recent Broadcasts -->
+          <div class="card">
+            <h3 class="card-title mb-lg"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Recent Broadcasts (last 10)</h3>
+            <div id="broadcast-history-list">
+              <p class="text-muted" style="font-size:13px">No broadcasts sent yet.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ═══════════════ TAB: HISTORY ═══════════════ -->
+      <section class="tab-content" id="tab-history">
+        <div class="section-header">
+          <h2 class="section-title-main"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> Activity History Logs</h2>
+          <button class="btn btn-secondary btn-sm" onclick="clearActivityLogs()">Clear Log History</button>
+        </div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Activity Description</th>
+                </tr>
+              </thead>
+              <tbody id="history-logs-tbody">
+                <tr><td colspan="2" class="text-center text-muted" style="padding: 24px;">No activities recorded yet</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ TAB: STAFF & EXPENSES ═══════════════ -->
+      <section class="tab-content" id="tab-expenses">
+        <div class="section-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h2 class="section-title-main" style="display: flex; align-items: center; gap: 8px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12" y2="6"></line><path d="M15 9h-4.5a1.5 1.5 0 0 0 0 3h3a1.5 1.5 0 0 1 0 3H9"></path></svg> Staff &amp; Expenses</h2>
+            <p class="section-subtitle">Manage staff members, payouts, repairs, and property expenditures</p>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <select id="expenses-month-filter" class="form-input form-select" style="width: auto; padding: 6px 12px; font-size: var(--font-sm); height: 36px; margin-bottom: 0;" onchange="onMonthFilterChange(this.value)">
+              <!-- Dynamic -->
+            </select>
+            <button class="btn btn-secondary" onclick="openModal('modal-add-staff')">+ Add Staff Member</button>
+            <button class="btn btn-primary" onclick="openModal('modal-add-expense')">+ Record New Expense</button>
+          </div>
+        </div>
+
+        <!-- KPI Summary Grid -->
+        <div class="kpi-grid mb-lg" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-md); margin-bottom: 24px;">
+          <div class="kpi-card card">
+            <div class="kpi-label" style="font-size: var(--font-xs); color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Total Staff</div>
+            <div class="kpi-value" id="kpi-total-staff" style="font-size: var(--font-2xl); font-weight: 800; color: var(--text-primary); margin-top: 4px;">0</div>
+          </div>
+          <div class="kpi-card card">
+            <div class="kpi-label" style="font-size: var(--font-xs); color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Salary Liability</div>
+            <div class="kpi-value" id="kpi-staff-salary" style="font-size: var(--font-2xl); font-weight: 800; color: var(--primary-light); margin-top: 4px;">₹0</div>
+          </div>
+          <div class="kpi-card card">
+            <div class="kpi-label" style="font-size: var(--font-xs); color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Other Expenses</div>
+            <div class="kpi-value" id="kpi-total-other-expenses" style="font-size: var(--font-2xl); font-weight: 800; color: var(--warning-dark); margin-top: 4px;">₹0</div>
+          </div>
+          <div class="kpi-card card">
+            <div class="kpi-label" style="font-size: var(--font-xs); color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Total Outflow (Kharch)</div>
+            <div class="kpi-value" id="kpi-total-expenses" style="font-size: var(--font-2xl); font-weight: 800; color: var(--danger); margin-top: 4px;">₹0</div>
+          </div>
+        </div>
+
+        <!-- Category Breakdown Row -->
+        <div class="card mb-lg" style="padding: 16px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; font-size: 13px;">
+          <span style="font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg> Category Breakdown:</span>
+          <span id="kpi-expense-breakdown" style="color: var(--text-muted);">No expenses recorded</span>
+        </div>
+
+        <!-- Inner Sub-Tabs Navigation -->
+        <div class="floor-tabs-wrap mb-lg" style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+          <button class="floor-tab active" id="subtab-btn-staff" onclick="switchExpensesSubTab('staff')" style="display: inline-flex; align-items: center; gap: 6px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Staff Members</button>
+          <button class="floor-tab" id="subtab-btn-expenses" onclick="switchExpensesSubTab('expenses')" style="display: inline-flex; align-items: center; gap: 6px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12" y2="6"></line><path d="M15 9h-4.5a1.5 1.5 0 0 0 0 3h3a1.5 1.5 0 0 1 0 3H9"></path></svg> Expenses Records</button>
+        </div>
+
+        <!-- Sub-Tab Content: Expenses Records -->
+        <div id="subtab-expenses-content" class="hidden">
+          <div class="card">
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Item / Description</th>
+                    <th>Category</th>
+                    <th>Property Context</th>
+                    <th>Amount</th>
+                    <th style="text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="expenses-tbody">
+                  <tr><td colspan="6" class="text-center text-muted" style="padding: 24px;">No expense records found</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub-Tab Content: Staff Members -->
+        <div id="subtab-staff-content">
+          <div class="card">
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Staff Name</th>
+                    <th>Phone Number</th>
+                    <th>Monthly Salary</th>
+                    <th>Pay Day</th>
+                    <th>Status</th>
+                    <th style="text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="staff-tbody">
+                  <tr><td colspan="6" class="text-center text-muted" style="padding: 24px;">No staff members added yet</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ TAB: COMPLAINTS ═══════════════ -->
+      <section class="tab-content" id="tab-complaints">
+        <div class="section-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h2 class="section-title-main" style="display: flex; align-items: center; gap: 8px;">
+              <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              Tenant Complaints
+            </h2>
+            <p class="section-subtitle">View and manage complaints filed by your tenants</p>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+            <select id="complaint-filter-status" class="form-input" style="width: auto; padding: 6px 12px; font-size: var(--font-sm);" onchange="renderComplaintsTab()">
+              <option value="all">All Status</option>
+              <option value="open">Open</option>
+              <option value="in_progress">In Progress</option>
+              <option value="resolved">Resolved</option>
+              <option value="closed">Closed</option>
+            </select>
+            <select id="complaint-filter-building" class="form-input" style="width: auto; padding: 6px 12px; font-size: var(--font-sm);" onchange="renderComplaintsTab()">
+              <option value="all">All Buildings</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- KPI row -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px;">
+          <div class="card" style="padding: 14px 18px; text-align: center;">
+            <div style="font-size: var(--font-xs); color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: .5px;">Total</div>
+            <div id="ckpi-total" style="font-size: var(--font-2xl); font-weight: 800; color: var(--text-primary); margin-top: 4px;">0</div>
+          </div>
+          <div class="card" style="padding: 14px 18px; text-align: center;">
+            <div style="font-size: var(--font-xs); color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: .5px;">Open</div>
+            <div id="ckpi-open" style="font-size: var(--font-2xl); font-weight: 800; color: var(--danger); margin-top: 4px;">0</div>
+          </div>
+          <div class="card" style="padding: 14px 18px; text-align: center;">
+            <div style="font-size: var(--font-xs); color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: .5px;">In Progress</div>
+            <div id="ckpi-inprogress" style="font-size: var(--font-2xl); font-weight: 800; color: var(--warning); margin-top: 4px;">0</div>
+          </div>
+          <div class="card" style="padding: 14px 18px; text-align: center;">
+            <div style="font-size: var(--font-xs); color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: .5px;">Resolved</div>
+            <div id="ckpi-resolved" style="font-size: var(--font-2xl); font-weight: 800; color: var(--success); margin-top: 4px;">0</div>
+          </div>
+        </div>
+
+        <!-- Complaints list -->
+        <div class="card" style="padding: 0; overflow: hidden;">
+          <div style="overflow-x: auto;">
+            <table class="data-table" style="width: 100%; min-width: 700px;">
+              <thead>
+                <tr>
+                  <th>Tenant</th>
+                  <th>Building / Room</th>
+                  <th>Category</th>
+                  <th>Description</th>
+                  <th>Filed On</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="complaints-owner-tbody">
+                <tr><td colspan="7" class="text-center text-muted" style="padding: 32px;">No complaints found</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ TAB: PLAN DETAILS ═══════════════ -->
+      <section class="tab-content" id="tab-plan">
+        <div class="section-header">
+          <h2 class="section-title-main">
+            <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg> My Plan
+          </h2>
+        </div>
+
+        <div style="max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--space-lg);">
+          <div class="card" style="padding: 24px;">
+            <h3 class="card-title mb-lg" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-top: 0;">Active Subscription Plan</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px;">
+                <span style="color: var(--text-secondary); font-weight: 500;">Billing Cycle</span>
+                <span id="plan-cycle-val" style="font-weight: 700; color: var(--text-primary);">—</span>
+              </div>
+              
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px;">
+                <span style="color: var(--text-secondary); font-weight: 500;">Building Slots Purchased</span>
+                <span id="plan-buildings-val" style="font-weight: 700; color: var(--text-primary);">—</span>
+              </div>
+              
+              <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px;">
+                <span style="color: var(--text-secondary); font-weight: 500;">Next Renewal / Expiry Date</span>
+                <span id="plan-expiry-val" style="font-weight: 700; color: var(--warning-light);">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alert Card for changes limitation -->
+          <div class="card" id="plan-notice-card" style="border-left: 4px solid var(--warning); background: rgba(245, 158, 11, 0.05); padding: 20px;">
+            <div style="display: flex; gap: 12px; align-items: flex-start;">
+              <span style="font-size: 20px; color: var(--warning); line-height: 1;">⚠️</span>
+              <div>
+                <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 700; color: var(--text-primary);">Important Notice / महत्वपूर्ण सूचना</h4>
+                
+                <p style="margin: 0 0 10px 0; font-size: 13px; line-height: 1.5; color: var(--text-secondary);">
+                  <strong>English:</strong> Upgrades, adding more buildings, or changing your billing cycle (Monthly to Yearly) can only be done <strong>after your current subscription expires</strong>. Please renew or modify your plan on the expiry date.
+                </p>
+                
+                <p style="margin: 0; font-size: 13px; line-height: 1.5; color: var(--text-secondary);">
+                  <strong>हिन्दी:</strong> नया प्लान अपग्रेड करने, अधिक बिल्डिंग जोड़ने या बिलिंग चक्र (मासिक से वार्षिक) को बदलने की अनुमति <strong>केवल वर्तमान सब्सक्रिप्शन की समाप्ति के बाद</strong> ही दी जाएगी। कृपया एक्सपायरी तिथि पर अपने प्लान को रिन्यू या संशोधित करें।
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ TAB: SETTINGS & HELP ═══════════════ -->
+      <section class="tab-content" id="tab-settings">
+        <div class="section-header">
+          <h2 class="section-title-main"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Settings &amp; Help</h2>
+        </div>
+
+        <div class="settings-grid">
+          <!-- Owner Profile Card -->
+          <div class="card settings-card">
+            <div>
+              <h3 class="card-title mb-lg">Owner Profile</h3>
+              <div class="form-group">
+                <label class="form-label">Owner Name</label>
+                <input class="form-input" type="text" id="sett-name" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input class="form-input" type="email" id="sett-email" readonly style="color: var(--text-muted); background-color: var(--bg-surface);" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">UPI ID (for payments)</label>
+                <input class="form-input" type="text" id="sett-upi" placeholder="yourname@paytm" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input class="form-input" type="tel" id="sett-phone" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Aadhaar Card Number</label>
+                <input class="form-input" type="text" id="sett-aadhaar" placeholder="12-digit Aadhaar Number" maxlength="12" />
+              </div>
+              <div class="form-group" style="margin-bottom: var(--space-base);">
+                <label class="form-label">Your Owner Key</label>
+                <input class="form-input" type="text" id="sett-key" readonly
+                  style="letter-spacing: 2px; font-weight: 700; color: var(--primary-light);" />
+              </div>
+            </div>
+            <button class="btn btn-primary" onclick="saveOwnerSettings()" style="width: 100%; margin-top: var(--space-lg);">Save Settings</button>
+          </div>
+
+          <!-- Tenant QR Code Card -->
+          <div class="card settings-card" id="tenant-qr-card">
+            <div>
+              <h3 class="card-title mb-sm" style="display: flex; align-items: center; gap: 6px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg> Tenant Registration QR Code</h3>
+              <p style="font-size: var(--font-xs); color: var(--text-muted); margin-bottom: var(--space-base); max-width: 380px;">
+                Share this QR code with your tenants. Scanning this will open the Tenant Registration portal with your Owner Key pre-filled automatically!
+              </p>
+              
+              <!-- QR Code Box -->
+              <div id="qrcode-container" style="background: white; padding: 16px; border-radius: var(--radius-sm); margin-bottom: var(--space-base); box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: inline-block;">
+                <div id="qrcode"></div>
+              </div>
+              
+              <div style="font-size: var(--font-sm); font-weight: 700; color: var(--primary-light); margin-bottom: 12px; font-family: monospace; letter-spacing: 1px;">
+                Owner Key: <span id="qr-owner-key">—</span>
+              </div>
+            </div>
+            
+            <div style="width: 100%;">
+              <div class="qr-actions-container">
+                <button class="btn btn-secondary btn-sm" onclick="downloadQRCode()" style="display: inline-flex; align-items: center; gap: 6px;">
+                  <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> QR Code Only
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="downloadTenantPoster('hi')" style="background: linear-gradient(135deg, #f59e0b, #d97706); border: none; display: inline-flex; align-items: center; gap: 6px;">
+                  <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Hinglish Poster (Flyer)
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="downloadTenantPoster('en')" style="background: linear-gradient(135deg, #6366f1, #4f46e5); border: none; display: inline-flex; align-items: center; gap: 6px;">
+                  <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> English Poster (Flyer)
+                </button>
+              </div>
+              
+              <div style="text-align: left; border-top: 1px solid var(--border-color); padding-top: var(--space-base);">
+                <h4 style="font-size: var(--font-xs); font-weight: 700; margin-bottom: 8px; color: var(--text-secondary);">Registration Instructions:</h4>
+                <ol style="font-size: var(--font-xs); color: var(--text-muted); padding-left: var(--space-base); line-height: 1.5; margin: 0;">
+                  <li>Download and print this QR code or hang it on your hostel/PG wall.</li>
+                  <li>Tenants scan this QR code using their phone's camera.</li>
+                  <li>They complete One-Tap Google login.</li>
+                  <li>Your Owner Key will be automatically linked — no manual typing required!</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cancellation & Refund Card -->
+          <div class="card settings-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <h3 class="card-title mb-lg" style="display: flex; align-items: center; gap: 6px;">
+                <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+                Cancellation &amp; Refund
+              </h3>
+              <p style="font-size: var(--font-xs); color: var(--text-muted); margin-bottom: var(--space-base); line-height: 1.5; max-width: 380px;">
+                If you are not satisfied with PG Builders, you may request a full refund within 7 days of your first transaction. Refunds are only applicable to your very first payment.
+              </p>
+            </div>
+            <button class="btn btn-danger" onclick="checkRefundEligibility()" style="width: 100%; margin-top: var(--space-lg); background: linear-gradient(135deg, var(--danger, #ff4d4f) 0%, #d32f2f 100%); border: none;">
+              Request Refund
+            </button>
+          </div>
+
+          <!-- Customer Support Desk Card -->
+          <div class="card" style="grid-column: 1 / -1;">
+            <h3 class="card-title mb-lg" style="display: flex; align-items: center; gap: 6px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path><line x1="9" y1="5" x2="9" y2="19"></line><line x1="15" y1="5" x2="15" y2="19"></line></svg> Help &amp; Customer Support Desk</h3>
+            <div class="support-grid">
+              <div>
+                <h4 class="settings-subtitle">Submit Support Request</h4>
+                <form id="support-ticket-form" onsubmit="submitSupportTicket(event)">
+                  <div class="form-group">
+                    <label class="form-label">Subject</label>
+                    <input class="form-input" type="text" id="ticket-subject" placeholder="e.g., UPI Payment integration issue" required />
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label class="form-label">Category</label>
+                      <select class="form-input form-select" id="ticket-category" required>
+                        <option value="Billing Issue">Billing Issue</option>
+                        <option value="Subscription Issue">Subscription Issue</option>
+                        <option value="Technical Problem">Technical Problem</option>
+                        <option value="Bug Report">Bug Report</option>
+                        <option value="Feature Request">Feature Request</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Priority</label>
+                      <select class="form-input form-select" id="ticket-priority" required>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="urgent">Urgent</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Support Details</label>
+                    <textarea class="form-input form-textarea" id="ticket-desc" rows="4" placeholder="Detail your query or issue..." required></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-full">Submit Support Request</button>
+                </form>
+              </div>
+              
+              <div>
+                <h4 class="settings-subtitle">Ticket History</h4>
+                <div class="table-wrap" style="max-height: 280px; overflow: auto;">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Subject</th>
+                        <th>Category</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="ticket-history-tbody">
+                      <tr><td colspan="4" class="text-center text-muted" style="padding: 24px;">No tickets submitted yet</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+          </div>
+          
+          <!-- Danger Zone Card -->
+          <div class="card" style="grid-column: 1 / -1; border: 1px solid rgba(255, 76, 76, 0.2); background: rgba(255, 76, 76, 0.01); margin-top: var(--space-base);">
+            <h3 class="card-title" style="color: var(--danger); display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> Danger Zone (खतरे का क्षेत्र)
+            </h3>
+            <p style="font-size: var(--font-xs); color: var(--text-muted); margin-bottom: var(--space-md);">
+              Once you delete your account, there is no going back. All your buildings, rooms, tenants, payments, and support history will be permanently wiped from our systems.
+            </p>
+            <div style="display: flex; justify-content: flex-start;">
+              <button class="btn btn-danger" onclick="openDeleteAccountModal()" style="background: var(--danger); border-color: var(--danger); font-weight: 700; cursor: pointer;">
+                <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> Permanently Delete Account
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Legal Footer -->
+        <div style="margin-top: 32px; padding: 18px 24px; border: 1px solid var(--border-color); border-radius: var(--radius); background: rgba(255,255,255,0.02); text-align: center;">
+          <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;">Legal &amp; Policies</p>
+          <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; font-size: 12px;">
+            <a href="/privacy-policy.html" target="_blank" style="color: var(--primary-light); text-decoration: none; opacity: 0.85;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">Privacy Policy</a>
+            <span style="color: var(--border-color);">|</span>
+            <a href="/terms-conditions.html" target="_blank" style="color: var(--primary-light); text-decoration: none; opacity: 0.85;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">Terms &amp; Conditions</a>
+            <span style="color: var(--border-color);">|</span>
+            <a href="/refund-policy.html" target="_blank" style="color: var(--primary-light); text-decoration: none; opacity: 0.85;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">Refund Policy</a>
+          </div>
+          <p style="font-size: 11px; color: var(--text-muted); margin-top: 10px; margin-bottom: 0;">© 2026 PG Builders · <a href="mailto:supportpgbuilderss@gmail.com" style="color: var(--text-muted); text-decoration: underline;">supportpgbuilderss@gmail.com</a></p>
+        </div>
+      </section>
+
+
+    </div>
+  </main>
+  <!-- ═══════════════ MODAL: ROOM INFO & TENANT DETAILS ═══════════════ -->
+  <div class="modal-overlay" id="modal-room-info">
+    <div class="modal-content" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Room Details</h3>
+        <button class="modal-close" onclick="closeModal('modal-room-info')">×</button>
+      </div>
+      <div id="room-info-details">
+        <!-- Dynamic content: metadata, tenant details, manual status update, delete button -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MODAL: ADD BUILDING ═══════════════ -->
+  <div class="modal-overlay" id="modal-add-building">
+    <div class="modal-content" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="16"></line><line x1="15" y1="22" x2="15" y2="16"></line></svg> Add New Building</h3>
+        <button class="modal-close" onclick="closeModal('modal-add-building')">×</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Building Name *</label>
+        <input class="form-input" type="text" id="bld-name" placeholder="e.g. Oxford Heights PG" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Location *</label>
+        <input class="form-input" type="text" id="bld-location" placeholder="e.g. Sector 15, Noida" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Building Type *</label>
+        <select class="form-input form-select" id="bld-type" onchange="onBuildingTypeChange()">
+          <option value="apartment">Apartment</option>
+          <option value="room">Rooms</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="display: none;">
+        <!-- Hidden but maintained so JS doesn't crash if it looks for it before we update JS -->
+        <input type="number" id="bld-rooms-per-floor" value="10" />
+        <input type="number" id="bld-floors" value="0" />
+        <input type="number" id="bld-rent" value="8000" />
+        <input type="number" id="bld-beds" value="3" />
+        <input type="number" id="bld-advance" value="5000" />
+        <input type="number" id="bld-maintenance" value="500" />
+        <input type="checkbox" id="bld-elec-included" />
+        <input type="number" id="bld-elec-rate" value="10" />
+        <input type="text" id="bld-room-prefix" value="101" />
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg" onclick="saveNewBuilding()">
+        Create Building →
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MODAL: ADD FLOOR ═══════════════ -->
+  <div class="modal-overlay" id="modal-add-floor">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Add New Floor</h3>
+        <button class="modal-close" onclick="closeModal('modal-add-floor')">×</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Building</label>
+        <input class="form-input" type="text" id="add-floor-bld-name" readonly
+          style="background: var(--bg-surface); opacity: 0.8;" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Floor Name/Number *</label>
+          <input class="form-input" type="text" id="add-floor-number" placeholder="e.g. Ground Floor, Basement, 3" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Rooms to Create *</label>
+          <input class="form-input" type="number" id="add-floor-rooms-count" value="10" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Room Prefix / Start *</label>
+          <input class="form-input" type="text" id="add-floor-room-prefix" placeholder="e.g. 301 or A301" />
+          <p class="form-hint">e.g. 301 → 301, 302...</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Rent Per Room (₹) *</label>
+          <input class="form-input" type="number" id="add-floor-room-rent" value="8000" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Security Deposit (₹)</label>
+          <input class="form-input" type="number" id="add-floor-room-advance" value="5000" />
+        </div>
+        <div id="add-floor-maint-rate-group" class="form-group">
+          <label class="form-label">Maintenance Charge (₹)</label>
+          <input class="form-input" type="number" id="add-floor-maint-charge" value="500" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="display: flex; align-items: center; padding-top: 12px;">
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+            <input type="checkbox" id="add-floor-elec-included" onchange="toggleFloorElecIncluded()" />
+            <span class="form-label" style="margin-bottom: 0; font-size: 13px;">Electricity included in rent</span>
+          </label>
+        </div>
+        <div class="form-group" style="display: flex; align-items: center; padding-top: 12px;">
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+            <input type="checkbox" id="add-floor-maint-included" onchange="toggleFloorMaintIncluded()" />
+            <span class="form-label" style="margin-bottom: 0; font-size: 13px;">Maintenance included in rent</span>
+          </label>
+        </div>
+      </div>
+      <div id="add-floor-elec-rate-group" class="form-row" style="display: none; align-items: flex-end; gap: 12px; margin-bottom: 12px;">
+        <div class="form-group" style="flex: 1; min-width: 140px;">
+          <label class="form-label">Electricity Rate (₹/unit)</label>
+          <input class="form-input" type="number" id="add-floor-elec-rate" value="10" />
+        </div>
+        <div class="form-group" style="flex: 1; display: flex; align-items: center; min-width: 130px; padding-bottom: 8px; box-sizing: border-box; height: 38px;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+            <input type="checkbox" id="add-floor-subsidy-mode" onchange="toggleFloorSubsidyFields('add')" />
+            <span class="form-label" style="margin-bottom: 0; font-size: 13px; white-space: nowrap;">Subsidy Mode</span>
+          </label>
+        </div>
+      </div>
+      <div id="add-floor-subsidy-row" class="form-row" style="display: none; align-items: flex-end; gap: 12px; margin-bottom: 12px;">
+        <div class="form-group" style="flex: 1; min-width: 140px;">
+          <label class="form-label">Subsidy Limit (Units)</label>
+          <input class="form-input" type="number" id="add-floor-subsidy-units" value="1" min="1" />
+        </div>
+        <div class="form-group" style="flex: 1; min-width: 140px;">
+          <label class="form-label">Subsidy Rate (₹/unit)</label>
+          <input class="form-input" type="number" id="add-floor-subsidy-rate" value="0" min="0" />
+        </div>
+      </div>
+      <div id="add-floor-bed-group" class="form-group" style="display: none;">
+        <label class="form-label">Beds Per Room</label>
+        <input class="form-input" type="number" id="add-floor-room-beds" value="3" />
+      </div>
+      <button class="btn btn-primary btn-full btn-lg mt-base" id="btn-save-floor" onclick="saveNewFloor()">
+        Create Floor & Rooms →
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MODAL: EDIT FLOOR ═══════════════ -->
+  <div class="modal-overlay" id="modal-edit-floor">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg> Edit Floor Details</h3>
+        <button class="modal-close" onclick="closeModal('modal-edit-floor')">×</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Building</label>
+        <input class="form-input" type="text" id="edit-floor-bld-name" readonly
+          style="background: var(--bg-surface); opacity: 0.8;" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Floor Name/Number</label>
+          <input class="form-input" type="text" id="edit-floor-number" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Rent Per Room (₹) *</label>
+          <input class="form-input" type="number" id="edit-floor-room-rent" value="8000" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Security Deposit (₹)</label>
+          <input class="form-input" type="number" id="edit-floor-room-advance" value="5000" />
+        </div>
+        <div id="edit-floor-maint-rate-group" class="form-group">
+          <label class="form-label">Maintenance Charge (₹)</label>
+          <input class="form-input" type="number" id="edit-floor-room-maint" value="500" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="display: flex; align-items: center; padding-top: 12px;">
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+            <input type="checkbox" id="edit-floor-elec-included" onchange="toggleEditFloorElecIncluded()" />
+            <span class="form-label" style="margin-bottom: 0; font-size: 13px;">Electricity included in rent</span>
+          </label>
+        </div>
+        <div class="form-group" style="display: flex; align-items: center; padding-top: 12px;">
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+            <input type="checkbox" id="edit-floor-maint-included" onchange="toggleEditFloorMaintIncluded()" />
+            <span class="form-label" style="margin-bottom: 0; font-size: 13px;">Maintenance included in rent</span>
+          </label>
+        </div>
+      </div>
+      <div id="edit-floor-elec-rate-group" class="form-row" style="display: none; align-items: flex-end; gap: 12px; margin-bottom: 12px;">
+        <div class="form-group" style="flex: 1; min-width: 140px;">
+          <label class="form-label">Electricity Rate (₹/unit)</label>
+          <input class="form-input" type="number" id="edit-floor-elec-rate" value="10" />
+        </div>
+        <div class="form-group" style="flex: 1; display: flex; align-items: center; min-width: 130px; padding-bottom: 8px; box-sizing: border-box; height: 38px;">
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+            <input type="checkbox" id="edit-floor-subsidy-mode" onchange="toggleFloorSubsidyFields('edit')" />
+            <span class="form-label" style="margin-bottom: 0; font-size: 13px; white-space: nowrap;">Subsidy Mode</span>
+          </label>
+        </div>
+      </div>
+      <div id="edit-floor-subsidy-row" class="form-row" style="display: none; align-items: flex-end; gap: 12px; margin-bottom: 12px;">
+        <div class="form-group" style="flex: 1; min-width: 140px;">
+          <label class="form-label">Subsidy Limit (Units)</label>
+          <input class="form-input" type="number" id="edit-floor-subsidy-units" value="1" min="1" />
+        </div>
+        <div class="form-group" style="flex: 1; min-width: 140px;">
+          <label class="form-label">Subsidy Rate (₹/unit)</label>
+          <input class="form-input" type="number" id="edit-floor-subsidy-rate" value="0" min="0" />
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full btn-lg mt-base" id="btn-save-edit-floor" onclick="saveEditedFloor()">
+        Save Floor Settings →
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MODAL: ADD ROOM ═══════════════ -->
+  <div class="modal-overlay" id="modal-add-room">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Add New Room</h3>
+        <button class="modal-close" onclick="closeModal('modal-add-room')">×</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Building</label>
+        <input class="form-input" type="text" id="add-room-bld-name" readonly
+          style="background: var(--bg-surface); opacity: 0.8;" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Select Floor *</label>
+          <select class="form-input form-select" id="add-room-floor-select">
+            <!-- Dynamic -->
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Room Number *</label>
+          <input class="form-input" type="text" id="add-room-number" placeholder="e.g. 111 or A111" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Rent Per Room (₹) *</label>
+          <input class="form-input" type="number" id="add-room-rent" value="8000" oninput="calcPerBedRent()" />
+        </div>
+        <div class="form-group" id="add-room-bed-group" style="display: none;">
+          <label class="form-label">Beds / Capacity *</label>
+          <input class="form-input" type="number" id="add-room-beds" value="3" oninput="calcPerBedRent()" />
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg mt-base" id="btn-save-room" onclick="saveNewRoom()">
+        Create Room →
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MODAL: ADD TENANT (MANUAL JOIN) ═══════════════ -->
+  <div class="modal-overlay" id="modal-add-tenant">
+    <div class="modal-content" style="max-width: 580px; max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h3 class="modal-title"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Add Tenant (Kirayedar) Manually</h3>
+        <button class="modal-close" onclick="closeModal('modal-add-tenant')">×</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Full Name *</label>
+        <input class="form-input" type="text" id="manual-name" placeholder="Enter tenant name" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Mobile Number *</label>
+          <input class="form-input" type="tel" id="manual-phone" placeholder="10-digit number" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Another Number</label>
+          <input class="form-input" type="tel" id="manual-alt-phone" placeholder="Optional" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email Address (Optional)</label>
+        <input class="form-input" type="email" id="manual-email" placeholder="tenant@example.com (will auto-generate if blank)" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Aadhaar Card Number *</label>
+        <input class="form-input" type="text" id="manual-aadhaar" placeholder="1234 5678 9012" maxlength="14" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Select Building *</label>
+        <select class="form-input form-select" id="manual-sel-building" onchange="onManualBuildingChange()">
+          <option value="">— Choose Building —</option>
+        </select>
+      </div>
+
+      <div class="form-group hidden" id="manual-floor-group">
+        <label class="form-label">Select Floor *</label>
+        <select class="form-input form-select" id="manual-sel-floor" onchange="onManualFloorChange()">
+          <option value="">— Choose Floor —</option>
+        </select>
+      </div>
+
+      <div class="form-group hidden" id="manual-room-group">
+        <label class="form-label">Select Room *</label>
+        <select class="form-input form-select" id="manual-sel-room" onchange="onManualRoomChange()">
+          <option value="">— Choose Room —</option>
+        </select>
+      </div>
+
+      <div id="manual-room-details" class="hidden" style="background: var(--bg-elevated); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 16px; font-size: var(--font-xs); line-height: 1.6;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+          <span style="color: var(--text-muted);">Monthly Rent</span>
+          <strong id="manual-room-rent" style="color: var(--success);">₹0</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+          <span style="color: var(--text-muted);">Advance Required</span>
+          <strong id="manual-room-advance">₹0</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-muted);">Room Type</span>
+          <span class="badge badge-primary" id="manual-room-type">Room</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Living Type</label>
+        <div style="display: flex; gap: 12px;">
+          <label style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--bg-input); border: 1px solid var(--border-input); border-radius: var(--radius-sm); cursor: pointer; flex: 1;">
+            <input type="radio" name="manual-living-type" value="alone" checked onchange="toggleManualMembersSection()" />
+            <span style="font-size: var(--font-xs); font-weight: 500; display: inline-flex; align-items: center; gap: 4px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; vertical-align: middle;" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Alone</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--bg-input); border: 1px solid var(--border-input); border-radius: var(--radius-sm); cursor: pointer; flex: 1;">
+            <input type="radio" name="manual-living-type" value="family" onchange="toggleManualMembersSection()" />
+            <span style="font-size: var(--font-xs); font-weight: 500; display: inline-flex; align-items: center; gap: 4px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; vertical-align: middle;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Only Members</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Only Members Section -->
+      <div id="manual-members-section" class="hidden" style="margin-bottom: var(--space-base);">
+        <div style="display: flex; align-items: center; justify-content: justify; margin-bottom: 12px;">
+          <span style="font-size: var(--font-xs); font-weight: 600; color: var(--text-secondary);">Only Members</span>
+          <button class="btn btn-sm btn-secondary" onclick="addManualMemberRow()" style="font-size: 11px; padding: 4px 8px; margin-left: auto;">+ Add Member</button>
+        </div>
+        <div id="manual-members-list"></div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Initial Meter Reading</label>
+          <input class="form-input" type="number" id="manual-meter" value="0" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Join Date *</label>
+          <input class="form-input" type="date" id="manual-join-date" />
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg mt-base" onclick="submitManualTenantRegistration()">
+        Save & Add Tenant
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MODAL: RENT REMINDERS ═══════════════ -->
+  <div class="modal-overlay" id="modal-reminders">
+    <div class="modal-content" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"></circle><polyline points="12 9 12 13 15 15"></polyline><path d="M5 3 2 6M19 3l3 3"></path></svg> Rent Reminders Due (रिमाइंडर लिस्ट)</h3>
+        <button class="modal-close" onclick="closeModal('modal-reminders')">×</button>
+      </div>
+      <p style="font-size: var(--font-xs); color: var(--text-muted); margin-bottom: 16px;">
+        Showing tenants whose rent is due within 5 days or is overdue, and who have not paid yet.
+      </p>
+      <div id="reminders-list-container"
+        style="max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;">
+        <!-- Dynamic list of reminders -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ ACCESS GATE OVERLAYS ═══════════════ -->
+  <!-- 1. Account Deleted Overlay -->
+  <div class="gate-overlay hidden" id="gate-deleted">
+    <div class="gate-card deleted">
+      <div class="gate-icon"><svg style="width:48px; height:48px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></div>
+      <h2 class="gate-title">Account Deleted</h2>
+      <p class="gate-desc">
+        Your owner profile has been permanently removed by the administrator.<br/>
+        <span style="font-size: var(--font-xs); color: var(--text-muted);">(आपका खाता व्यवस्थापक द्वारा स्थायी रूप से हटा दिया गया है।)</span>
+      </p>
+      <button class="btn btn-danger btn-full btn-lg" onclick="handleLogout()">Logout (बाहर निकलें)</button>
+    </div>
+  </div>
+
+  <!-- 2. Account Suspended Overlay -->
+  <div class="gate-overlay hidden" id="gate-suspended">
+    <div class="gate-card suspended">
+      <div class="gate-icon"><svg style="width:48px; height:48px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg></div>
+      <h2 class="gate-title">Account Suspended</h2>
+      <p class="gate-desc">
+        Your account is currently suspended by the administrator.<br/>
+        Please contact administrator support to resolve this issue.<br/>
+        <span style="font-size: var(--font-xs); color: var(--text-muted);">(आपका खाता व्यवस्थापक द्वारा निलंबित कर दिया गया है। कृपया व्यवस्थापक से संपर्क करें।)</span>
+      </p>
+      <div style="background: rgba(255, 255, 255, 0.02); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-light); font-size: var(--font-xs); text-align: left; margin-bottom: 24px;">
+        <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> <strong>Support Email:</strong> admin@pgbuilderss.online<br/>
+        <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> <strong>Support Phone:</strong> +91 9999999999
+      </div>
+      <button class="btn btn-ghost btn-full" onclick="handleLogout()">Logout (बाहर निकलें)</button>
+    </div>
+  </div>
+
+  <!-- 3. Subscription Expired Overlay -->
+  <div class="gate-overlay hidden" id="gate-expired">
+    <div class="gate-card expired" style="max-width: 520px; max-height: 90vh; overflow-y: auto;">
+      <div class="gate-icon"><svg style="width:48px; height:48px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+      <h2 class="gate-title">Subscription Expired</h2>
+      <p class="gate-desc">
+        Your SaaS subscription plan has expired. Please choose a plan below and renew to restore your dashboard access.<br/>
+        <span style="font-size: var(--font-xs); color: var(--text-muted);">(आपका सब्सक्रिप्शन समाप्त हो गया है। कृपया जारी रखने के लिए रिन्यू करें।)</span>
+      </p>
+
+      <div class="gate-renew-section">
+        <h4 style="font-size: var(--font-sm); font-weight: 700; color: var(--text-primary); margin-bottom: 12px;">1. Choose a SaaS Plan</h4>
+        <div class="gate-plan-select">
+          <label class="gate-plan-option selected" id="gate-opt-basic" onclick="selectGatePlan('Basic', 999, this)">
+            <div style="display: flex; align-items: center;">
+              <input type="radio" name="gate-plan" value="Basic" checked />
+              <div>
+                <strong>Basic Plan</strong>
+                <div style="font-size: 10px; color: var(--text-muted);">1 Building • Up to 20 Rooms</div>
+              </div>
+            </div>
+            <strong style="color: var(--primary-light);">₹999/mo</strong>
+          </label>
+          <label class="gate-plan-option" id="gate-opt-pro" onclick="selectGatePlan('Pro', 1999, this)">
+            <div style="display: flex; align-items: center;">
+              <input type="radio" name="gate-plan" value="Pro" />
+              <div>
+                <strong>Pro Plan</strong>
+                <div style="font-size: 10px; color: var(--text-muted);">5 Buildings • Up to 100 Rooms • WhatsApp Alerts</div>
+              </div>
+            </div>
+            <strong style="color: var(--primary-light);">₹1,999/mo</strong>
+          </label>
+          <label class="gate-plan-option" id="gate-opt-enterprise" onclick="selectGatePlan('Enterprise', 4999, this)">
+            <div style="display: flex; align-items: center;">
+              <input type="radio" name="gate-plan" value="Enterprise" />
+              <div>
+                <strong>Enterprise Plan</strong>
+                <div style="font-size: 10px; color: var(--text-muted);">Unlimited Buildings & Rooms • Custom Domain • 24/7 Support</div>
+              </div>
+            </div>
+            <strong style="color: var(--primary-light);">₹4,999/mo</strong>
+          </label>
+        </div>
+
+        <h4 style="font-size: var(--font-sm); font-weight: 700; color: var(--text-primary); margin-bottom: 12px;">2. Scan QR to Pay (₹<span id="gate-pay-amount">999</span>)</h4>
+        <div class="gate-qr-container">
+          <img class="gate-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=admin@pgbuilderss.online%26pn=PG%20Builders%26am=999%26cu=INR" alt="UPI QR Code" />
+          <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">
+            <strong>UPI ID:</strong> admin@pgbuilderss.online
+          </div>
+        </div>
+
+        <h4 style="font-size: var(--font-sm); font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">3. Enter UTR Number</h4>
+        <div class="form-group">
+          <input type="text" class="form-input" id="gate-utr" placeholder="12-Digit UPI Ref / UTR Number" maxlength="12" style="text-align: center; font-size: var(--font-sm); letter-spacing: 1px;" />
+        </div>
+
+        <button class="btn btn-primary btn-full btn-lg" id="btn-gate-renew" onclick="handleGateRenewSubscription()">
+          Verify &amp; Activate Subscription <svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; display: inline-block; vertical-align: middle; margin-left: 4px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </button>
+
+        <button class="btn btn-ghost btn-full mt-sm" onclick="handleLogout()">
+          Logout (लॉगआउट)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TENANT PROFILE MODAL -->
+  <div class="modal-overlay" id="modal-tenant-profile">
+    <div class="modal-content" style="max-width: 900px; width: 95%; background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: 12px; display: flex; flex-direction: column; max-height: 90vh; overflow: hidden;">
+      <div class="modal-header" style="background: var(--bg-surface); border-bottom: 1px solid var(--border-light); padding: 20px;">
+        <h2 id="tp-tenant-name" style="font-size: 1.5rem; margin: 0; color: var(--text-primary);">Tenant Name</h2>
+        <button class="btn btn-ghost" onclick="closeTenantProfileModal()" style="display: inline-flex; align-items: center; justify-content: center; padding: 6px;"><svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+      </div>
+      <div class="modal-body" style="padding: 24px; overflow-y: auto; flex: 1;">
+        <!-- Profile Tabs Header -->
+        <div class="inner-tabs-scrollable">
+          <button class="btn btn-ghost profile-tab-btn active btn-primary" onclick="switchProfileTab('room-deposit', this)" style="border-radius: 0; border-bottom: 2px solid transparent; flex: 1; font-size: 11px; padding: 8px 4px; text-align: center; justify-content: center; white-space: nowrap;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> Room &amp; Rent</button>
+          <button class="btn btn-ghost profile-tab-btn" onclick="switchProfileTab('family-members', this)" style="border-radius: 0; border-bottom: 2px solid transparent; flex: 1; font-size: 11px; padding: 8px 4px; text-align: center; justify-content: center; white-space: nowrap;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Members</button>
+          <button class="btn btn-ghost profile-tab-btn" onclick="switchProfileTab('payment-info', this)" style="border-radius: 0; border-bottom: 2px solid transparent; flex: 1; font-size: 11px; padding: 8px 4px; text-align: center; justify-content: center; white-space: nowrap;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg> Payments</button>
+          <button class="btn btn-ghost profile-tab-btn" onclick="switchProfileTab('room-history', this)" style="border-radius: 0; border-bottom: 2px solid transparent; flex: 1; font-size: 11px; padding: 8px 4px; text-align: center; justify-content: center; white-space: nowrap;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> Room History</button>
+        </div>
+
+        <!-- Tab 1: Room & Deposit Details -->
+        <div id="ptab-room-deposit" class="profile-tab-content" style="display: block;">
+          <div class="card" style="padding: 20px; background: var(--bg-body); border: 1px solid var(--border-light); border-radius: 8px;">
+            <h4 style="margin-bottom: 16px; border-bottom: 1px solid var(--border-light); padding-bottom: 8px; color: var(--primary);"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> Room &amp; Deposit Details</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 14px;">
+              <div><strong>Building:</strong> <br><span id="tp-building" style="color: var(--text-secondary);"></span></div>
+              <div><strong>Floor:</strong> <br><span id="tp-floor" style="color: var(--text-secondary);"></span></div>
+              <div><strong>Room:</strong> <br><span id="tp-room" style="color: var(--text-secondary);"></span></div>
+              <div><strong>Rent:</strong> <br><span id="tp-rent" style="color: var(--text-secondary);"></span></div>
+              <div><strong>Maintenance:</strong> <br><span id="tp-maintenance" style="color: var(--text-secondary);"></span></div>
+              <div><strong>Electricity:</strong> <br><span id="tp-electricity" style="color: var(--text-secondary);"></span></div>
+              <div><strong>Deposit Amount:</strong> <br><span id="tp-deposit-amount" style="color: var(--text-secondary);"></span></div>
+              <div><strong>Deposit Status:</strong> <br><span id="tp-deposit-status" class="badge"></span></div>
+              <div><strong>Refund Status:</strong> <br><span id="tp-refund-status" class="badge"></span></div>
+              <div><strong>Initial Meter:</strong> <br><span id="tp-initial-meter" style="color: var(--text-secondary);"></span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Family Members -->
+        <div id="ptab-family-members" class="profile-tab-content" style="display: none;">
+          <div class="card" style="padding: 20px; background: var(--bg-body); border: 1px solid var(--border-light); border-radius: 8px;">
+            <h4 style="margin-bottom: 16px; border-bottom: 1px solid var(--border-light); padding-bottom: 8px; color: var(--primary);"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Family Members</h4>
+            <div id="tp-members-list" style="display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Payment Info -->
+        <div id="ptab-payment-info" class="profile-tab-content" style="display: none;">
+          <div class="card" style="padding: 20px; background: var(--bg-body); border: 1px solid var(--border-light); border-radius: 8px;">
+            <h4 style="margin-bottom: 16px; border-bottom: 1px solid var(--border-light); padding-bottom: 8px; color: var(--primary);"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg> Payment Information</h4>
+            <div style="margin-bottom: 20px; font-size: 15px;">
+              <strong>Current Month Rent:</strong> <span id="tp-current-month-status" class="badge" style="margin-left: 8px;"></span>
+            </div>
+            
+            <h5 style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Payment History</h5>
+            <div id="tp-payment-history" style="max-height: 200px; overflow-y: auto; padding-right: 8px; display: flex; flex-direction: column; gap: 8px; font-size: 14px;">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Room History -->
+        <div id="ptab-room-history" class="profile-tab-content" style="display: none;">
+          <div class="card" style="padding: 20px; background: var(--bg-body); border: 1px solid var(--border-light); border-radius: 8px;">
+            <h4 style="margin-bottom: 16px; border-bottom: 1px solid var(--border-light); padding-bottom: 8px; color: var(--primary);"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> Room History (कमरा इतिहास)</h4>
+            <div id="tp-room-history-list" style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; max-height: 250px; overflow-y: auto;">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MODAL: ADD STAFF ═══════════════ -->
+  <div class="modal-overlay" id="modal-add-staff">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg> Add Staff Member</h3>
+        <button class="modal-close" onclick="closeModal('modal-add-staff')">×</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Full Name *</label>
+        <input class="form-input" type="text" id="staff-name" placeholder="e.g. Ramesh Kumar" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone Number *</label>
+        <input class="form-input" type="tel" id="staff-phone" placeholder="e.g. 9876543210" maxlength="10" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Monthly Salary (₹) *</label>
+          <input class="form-input" type="number" id="staff-salary" placeholder="e.g. 12000" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Pay Day (Day of Month) *</label>
+          <input class="form-input" type="number" id="staff-payday" min="1" max="31" value="5" />
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg mt-base" id="btn-save-staff" onclick="saveNewStaff()">
+        Save Staff Member <svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; display: inline-block; vertical-align: middle; margin-left: 4px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MODAL: ADD EXPENSE ═══════════════ -->
+  <div class="modal-overlay" id="modal-add-expense">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 6px; vertical-align: middle;" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12" y2="6"></line><path d="M15 9h-4.5a1.5 1.5 0 0 0 0 3h3a1.5 1.5 0 0 1 0 3H9"></path></svg> Record New Expense</h3>
+        <button class="modal-close" onclick="closeModal('modal-add-expense')">×</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description / Item Name *</label>
+        <input class="form-input" type="text" id="exp-name" placeholder="e.g. Motor Pump Repairing" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Amount (₹) *</label>
+          <input class="form-input" type="number" id="exp-amount" placeholder="e.g. 2500" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date *</label>
+          <input class="form-input" type="date" id="exp-date" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category *</label>
+          <select class="form-input form-select" id="exp-category">
+            <option value="Repairs">Repairs & Maintenance</option>
+            <option value="Electricity">Electricity Bill</option>
+            <option value="Water">Water Charges</option>
+            <option value="Maintenance">Property Maintenance</option>
+            <option value="Staff Salary">Staff Salary</option>
+            <option value="Others">Others</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Property Context</label>
+          <select class="form-input form-select" id="exp-building-select">
+            <option value="">General (All Properties)</option>
+            <!-- Buildings will be dynamically rendered here -->
+          </select>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg mt-base" id="btn-save-expense" onclick="saveNewExpense()">
+        Record Expense <svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; display: inline-block; vertical-align: middle; margin-left: 4px;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MODAL: PERMANENT ACCOUNT DELETION ═══════════════ -->
+  <div class="modal-overlay" id="modal-delete-account">
+    <div class="modal-content" style="max-width: 500px; border: 1px solid rgba(255, 76, 76, 0.3);">
+      <div class="modal-header">
+        <h3 class="modal-title" style="color: var(--danger); display: flex; align-items: center; gap: 8px;">
+          <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> Delete Account Permanently?
+        </h3>
+        <button class="modal-close" onclick="closeModal('modal-delete-account')">×</button>
+      </div>
+      <div style="font-size: var(--font-sm); color: var(--text-secondary); line-height: 1.6; margin-bottom: var(--space-md);">
+        <p style="margin-bottom: 12px; font-weight: 600; color: var(--text-primary);">
+          Are you absolutely sure you want to delete your PG Builders account?
+        </p>
+        <p style="margin-bottom: 12px;">
+          This action is <strong>irreversible</strong> and will permanently destroy:
+        </p>
+        <ul style="padding-left: 20px; margin-bottom: var(--space-md); list-style-type: disc;">
+          <li>All your registered Buildings & Properties</li>
+          <li>All Rooms & Bed configurations</li>
+          <li>All Tenant profiles & Active agreements</li>
+          <li>All Payment transactions & Receipt histories</li>
+          <li>All Support tickets & Communications</li>
+        </ul>
+        <p style="margin-bottom: var(--space-sm); font-size: var(--font-xs); color: var(--text-muted);">
+          To confirm, please type your registered email address <strong id="delete-confirm-email-label" style="color: var(--text-primary); font-family: monospace;"></strong> below:
+        </p>
+        <input class="form-input" type="text" id="delete-confirm-email-input" placeholder="Enter your email to confirm" autocomplete="off" style="border-color: rgba(255, 76, 76, 0.4);" />
+      </div>
+      <div style="display: flex; gap: var(--space-sm); justify-content: flex-end; margin-top: var(--space-base);">
+        <button class="btn btn-ghost" onclick="closeModal('modal-delete-account')">Cancel</button>
+        <button class="btn btn-danger" id="btn-execute-delete-account" onclick="executeDeleteOwnerAccount()" style="background: var(--danger); border-color: var(--danger); font-weight: 700; cursor: pointer;">
+          Yes, Delete My Account
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: UPDATE COMPLAINT STATUS -->
+  <div class="modal-overlay" id="modal-update-complaint">
+    <div class="modal-content" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title" style="display:flex; align-items:center; gap:8px;">
+          <svg class="svg-icon" style="width:1.2em;height:1.2em;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          Update Complaint
+        </h3>
+        <button class="modal-close" onclick="closeModal('modal-update-complaint')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-complaint-id" />
+        <div class="form-group">
+          <label class="form-label">Complaint by</label>
+          <input class="form-input" type="text" id="edit-complaint-tenant" readonly style="color:var(--text-muted); background:var(--bg-surface);" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <input class="form-input" type="text" id="edit-complaint-category" readonly style="color:var(--text-muted); background:var(--bg-surface);" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-input" id="edit-complaint-desc" rows="3" readonly style="color:var(--text-muted); background:var(--bg-surface); resize:none;"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Update Status</label>
+          <select class="form-input" id="edit-complaint-status">
+            <option value="open">Open</option>
+            <option value="in_progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Response / Note (optional)</label>
+          <textarea class="form-input" id="edit-complaint-response" rows="3" placeholder="Add a response or note for the tenant..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modal-update-complaint')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveComplaintUpdate()">Save Update</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MODAL: REFUND REQUEST ═══════════════ -->
+  <div class="modal-overlay" id="modal-refund-request">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title" style="display:flex; align-items:center; gap:8px;">
+          <svg class="svg-icon" style="width:1.2em;height:1.2em;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+          Request Subscription Refund
+        </h3>
+        <button class="modal-close" onclick="closeModal('modal-refund-request')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" type="text" id="refund-name" readonly style="color:var(--text-muted); background:var(--bg-surface);" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" id="refund-email" readonly style="color:var(--text-muted); background:var(--bg-surface);" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Plan Purchased</label>
+            <input class="form-input" type="text" id="refund-plan" readonly style="color:var(--text-muted); background:var(--bg-surface);" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Payment Date</label>
+            <input class="form-input" type="text" id="refund-payment-date" readonly style="color:var(--text-muted); background:var(--bg-surface);" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Refund Amount</label>
+          <input class="form-input" type="text" id="refund-amount" readonly style="color:var(--text-muted); background:var(--bg-surface);" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Reason for Refund <span style="color:var(--danger)">*</span></label>
+          <select class="form-input" id="refund-reason" required>
+            <option value="" disabled selected>Select a reason...</option>
+            <option value="Software did not meet my requirements">Software did not meet my requirements</option>
+            <option value="Missing features">Missing features</option>
+            <option value="Technical issues">Technical issues</option>
+            <option value="Found another solution">Found another solution</option>
+            <option value="Pricing concerns">Pricing concerns</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Additional Comments (Optional)</label>
+          <textarea class="form-input" id="refund-comments" rows="3" placeholder="Please explain your issue..."></textarea>
+        </div>
+        <div style="display:flex; align-items:flex-start; gap:8px; margin-top:12px; border-top: 1px solid var(--border-color); padding-top: 12px;">
+          <input type="checkbox" id="refund-confirm" required style="width:18px; height:18px; margin-top:2px; cursor:pointer;" />
+          <label for="refund-confirm" style="font-size:11px; color:var(--text-secondary); cursor:pointer; line-height:1.4; user-select:none;">
+            I understand that once my refund request is approved and processed, my account and associated data may be permanently deleted and may not be recoverable.
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('modal-refund-request')">Cancel</button>
+        <button class="btn btn-danger" onclick="submitRefundRequest()">Request Refund</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ GLOBAL SEARCH MODAL (SPOTLIGHT STYLE) ═══════════════ -->
+  <div id="global-search-modal" class="modal-overlay" onclick="window.closeGlobalSearch()" style="align-items: flex-start !important; justify-content: center !important; padding: 10px !important; z-index: 10005;">
+    <div class="modal-content" style="max-width: 480px; width: 100%; margin: 10px auto 0 auto !important; padding: 0; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-2xl); overflow: hidden; display: flex; flex-direction: column;" onclick="event.stopPropagation()">
+      
+      <!-- Input Area -->
+      <div style="display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border-color); gap: 10px; background: var(--bg-input);">
+        <svg class="svg-icon" style="width: 18px; height: 18px; stroke: var(--primary-light); fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="topbar-search"
+          placeholder="Search room / tenant..."
+          oninput="handleTopbarSearch()"
+          autocomplete="off"
+          style="flex: 1; border: none; background: transparent; font-size: 15px; color: var(--text-primary); outline: none; padding: 2px 0;" />
+        <button onclick="window.closeGlobalSearch()" style="width: 26px; height: 26px; font-size: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-muted); cursor: pointer; transition: all 0.2s; padding: 0; line-height: 1;">&times;</button>
+      </div>
+
+      <!-- Search Results Area -->
+      <div id="search-dropdown" style="display: none; position: static; max-height: 300px; overflow-y: auto; border: none; box-shadow: none; width: 100%; background: transparent; min-width: unset;">
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    window.openGlobalSearch = function() {
+      const modal = document.getElementById('global-search-modal');
+      if (modal) {
+        modal.classList.add('active');
+        const input = document.getElementById('topbar-search');
+        if (input) {
+          input.value = '';
+          input.focus();
+        }
+        const dropdown = document.getElementById('search-dropdown');
+        if (dropdown) {
+          dropdown.style.display = 'none';
+          dropdown.innerHTML = '';
+        }
+      }
+    };
+
+    window.closeGlobalSearch = function() {
+      const modal = document.getElementById('global-search-modal');
+      if (modal) {
+        modal.classList.remove('active');
+        const input = document.getElementById('topbar-search');
+        if (input) {
+          input.value = '';
+          input.blur();
+        }
+        const dropdown = document.getElementById('search-dropdown');
+        if (dropdown) {
+          dropdown.style.display = 'none';
+          dropdown.innerHTML = '';
+        }
+        // Restore table filters to clear state
+        if (typeof handleTopbarSearch === 'function') handleTopbarSearch();
+      }
+    };
+
+    window.closeTopbarSearch = window.closeGlobalSearch;
+  </script>
+
+  <script type="module" src="/src/js/owner-dashboard.js"></script>
+</body>
+
+</html>
