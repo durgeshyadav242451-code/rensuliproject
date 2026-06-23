@@ -418,19 +418,19 @@ export function initInstallPrompt() {
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredInstallPrompt = e;
-    // Clear temp dismissal — user should see it again
-    if (localStorage.getItem('pgb_install_dismissed') === 'temp') {
-      localStorage.removeItem('pgb_install_dismissed');
-    }
-    showInstallBanner();
+    // Disabled to prevent automatic popups from disrupting mobile users
+    // if (localStorage.getItem('pgb_install_dismissed') === 'temp') {
+    //   localStorage.removeItem('pgb_install_dismissed');
+    // }
+    // showInstallBanner();
   });
 
-  // On iOS — show a manual guide banner (iOS doesn't support beforeinstallprompt)
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isSafari = /safari/i.test(navigator.userAgent) && !/chrome/i.test(navigator.userAgent);
-  if (isIOS && isSafari && !localStorage.getItem('pgb_install_dismissed')) {
-    setTimeout(() => showIOSInstallBanner(), 2000);
-  }
+  // On iOS — do not show guide banner automatically
+  // const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  // const isSafari = /safari/i.test(navigator.userAgent) && !/chrome/i.test(navigator.userAgent);
+  // if (isIOS && isSafari && !localStorage.getItem('pgb_install_dismissed')) {
+  //   setTimeout(() => showIOSInstallBanner(), 2000);
+  // }
 }
 
 // ── Manual trigger (called from settings/sidebar Install button) ──
