@@ -161,11 +161,16 @@ function checkTenantStatus() {
             if (!session) return;
             const userId = session.user.id;
 
-            const { data: profile } = await supabase
+            const { data: profiles } = await supabase
               .from('tenants')
               .select('status')
               .eq('auth_user_id', userId)
-              .maybeSingle();
+              .order('created_at', { ascending: false });
+
+            let profile = null;
+            if (profiles && profiles.length > 0) {
+              profile = profiles.find(p => ['active', 'pending', 'vacating'].includes(p.status)) || profiles[0];
+            }
 
             if (profile && profile.status === 'active') {
               // Owner approved! Clean up polling and subscription
@@ -254,11 +259,18 @@ async function loadRealData(session) {
     const userEmail = activeSession.user.email;
 
     // 1. Try by auth_user_id first (most precise — avoids false email matches)
-    let { data: profile } = await supabase
+    // Order by status priority: active/pending/vacating first, then vacated/rejected.
+    // Within the same status category, order by created_at DESC (latest first) to select the correct stay.
+    let { data: profiles } = await supabase
       .from('tenants')
       .select('*')
       .eq('auth_user_id', userId)
-      .maybeSingle();
+      .order('created_at', { ascending: false });
+
+    let profile = null;
+    if (profiles && profiles.length > 0) {
+      profile = profiles.find(p => ['active', 'pending', 'vacating'].includes(p.status)) || profiles[0];
+    }
 
     // 2. Fallback: match by email ONLY for unlinked records (owner added tenant before they registered)
     if (!profile) {
@@ -2008,47 +2020,24 @@ window.submitBlockReRegistration = async function () {
     const session = await getSession();
     if (!session) throw new Error('No active session. Please log in again.');
 
-    let query;
-    if (tenantData && tenantData.id) {
-      // Row exists, perform update
-      query = supabase
-        .from('tenants')
-        .update({
-          owner_id: blockSelectedOwner.id,
-          building_id: blockSelectedBuilding.id,
-          room_id: blockSelectedRoom.id,
-          status: 'pending',
-          name,
-          phone,
-          alt_phone: altPhone,
-          aadhaar_number: aadhaar,
-          living_type: livingType,
-          initial_meter_reading: parseFloat(meterReading) || 0,
-          join_date: new Date().toISOString().split('T')[0],
-          vacate_date: null
-        })
-        .eq('id', tenantData.id);
-    } else {
-      // Row does not exist, perform insert
-      query = supabase
-        .from('tenants')
-        .insert({
-          owner_id: blockSelectedOwner.id,
-          building_id: blockSelectedBuilding.id,
-          room_id: blockSelectedRoom.id,
-          status: 'pending',
-          email: session.user.email,
-          name,
-          phone,
-          alt_phone: altPhone,
-          aadhaar_number: aadhaar,
-          living_type: livingType,
-          initial_meter_reading: parseFloat(meterReading) || 0,
-          join_date: new Date().toISOString().split('T')[0],
-          auth_user_id: session.user.id,
-          vacate_date: null
-        });
-    }
+    const query = supabase
+      .from('tenants')
+      .insert({
+        owner_id: blockSelectedOwner.id,
+        building_id: blockSelectedBuilding.id,
+        room_id: blockSelectedRoom.id,
+        status: 'pending',
+        email: session.user.email,
+        name,
+        phone,
+        alt_phone: altPhone,
+        aadhaar_number: aadhaar,
+        living_type: livingType,
+        initial_meter_reading: parseFloat(meterReading) || 0,
+        join_date: new Date().toISOString().split('T')[0],
+        auth_user_id: session.user.id,
+        vacate_date: null
+      });
 
     const { data: updated, error } = await query.select();
 

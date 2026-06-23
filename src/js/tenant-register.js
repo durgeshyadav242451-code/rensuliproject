@@ -95,14 +95,18 @@ async function checkSession() {
     const userEmail = session.user.email;
     const googleName = session.user.user_metadata?.full_name || session.user.user_metadata?.name || '';
 
-    // Look up existing tenant by auth_user_id
-    let { data: profile } = await supabase
+    // Look up existing tenants by auth_user_id
+    let { data: profiles } = await supabase
       .from('tenants')
       .select('*, members(*)')
       .eq('auth_user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .order('created_at', { ascending: false });
+
+    let profile = null;
+    if (profiles && profiles.length > 0) {
+      // Prioritize active/pending/vacating profiles
+      profile = profiles.find(p => ['active', 'pending', 'vacating'].includes(p.status)) || profiles[0];
+    }
 
     // Fallback: email match
     if (!profile) {
@@ -113,7 +117,8 @@ async function checkSession() {
         .order('created_at', { ascending: false });
 
       if (emailProfiles && emailProfiles.length > 0) {
-        profile = emailProfiles[0];
+        // Prioritize active/pending/vacating profiles
+        profile = emailProfiles.find(p => ['active', 'pending', 'vacating'].includes(p.status)) || emailProfiles[0];
         // Auto-link auth_user_id
         await supabase.from('tenants').update({ auth_user_id: userId }).eq('id', profile.id);
         profile.auth_user_id = userId;
@@ -538,72 +543,41 @@ window.handleSubmitRegistration = async function() {
       ? selectedRoom.per_bed_rent
       : selectedRoom?.rent || 0;
 
-    if (isReturningTenant && existingTenantProfile) {
-      // Delete old members for returning tenant so they don't carry over
-      await supabase.from('members').delete().eq('tenant_id', existingTenantProfile.id);
+    // We ALWAYS insert a brand new tenant record to make sure all bills, rent history, payments,
+    // and complaints start completely fresh for this new room stay.
+    const name = (isReturningTenant && existingTenantProfile) ? existingTenantProfile.name : document.getElementById('info-name').value.trim();
+    const phone = (isReturningTenant && existingTenantProfile) ? existingTenantProfile.phone : document.getElementById('info-phone').value.trim();
+    const altPhone = (isReturningTenant && existingTenantProfile) ? existingTenantProfile.alt_phone : document.getElementById('info-alt-phone').value.trim();
+    const aadhaar = (isReturningTenant && existingTenantProfile) ? existingTenantProfile.aadhaar_number : document.getElementById('info-aadhaar').value.trim();
 
-      // UPDATE existing tenant profile (returning tenant)
-      const { error } = await supabase
-        .from('tenants')
-        .update({
-          owner_id: selectedOwner.id,
-          building_id: selectedBuilding.id,
-          room_id: selectedRoom.id,
-          status: 'pending',
-          living_type: livingType,
-          advance_paid: 0,
-          initial_meter_reading: meterReading,
-          current_meter_reading: meterReading,
-          join_date: new Date().toISOString().split('T')[0],
-          vacate_date: null,
-          auth_user_id: userId
-        })
-        .eq('id', existingTenantProfile.id);
+    const { data: inserted, error } = await supabase
+      .from('tenants')
+      .insert({
+        owner_id: selectedOwner.id,
+        building_id: selectedBuilding.id,
+        room_id: selectedRoom.id,
+        auth_user_id: userId,
+        name,
+        phone,
+        alt_phone: altPhone,
+        email: userEmail,
+        aadhaar_number: aadhaar,
+        living_type: livingType,
+        status: 'pending',
+        advance_paid: 0,
+        initial_meter_reading: meterReading,
+        current_meter_reading: meterReading,
+        join_date: new Date().toISOString().split('T')[0]
+      })
+      .select();
 
-      if (error) throw error;
-      tenantId = existingTenantProfile.id;
+    if (error) throw error;
+    tenantId = inserted[0].id;
 
-      // Log history entry
-      await logTenantHistory(tenantId, selectedOwner.id, selectedBuilding.id, selectedRoom.id,
-        selectedBuilding.name, selectedRoom.room_number,
-        new Date().toISOString().split('T')[0]);
-
-    } else {
-      // INSERT new tenant
-      const name = document.getElementById('info-name').value.trim();
-      const phone = document.getElementById('info-phone').value.trim();
-      const altPhone = document.getElementById('info-alt-phone').value.trim();
-      const aadhaar = document.getElementById('info-aadhaar').value.trim();
-
-      const { data: inserted, error } = await supabase
-        .from('tenants')
-        .insert({
-          owner_id: selectedOwner.id,
-          building_id: selectedBuilding.id,
-          room_id: selectedRoom.id,
-          auth_user_id: userId,
-          name,
-          phone,
-          alt_phone: altPhone,
-          email: userEmail,
-          aadhaar_number: aadhaar,
-          living_type: livingType,
-          status: 'pending',
-          advance_paid: 0,
-          initial_meter_reading: meterReading,
-          current_meter_reading: meterReading,
-          join_date: new Date().toISOString().split('T')[0]
-        })
-        .select();
-
-      if (error) throw error;
-      tenantId = inserted[0].id;
-
-      // Log history entry
-      await logTenantHistory(tenantId, selectedOwner.id, selectedBuilding.id, selectedRoom.id,
-        selectedBuilding.name, selectedRoom.room_number,
-        new Date().toISOString().split('T')[0]);
-    }
+    // Log history entry
+    await logTenantHistory(tenantId, selectedOwner.id, selectedBuilding.id, selectedRoom.id,
+      selectedBuilding.name, selectedRoom.room_number,
+      new Date().toISOString().split('T')[0]);
 
     // Insert NEW members (if any added in this step)
     const newMembers = collectMemberData();
