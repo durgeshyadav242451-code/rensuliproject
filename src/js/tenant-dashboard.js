@@ -1267,6 +1267,7 @@ window.submitPayment = async function () {
   btn.disabled = true;
   btn.textContent = 'Submitting Payment...';
 
+  let success = false;
   try {
     const targetMonth = (() => {
       const joinDate = tenantData.join_date ? new Date(tenantData.join_date) : new Date();
@@ -1313,20 +1314,29 @@ window.submitPayment = async function () {
 
     if (error) throw error;
 
+    success = true;
+
     await loadRealData();
     renderPaymentHistory();
     renderDashboard();
 
     showToast('Payment Submitted!', `${formatCurrency(total)} via ${method}. Pending owner approval.`, 'payment');
 
-    // Switch to history
-    setTimeout(() => switchTab('history'), 1500);
+    // Save active tab as history so it loads the history tab on refresh
+    localStorage.setItem('pgb_tenant_active_tab', 'history');
+
+    // Reload the page after a short delay so user can see toast, and UI locks completely
+    setTimeout(() => {
+      location.reload();
+    }, 1500);
   } catch (err) {
     console.error('Error submitting payment:', err);
     showToast('Error', 'Failed to submit payment: ' + err.message, 'error');
   } finally {
-    btn.disabled = false;
-    btn.textContent = originalText;
+    if (!success) {
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
   }
 };
 
