@@ -18,6 +18,12 @@ let allSettings = {};
 let allAuditLogs = [];
 let allArchives = [];
 let allRefunds = [];
+let allAffiliates = [];
+let allAffiliatePayouts = [];
+let allWithdrawalRequests = [];
+let activeAffiliate = null;
+let currentAffiliateFilter = 'all';
+let currentWRFilter = 'all';
 
 let activeTicket = null;
 
@@ -27,12 +33,69 @@ let chartUsersInstance = null;
 let chartPlansInstance = null;
 let chartTrendsInstance = null;
 
-// ── Initialization on Page Load ──
-document.addEventListener('DOMContentLoaded', async () => {
+// ── Global Window Bindings (Executed Synchronously on Script Load) ──
+window.switchAdminTab = switchAdminTab;
+window.handleAdminLogin = handleAdminLogin;
+window.handleAdminLogout = handleAdminLogout;
+window.filterLandlordsTable = filterLandlordsTable;
+window.filterTenantsTable = filterTenantsTable;
+window.deleteTenantPermanently = deleteTenantPermanently;
+window.filterPaymentsTable = filterPaymentsTable;
+window.deletePaymentPermanently = deletePaymentPermanently;
+window.filterTicketsTable = filterTicketsTable;
+window.handleSendBroadcast = handleSendBroadcast;
+window.handleSaveGeneralSettings = handleSaveGeneralSettings;
+window.handleSaveGatewaySettings = handleSaveGatewaySettings;
+window.clearSystemAuditLogs = clearSystemAuditLogs;
+window.closeAdminModal = closeAdminModal;
+window.submitLandlordSubscriptionChange = submitLandlordSubscriptionChange;
+window.openEditSubscriptionModal = openEditSubscriptionModal;
+window.toggleLandlordStatus = toggleLandlordStatus;
+window.unlockLandlordStatus = unlockLandlordStatus;
+window.forceExpirePlan = forceExpirePlan;
+window.impersonateLandlord = impersonateLandlord;
+window.deleteLandlordPermanently = deleteLandlordPermanently;
+window.openTicketDetailsModal = openTicketDetailsModal;
+window.submitTicketReply = submitTicketReply;
+window.updateTicketStatus = updateTicketStatus;
+window.updateTicketPriority = updateTicketPriority;
+window.deleteBroadcastPermanently = deleteBroadcastPermanently;
+window.initAnalyticsCharts = initAnalyticsCharts;
+window.filterArchivesTable = filterArchivesTable;
+window.openArchiveDetailsModal = openArchiveDetailsModal;
+window.deleteArchivePermanently = deleteArchivePermanently;
+window.renderPlanConfigForm = renderPlanConfigForm;
+window.calculatePreviewPrices = calculatePreviewPrices;
+window.savePlanConfig = savePlanConfig;
+window.saveLocalExpirySim = saveLocalExpirySim;
+window.simulateExpiryDB = simulateExpiryDB;
+window.viewPaymentReceipt = viewPaymentReceipt;
+window.filterRefundsTable = filterRefundsTable;
+window.handleApproveRefund = handleApproveRefund;
+window.handleRejectRefund = handleRejectRefund;
+window.viewLandlordProfile = viewLandlordProfile;
+window.saveAffiliateCommission = saveAffiliateCommission;
+window.saveWithdrawalWindowSettings = saveWithdrawalWindowSettings;
+window.filterAffiliatesTable = filterAffiliatesTable;
+window.viewAffiliateDetails = viewAffiliateDetails;
+window.submitAffiliatePayout = submitAffiliatePayout;
+window.submitCustomCommission = submitCustomCommission;
+window.deleteAffiliatePermanently = deleteAffiliatePermanently;
+window.setAffiliateFilter = setAffiliateFilter;
+window.openBulkPayoutModal = openBulkPayoutModal;
+window.submitBulkPayout = submitBulkPayout;
+window.setWRFilter = setWRFilter;
+window.openVerifyWRModal = openVerifyWRModal;
+window.processWithdrawalRequest = processWithdrawalRequest;
+
+// ── Initialization (Executed on Page Load) ──
+async function init() {
   // Initialize Toast framework
-  const toastContainer = document.createElement('div');
-  toastContainer.className = 'toast-container';
-  document.body.appendChild(toastContainer);
+  if (!document.querySelector('.toast-container')) {
+    const toastContainer = document.createElement('div');
+    toastContainer.className = 'toast-container';
+    document.body.appendChild(toastContainer);
+  }
 
   // Scroll event listener to persist scroll position
   let scrollTimeout;
@@ -44,49 +107,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   await checkAuth();
-  
-  // Bind global functions to window for HTML calls
-  window.switchAdminTab = switchAdminTab;
-  window.handleAdminLogin = handleAdminLogin;
-  window.handleAdminLogout = handleAdminLogout;
-  window.filterLandlordsTable = filterLandlordsTable;
-  window.filterTenantsTable = filterTenantsTable;
-  window.deleteTenantPermanently = deleteTenantPermanently;
-  window.filterPaymentsTable = filterPaymentsTable;
-  window.deletePaymentPermanently = deletePaymentPermanently;
-  window.filterTicketsTable = filterTicketsTable;
-  window.handleSendBroadcast = handleSendBroadcast;
-  window.handleSaveGeneralSettings = handleSaveGeneralSettings;
-  window.handleSaveGatewaySettings = handleSaveGatewaySettings;
-  window.clearSystemAuditLogs = clearSystemAuditLogs;
-  window.closeAdminModal = closeAdminModal;
-  window.submitLandlordSubscriptionChange = submitLandlordSubscriptionChange;
-  window.openEditSubscriptionModal = openEditSubscriptionModal;
-  window.toggleLandlordStatus = toggleLandlordStatus;
-  window.unlockLandlordStatus = unlockLandlordStatus;
-  window.forceExpirePlan = forceExpirePlan;
-  window.impersonateLandlord = impersonateLandlord;
-  window.deleteLandlordPermanently = deleteLandlordPermanently;
-  window.openTicketDetailsModal = openTicketDetailsModal;
-  window.submitTicketReply = submitTicketReply;
-  window.updateTicketStatus = updateTicketStatus;
-  window.updateTicketPriority = updateTicketPriority;
-  window.deleteBroadcastPermanently = deleteBroadcastPermanently;
-  window.initAnalyticsCharts = initAnalyticsCharts;
-  window.filterArchivesTable = filterArchivesTable;
-  window.openArchiveDetailsModal = openArchiveDetailsModal;
-  window.deleteArchivePermanently = deleteArchivePermanently;
-  window.renderPlanConfigForm = renderPlanConfigForm;
-  window.calculatePreviewPrices = calculatePreviewPrices;
-  window.savePlanConfig = savePlanConfig;
-  window.saveLocalExpirySim = saveLocalExpirySim;
-  window.simulateExpiryDB = simulateExpiryDB;
-  window.viewPaymentReceipt = viewPaymentReceipt;
-  window.filterRefundsTable = filterRefundsTable;
-  window.handleApproveRefund = handleApproveRefund;
-  window.handleRejectRefund = handleRejectRefund;
-  window.viewLandlordProfile = viewLandlordProfile;
-});
+}
+
+// Start initialization immediately
+init();
 
 // ── Security & Authentication Check ──
 async function checkAuth() {
@@ -257,6 +281,42 @@ async function loadAllData() {
       allRefunds = refundData || [];
     }
 
+    // 12. Fetch Affiliates
+    const { data: affiliatesData, error: errAffiliates } = await supabase
+      .from('affiliates')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (errAffiliates) {
+      console.warn('affiliates query failed:', errAffiliates);
+      allAffiliates = [];
+    } else {
+      allAffiliates = affiliatesData || [];
+    }
+
+    // 13. Fetch Affiliate Payouts
+    const { data: payoutsData, error: errPayouts } = await supabase
+      .from('affiliate_payouts')
+      .select('*')
+      .order('payout_date', { ascending: false });
+    if (errPayouts) {
+      console.warn('affiliate_payouts query failed:', errPayouts);
+      allAffiliatePayouts = [];
+    } else {
+      allAffiliatePayouts = payoutsData || [];
+    }
+
+    // 14. Fetch Withdrawal Requests
+    const { data: wrData, error: errWR } = await supabase
+      .from('withdrawal_requests')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (errWR) {
+      console.warn('withdrawal_requests table not found yet. Run migration v28.', errWR);
+      allWithdrawalRequests = [];
+    } else {
+      allWithdrawalRequests = wrData || [];
+    }
+
     // Trigger Calculations & UI Renders
     calculateMetrics();
     renderAllViews();
@@ -417,10 +477,13 @@ function switchAdminTab(tabId, clickedEl) {
     payments: 'SaaS Payment Operations Centre',
     'plan-config': 'SaaS Plan Configuration',
     tickets: 'Platform Customer Support Desk',
+    refunds: 'Refund Requests Desk',
+    affiliates: 'Affiliate Program Manager',
     broadcasts: 'Global Broadcast System',
     analytics: 'SaaS Platform Analytics',
     settings: 'Global Platform Configuration',
-    logs: 'System Security Audit Logs'
+    logs: 'System Security Audit Logs',
+    archives: 'Deleted Owners Archive'
   };
   const topbarTitle = document.getElementById('admin-topbar-title');
   if (topbarTitle) topbarTitle.textContent = headerMap[tabId] || 'SaaS Control Centre';
@@ -439,6 +502,9 @@ function renderAllViews() {
   renderArchivesTable();
   renderPlanConfigForm();
   renderRefundsTable();
+  renderAffiliatesTable();
+  renderAffiliateSettings();
+  renderWithdrawalRequestsTable();
 }
 
 // Render Landlords Directory
@@ -467,18 +533,22 @@ function renderLandlordsTable(data = allLandlords) {
       .reduce((acc, p) => acc + Number(p.total_amount), 0);
 
     const expiryStr = owner.subscription_expiry ? formatDate(owner.subscription_expiry) : 'N/A';
-    const planClass = owner.plan_type === 'Enterprise' ? 'admin-badge-success' : 'admin-badge-warning';
-    const planLabel = owner.plan_type === 'Enterprise' ? 'unlocked account' : '(paid) plan';
+    const isTrial = owner.subscription_status === 'trial';
+    const planClass = owner.plan_type === 'Enterprise' ? 'admin-badge-success' : (isTrial ? 'admin-badge-info' : 'admin-badge-warning');
+    const planLabel = owner.plan_type === 'Enterprise' ? 'unlocked account' : (isTrial ? 'Free Trial (ट्रायल)' : '(paid) plan');
 
     let ownerStatus = owner.status || 'Active';
     const isExpired = owner.subscription_expiry && new Date(owner.subscription_expiry) < new Date();
     if (isExpired && ownerStatus !== 'Suspended' && ownerStatus !== 'Locked') {
       ownerStatus = 'Expired';
+    } else if (isTrial && ownerStatus !== 'Suspended' && ownerStatus !== 'Locked') {
+      ownerStatus = 'Trial';
     }
 
     const statusClass = ownerStatus === 'Suspended' ? 'admin-badge-danger' : 
                         (ownerStatus === 'Locked' ? 'admin-badge-warning' : 
-                        (ownerStatus === 'Expired' ? 'admin-badge-danger' : 'admin-badge-success'));
+                        (ownerStatus === 'Expired' ? 'admin-badge-danger' : 
+                        (ownerStatus === 'Trial' ? 'admin-badge-info' : 'admin-badge-success')));
 
     return `
       <tr>
@@ -538,11 +608,14 @@ async function viewLandlordProfile(ownerId) {
   // Status markings
   let ownerStatus = owner.status || 'Active';
   const isExpired = owner.subscription_expiry && new Date(owner.subscription_expiry) < new Date();
+  const isTrial = owner.subscription_status === 'trial';
   if (isExpired && ownerStatus !== 'Suspended' && ownerStatus !== 'Locked') {
     ownerStatus = 'Expired';
+  } else if (isTrial && ownerStatus !== 'Suspended' && ownerStatus !== 'Locked') {
+    ownerStatus = 'Trial';
   }
 
-  const planLabel = owner.plan_type === 'Enterprise' ? 'Enterprise' : 'Basic Plan';
+  const planLabel = owner.plan_type === 'Enterprise' ? 'Enterprise' : (isTrial ? 'Free Trial (ट्रायल)' : 'Basic Plan');
   
   // Set UI elements
   document.getElementById('ld-owner-name').textContent = owner.name || 'Anonymous';
@@ -552,12 +625,13 @@ async function viewLandlordProfile(ownerId) {
   statusEl.textContent = ownerStatus;
   statusEl.className = `admin-badge ${ownerStatus === 'Suspended' ? 'admin-badge-danger' : 
                                     (ownerStatus === 'Locked' ? 'admin-badge-warning' : 
-                                    (ownerStatus === 'Expired' ? 'admin-badge-danger' : 'admin-badge-success'))}`;
+                                    (ownerStatus === 'Expired' ? 'admin-badge-danger' : 
+                                    (ownerStatus === 'Trial' ? 'admin-badge-info' : 'admin-badge-success')))}`;
 
   // Plan Badge
   const planEl = document.getElementById('ld-plan');
   planEl.textContent = planLabel;
-  planEl.className = `admin-badge ${owner.plan_type === 'Enterprise' ? 'admin-badge-success' : 'admin-badge-warning'}`;
+  planEl.className = `admin-badge ${owner.plan_type === 'Enterprise' ? 'admin-badge-success' : (isTrial ? 'admin-badge-info' : 'admin-badge-warning')}`;
 
   document.getElementById('ld-key').textContent = owner.owner_key || '—';
   document.getElementById('ld-email').textContent = owner.email || '—';
@@ -695,8 +769,14 @@ async function toggleLandlordStatus(ownerId, currentStatus) {
 
 // Edit Subscription modal actions
 function openEditSubscriptionModal(ownerId, planType) {
+  const owner = allLandlords.find(o => o.id === ownerId);
   document.getElementById('sub-modal-owner-id').value = ownerId;
-  document.getElementById('sub-modal-plan').value = planType;
+  
+  if (owner && owner.subscription_status === 'trial') {
+    document.getElementById('sub-modal-plan').value = 'Trial';
+  } else {
+    document.getElementById('sub-modal-plan').value = planType || 'Basic';
+  }
   
   // Show modal
   document.getElementById('modal-edit-subscription').classList.add('active');
@@ -718,9 +798,17 @@ async function submitLandlordSubscriptionChange(event) {
       updatePayload.subscription_status = 'active';
       updatePayload.subscription_expiry = null;
       updatePayload.allowed_buildings = 9999;
+    } else if (newPlan === 'Trial') {
+      const expiry = new Date();
+      expiry.setMonth(expiry.getMonth() + 1); // 1 month from now
+      updatePayload.subscription_status = 'trial';
+      updatePayload.subscription_expiry = expiry.toISOString();
+      updatePayload.allowed_buildings = 1;
+      updatePayload.plan_type = 'Basic'; // Trial uses Basic plan type
     } else {
-      // If changing from Enterprise to Basic, reset subscription to expired so they have to pay/renew
-      if (owner && owner.plan_type === 'Enterprise') {
+      // Basic plan
+      // If changing from Enterprise/Trial to Basic, reset subscription to expired so they have to pay/renew
+      if (owner && (owner.plan_type === 'Enterprise' || owner.subscription_status === 'trial')) {
         updatePayload.subscription_status = 'expired';
         updatePayload.subscription_expiry = null;
         updatePayload.allowed_buildings = 1;
@@ -739,10 +827,10 @@ async function submitLandlordSubscriptionChange(event) {
     }
 
     showToast('Success', `Subscription modified for ${owner?.name}.`, 'success');
-    const planLabel = newPlan === 'Enterprise' ? 'unlocked account' : '(paid) plan';
+    const planLabel = newPlan === 'Enterprise' ? 'unlocked account' : (newPlan === 'Trial' ? 'Free Trial (1 Month)' : '(paid) plan');
     const logDesc = newPlan === 'Enterprise' 
       ? `Changed plan of ${owner?.name} to unlocked account (unlimited, lifetime)`
-      : `Changed plan of ${owner?.name} to (paid) plan`;
+      : (newPlan === 'Trial' ? `Changed plan of ${owner?.name} to Free Trial (1 Month)` : `Changed plan of ${owner?.name} to (paid) plan`);
     logAdminAction(logDesc, 'Landlords');
     closeAdminModal('modal-edit-subscription');
     await loadAllData();
@@ -830,6 +918,8 @@ function filterLandlordsTable() {
     const isExpired = owner.subscription_expiry && new Date(owner.subscription_expiry) < new Date();
     if (isExpired && ownerStatus !== 'Suspended' && ownerStatus !== 'Locked') {
       ownerStatus = 'Expired';
+    } else if (owner.subscription_status === 'trial' && ownerStatus !== 'Suspended' && ownerStatus !== 'Locked') {
+      ownerStatus = 'Trial';
     }
 
     const matchesStatus = (status === 'all') || (ownerStatus === status);
@@ -2485,4 +2575,824 @@ async function handleRejectRefund(requestId) {
   }
 }
 
+// ═══════════════════════════════════════════
+// AFFILIATE MANAGEMENT PANEL FOR SUPER ADMIN
+// ═══════════════════════════════════════════
+
+function renderAffiliatesTable(data = allAffiliates) {
+  const tbody = document.getElementById('affiliates-table-body');
+  const totalAffiliatesEl = document.getElementById('stat-total-affiliates');
+  const totalPayoutsEl = document.getElementById('stat-total-payouts');
+  const totalBuildingsEl = document.getElementById('stat-total-buildings');
+
+  if (totalAffiliatesEl) totalAffiliatesEl.textContent = allAffiliates.length;
+
+  // Calculate sum of all payouts
+  const totalPayoutsSum = allAffiliatePayouts.reduce((sum, p) => sum + Number(p.amount), 0);
+  if (totalPayoutsEl) totalPayoutsEl.textContent = formatCurrency(totalPayoutsSum.toFixed(2));
+
+  // Calculate total referred buildings across all affiliates
+  const referralCodes = new Set(allAffiliates.map(a => a.referral_code).filter(Boolean));
+  const referredLandlords = allLandlords.filter(o => referralCodes.has(o.referred_by_code));
+  const totalReferredBuildings = referredLandlords.reduce((sum, o) => sum + Number(o.allowed_buildings || 0), 0);
+  if (totalBuildingsEl) totalBuildingsEl.textContent = totalReferredBuildings;
+
+  if (!tbody) return;
+
+  if (data.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" class="text-center text-muted" style="padding: 24px;">No affiliates found</td></tr>`;
+    return;
+  }
+
+  // Sort affiliates descending by join date (latest first)
+  data.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+  const defaultCommissionRate = allSettings['affiliate']?.commission_percentage || 20;
+
+  tbody.innerHTML = data.map(affiliate => {
+    // 1. Find landlords referred by this affiliate
+    const referred = allLandlords.filter(o => o.referred_by_code === affiliate.referral_code);
+    const referredIds = referred.map(l => l.id);
+
+    const commissionRate = affiliate.commission_percentage !== null && affiliate.commission_percentage !== undefined
+      ? Number(affiliate.commission_percentage)
+      : defaultCommissionRate;
+
+    // 2. Sum up approved payments
+    let totalCommissions = 0;
+    if (referredIds.length > 0) {
+      const referredPayments = allPayments.filter(p => 
+        referredIds.includes(p.owner_id) && 
+        p.month_year === 'SaaS Renewal' && 
+        p.status === 'approved'
+      );
+      totalCommissions = referredPayments.reduce((sum, p) => {
+        const baseAmount = Number(p.total_amount) / 1.18;
+        const rate = p.commission_rate !== null && p.commission_rate !== undefined
+          ? Number(p.commission_rate)
+          : commissionRate;
+        return sum + Math.round(baseAmount * (rate / 100));
+      }, 0);
+    }
+
+    // 3. Sum up payouts
+    const payouts = allAffiliatePayouts.filter(p => p.affiliate_id === affiliate.id);
+    const totalPaid = payouts.reduce((sum, p) => sum + Number(p.amount), 0);
+
+    // 4. Balance
+    const unpaidBalance = Math.max(0, totalCommissions - totalPaid);
+
+    const joinedDate = affiliate.created_at ? formatDate(affiliate.created_at) : 'N/A';
+
+    return `
+      <tr>
+        <td><strong>${affiliate.name || 'Anonymous'}</strong></td>
+        <td>${affiliate.email}</td>
+        <td>${affiliate.phone || '—'}</td>
+        <td><strong style="color: var(--warning-light);">${affiliate.upi_id || 'Not Set'}</strong></td>
+        <td><code style="color: var(--primary-light); font-weight:700;">${affiliate.referral_code}</code></td>
+        <td><strong style="color: var(--success-light);">${affiliate.commission_percentage !== null ? affiliate.commission_percentage + '%' : 'Default (' + defaultCommissionRate + '%)'}</strong></td>
+        <td><strong style="color: var(--warning-light);">${formatCurrency(Math.round(unpaidBalance))}</strong></td>
+        <td>${joinedDate}</td>
+        <td style="text-align: right; white-space: nowrap; width: 1%;">
+          <div style="display: flex; gap: 6px; justify-content: flex-end; align-items: center;">
+            <button class="admin-btn admin-btn-secondary" style="padding: 4px 10px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px;" onclick="viewAffiliateDetails('${affiliate.id}')">
+              <svg style="width:12px; height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              View
+            </button>
+            <button class="admin-btn admin-btn-danger" style="padding: 4px 10px; font-size: 11px; background: #c0392b; display: inline-flex; align-items: center; justify-content: center;" onclick="deleteAffiliatePermanently('${affiliate.id}')" title="Delete Affiliate">
+              <svg style="width:12px; height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function setAffiliateFilter(filterType) {
+  currentAffiliateFilter = filterType;
+  
+  // Update active state in UI buttons
+  const buttons = ['all', 'pending', 'completed'];
+  buttons.forEach(b => {
+    const btn = document.getElementById(`aff-filter-${b}`);
+    if (btn) {
+      if (b === filterType) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    }
+  });
+
+  // Re-run search and filtering
+  filterAffiliatesTable();
+}
+
+function filterAffiliatesTable() {
+  const searchInput = document.getElementById('affiliate-search-input');
+  const search = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+  const defaultCommissionRate = allSettings['affiliate']?.commission_percentage || 20;
+
+  const filtered = allAffiliates.filter(affiliate => {
+    // 1. Check search query match
+    const matchesSearch = !search || 
+      (affiliate.name && affiliate.name.toLowerCase().includes(search)) || 
+      (affiliate.email && affiliate.email.toLowerCase().includes(search)) || 
+      (affiliate.phone && affiliate.phone.toLowerCase().includes(search)) ||
+      (affiliate.referral_code && affiliate.referral_code.toLowerCase().includes(search));
+
+    if (!matchesSearch) return false;
+
+    // 2. Check filter status match
+    if (currentAffiliateFilter === 'all') return true;
+
+    // Calculate balance to filter
+    const referred = allLandlords.filter(o => o.referred_by_code === affiliate.referral_code);
+    const referredIds = referred.map(l => l.id);
+    
+    const commissionRate = affiliate.commission_percentage !== null && affiliate.commission_percentage !== undefined
+      ? Number(affiliate.commission_percentage)
+      : defaultCommissionRate;
+
+    let totalCommissions = 0;
+    if (referredIds.length > 0) {
+      const referredPayments = allPayments.filter(p => 
+        referredIds.includes(p.owner_id) && 
+        p.month_year === 'SaaS Renewal' && 
+        p.status === 'approved'
+      );
+      totalCommissions = referredPayments.reduce((sum, p) => {
+        const baseAmount = Number(p.total_amount) / 1.18;
+        const rate = p.commission_rate !== null && p.commission_rate !== undefined
+          ? Number(p.commission_rate)
+          : commissionRate;
+        return sum + Math.round(baseAmount * (rate / 100));
+      }, 0);
+    }
+
+    const payouts = allAffiliatePayouts.filter(p => p.affiliate_id === affiliate.id);
+    const totalPaid = payouts.reduce((sum, p) => sum + Number(p.amount), 0);
+    const unpaidBalance = Math.max(0, totalCommissions - totalPaid);
+
+    if (currentAffiliateFilter === 'pending') {
+      return unpaidBalance > 0;
+    } else if (currentAffiliateFilter === 'completed') {
+      return unpaidBalance <= 0;
+    }
+
+    return true;
+  });
+
+  renderAffiliatesTable(filtered);
+}
+
+function renderAffiliateSettings() {
+  const rateInput = document.getElementById('settings-commission-rate');
+  if (rateInput) {
+    const rate = allSettings['affiliate']?.commission_percentage || 20;
+    rateInput.value = rate;
+  }
+
+  const startDayInput = document.getElementById('settings-wr-start-day');
+  if (startDayInput) {
+    startDayInput.value = allSettings['affiliate']?.withdrawal_start_day !== undefined 
+      ? allSettings['affiliate']?.withdrawal_start_day 
+      : 1;
+  }
+
+  const endDayInput = document.getElementById('settings-wr-end-day');
+  if (endDayInput) {
+    endDayInput.value = allSettings['affiliate']?.withdrawal_end_day !== undefined 
+      ? allSettings['affiliate']?.withdrawal_end_day 
+      : 5;
+  }
+
+  const windowStatusSelect = document.getElementById('settings-wr-window-status');
+  if (windowStatusSelect) {
+    windowStatusSelect.value = allSettings['affiliate']?.withdrawal_window_status || 'auto';
+  }
+}
+
+async function saveAffiliateCommission(event) {
+  if (event) event.preventDefault();
+  const rateInput = document.getElementById('settings-commission-rate');
+  if (!rateInput) return;
+  const rate = parseInt(rateInput.value) || 20;
+
+  try {
+    const currentAffiliateSettings = allSettings['affiliate'] || {
+      withdrawal_start_day: 1,
+      withdrawal_end_day: 5,
+      withdrawal_window_status: 'auto'
+    };
+    const valueJSON = {
+      ...currentAffiliateSettings,
+      commission_percentage: rate
+    };
+
+    const { data, error } = await supabase
+      .from('platform_settings')
+      .upsert({ key: 'affiliate', value: valueJSON })
+      .select();
+
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      throw new Error('Permission denied. Please make sure the platform_settings table allows your role to write.');
+    }
+
+    showToast('Settings Saved', `Default affiliate commission rate updated to ${rate}%.`, 'success');
+    logAdminAction(`Updated default affiliate commission rate to ${rate}%`, 'Settings');
+    await loadAllData();
+  } catch (err) {
+    showToast('Failed to Save', err.message || String(err), 'error');
+  }
+}
+
+async function saveWithdrawalWindowSettings(event) {
+  if (event) event.preventDefault();
+  const startDay = parseInt(document.getElementById('settings-wr-start-day')?.value) || 1;
+  const endDay = parseInt(document.getElementById('settings-wr-end-day')?.value) || 5;
+  const status = document.getElementById('settings-wr-window-status')?.value || 'auto';
+
+  if (startDay < 1 || startDay > 31 || endDay < 1 || endDay > 31) {
+    return showToast('Invalid Days', 'Days of month must be between 1 and 31.', 'warning');
+  }
+  if (startDay > endDay) {
+    return showToast('Invalid Range', 'Start Day cannot be greater than End Day.', 'warning');
+  }
+
+  const btn = event?.submitter || document.querySelector('#withdrawal-settings-form button[type="submit"]');
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+
+  try {
+    const currentAffiliateSettings = allSettings['affiliate'] || { commission_percentage: 20 };
+    const updatedSettings = {
+      ...currentAffiliateSettings,
+      withdrawal_start_day: startDay,
+      withdrawal_end_day: endDay,
+      withdrawal_window_status: status
+    };
+
+    const { data, error } = await supabase
+      .from('platform_settings')
+      .upsert({ key: 'affiliate', value: updatedSettings })
+      .select();
+
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      throw new Error('Permission denied. Please make sure the platform_settings table allows your role to write.');
+    }
+
+    showToast('Settings Saved', 'Withdrawal window settings updated successfully.', 'success');
+    logAdminAction(`Updated withdrawal window settings (Start: ${startDay}, End: ${endDay}, Status: ${status})`, 'Settings');
+    await loadAllData();
+  } catch (err) {
+    showToast('Failed to Save', err.message || String(err), 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Save Window Settings'; }
+  }
+}
+
+async function viewAffiliateDetails(affiliateId) {
+  const affiliate = allAffiliates.find(a => a.id === affiliateId);
+  if (!affiliate) {
+    showToast('Error', 'Affiliate profile not found.', 'error');
+    return;
+  }
+
+  activeAffiliate = affiliate;
+
+  // Calculate statistics
+  const referred = allLandlords.filter(o => o.referred_by_code === affiliate.referral_code);
+  // Sort referred landlords by join date descending (latest first)
+  referred.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+  const referredIds = referred.map(l => l.id);
+  const defaultCommissionRate = allSettings['affiliate']?.commission_percentage || 20;
+  
+  const commissionRate = affiliate.commission_percentage !== null && affiliate.commission_percentage !== undefined
+    ? Number(affiliate.commission_percentage)
+    : defaultCommissionRate;
+
+  let totalCommissions = 0;
+  if (referredIds.length > 0) {
+    const referredPayments = allPayments.filter(p => 
+      referredIds.includes(p.owner_id) && 
+      p.month_year === 'SaaS Renewal' && 
+      p.status === 'approved'
+    );
+    totalCommissions = referredPayments.reduce((sum, p) => {
+      const baseAmount = Number(p.total_amount) / 1.18;
+      const rate = p.commission_rate !== null && p.commission_rate !== undefined
+        ? Number(p.commission_rate)
+        : commissionRate;
+      return sum + Math.round(baseAmount * (rate / 100));
+    }, 0);
+  }
+
+  const payouts = allAffiliatePayouts.filter(p => p.affiliate_id === affiliate.id);
+  // Sort payouts descending (latest first)
+  payouts.sort((a, b) => new Date(b.created_at || b.payout_date || 0) - new Date(a.created_at || a.payout_date || 0));
+
+  const totalPaid = payouts.reduce((sum, p) => sum + Number(p.amount), 0);
+  const unpaidBalance = Math.max(0, totalCommissions - totalPaid);
+
+  // Populate details
+  document.getElementById('aff-detail-name').textContent = affiliate.name || 'Anonymous';
+  document.getElementById('aff-detail-balance').textContent = formatCurrency(Math.round(unpaidBalance));
+  document.getElementById('aff-detail-email').textContent = affiliate.email || '—';
+  document.getElementById('aff-detail-phone').textContent = affiliate.phone || '—';
+  document.getElementById('aff-detail-upi').textContent = affiliate.upi_id || 'Not Set';
+  document.getElementById('aff-detail-code').textContent = affiliate.referral_code || '—';
+
+  document.getElementById('aff-detail-referred').textContent = referred.length;
+  document.getElementById('aff-detail-total-earned').textContent = formatCurrency(Math.round(totalCommissions));
+  document.getElementById('aff-detail-total-paid').textContent = formatCurrency(Math.round(totalPaid));
+  document.getElementById('aff-detail-payout-count').textContent = `${payouts.length} time${payouts.length !== 1 ? 's' : ''}`;
+
+  document.getElementById('payout-affiliate-id').value = affiliateId;
+  document.getElementById('payout-amount').value = Math.round(unpaidBalance);
+  document.getElementById('payout-txn-id').value = '';
+  
+  // Set custom commission rate input
+  document.getElementById('custom-comm-rate').value = affiliate.commission_percentage !== null && affiliate.commission_percentage !== undefined
+    ? affiliate.commission_percentage
+    : '';
+
+  // Render payout history logs
+  const logBody = document.getElementById('aff-payouts-log-body');
+  if (logBody) {
+    if (payouts.length === 0) {
+      logBody.innerHTML = `<tr><td colspan="3" class="text-center text-muted">No payouts recorded yet.</td></tr>`;
+    } else {
+      logBody.innerHTML = payouts.map(p => {
+        const dateStr = p.payout_date ? formatDate(p.payout_date) : formatDate(p.created_at);
+        return `
+          <tr>
+            <td>${dateStr}</td>
+            <td><strong style="color: var(--success-light);">${formatCurrency(Number(p.amount).toFixed(2))}</strong></td>
+            <td style="font-family: monospace; font-size: 11px;">${p.transaction_id || '—'}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+  }
+
+  // Render referred landlords log
+  const logLandlordsBody = document.getElementById('aff-landlords-log-body');
+  if (logLandlordsBody) {
+    if (referred.length === 0) {
+      logLandlordsBody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No referred landlords yet.</td></tr>`;
+    } else {
+      logLandlordsBody.innerHTML = referred.map(landlord => {
+        // Filter approved SaaS payments from this landlord
+        const landlordPayments = allPayments.filter(p => 
+          p.owner_id === landlord.id && 
+          p.month_year === 'SaaS Renewal' && 
+          p.status === 'approved'
+        );
+
+        let totalBasePaid = 0;
+        let commissionFromLandlord = 0;
+        landlordPayments.forEach(p => {
+          const baseAmount = Number(p.total_amount) / 1.18;
+          const rate = p.commission_rate !== null && p.commission_rate !== undefined
+            ? Number(p.commission_rate)
+            : commissionRate;
+          totalBasePaid += Math.round(baseAmount);
+          commissionFromLandlord += Math.round(baseAmount * (rate / 100));
+        });
+
+        let lastPaymentDate = 'No Payment';
+        if (landlordPayments.length > 0) {
+          landlordPayments.sort((a, b) => new Date(b.created_at || b.payment_date || 0) - new Date(a.created_at || a.payment_date || 0));
+          lastPaymentDate = landlordPayments[0].payment_date 
+            ? formatDate(landlordPayments[0].payment_date) 
+            : formatDate(landlordPayments[0].created_at);
+        }
+
+        let landlordStatus = landlord.status || 'Active';
+        const isExpired = landlord.subscription_expiry && new Date(landlord.subscription_expiry) < new Date();
+        if (isExpired && landlordStatus !== 'Suspended' && landlordStatus !== 'Locked') {
+          landlordStatus = 'Expired';
+        } else if (landlord.subscription_status === 'trial' && landlordStatus !== 'Suspended' && landlordStatus !== 'Locked') {
+          landlordStatus = 'Trial';
+        }
+
+        const statusClass = landlordStatus === 'Suspended' ? 'admin-badge-danger' : 
+                            (landlordStatus === 'Locked' ? 'admin-badge-warning' : 
+                            (landlordStatus === 'Expired' ? 'admin-badge-danger' : 
+                            (landlordStatus === 'Trial' ? 'admin-badge-info' : 'admin-badge-success')));
+
+        return `
+          <tr>
+            <td><strong>${landlord.name || 'Anonymous'}</strong></td>
+            <td><strong>${landlord.allowed_buildings || 0}</strong></td>
+            <td><span class="admin-badge ${statusClass}">${landlordStatus}</span></td>
+            <td><strong>${formatCurrency(Math.round(totalBasePaid))}</strong></td>
+            <td style="color: var(--warning-light);"><strong>${formatCurrency(Math.round(commissionFromLandlord))}</strong></td>
+            <td>${lastPaymentDate}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+  }
+
+  // Open modal
+  document.getElementById('modal-affiliate-detail').classList.add('active');
+}
+
+async function submitAffiliatePayout(event) {
+  if (event) event.preventDefault();
+  const affiliateId = document.getElementById('payout-affiliate-id').value;
+  const amount = Number(document.getElementById('payout-amount').value) || 0;
+  const txnId = document.getElementById('payout-txn-id').value.trim();
+
+  if (amount <= 0) {
+    showToast('Invalid Amount', 'Payout amount must be greater than zero.', 'warning');
+    return;
+  }
+
+  if (!txnId) {
+    showToast('Required', 'Please enter a transaction ID or reference.', 'warning');
+    return;
+  }
+
+  const affiliate = allAffiliates.find(a => a.id === affiliateId);
+
+  try {
+    const { error } = await supabase
+      .from('affiliate_payouts')
+      .insert({
+        affiliate_id: affiliateId,
+        amount: amount,
+        transaction_id: txnId,
+        status: 'paid'
+      });
+
+    if (error) throw error;
+
+    showToast('Payout Recorded', `Payout of ₹${amount} recorded for ${affiliate?.name || 'affiliate'}.`, 'success');
+    logAdminAction(`Recorded payout of ₹${amount} for affiliate ${affiliate?.name} (${affiliate?.referral_code})`, 'Payments');
+    
+    // Close modal
+    closeAdminModal('modal-affiliate-detail');
+    
+    // Reload
+    await loadAllData();
+  } catch (err) {
+    showToast('Failed to Save', err.message || String(err), 'error');
+  }
+}
+
+async function submitCustomCommission(event) {
+  if (event) event.preventDefault();
+  if (!activeAffiliate) return;
+
+  const commInput = document.getElementById('custom-comm-rate');
+  const commVal = commInput ? commInput.value.trim() : '';
+
+  let targetPercentage = null;
+  if (commVal !== '') {
+    targetPercentage = parseInt(commVal);
+    if (isNaN(targetPercentage) || targetPercentage < 1 || targetPercentage > 100) {
+      showToast('Invalid Rate', 'Commission rate must be a number between 1 and 100.', 'warning');
+      return;
+    }
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('affiliates')
+      .update({ commission_percentage: targetPercentage })
+      .eq('id', activeAffiliate.id)
+      .select();
+
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      throw new Error('Permission denied. Please make sure database migration v27 has been run in your Supabase SQL editor to allow superadmin updates.');
+    }
+
+    showToast('Commission Updated', `Commission rate updated for ${activeAffiliate.name}.`, 'success');
+    logAdminAction(`Updated custom commission rate for affiliate ${activeAffiliate.name} (${activeAffiliate.referral_code}) to ${targetPercentage !== null ? targetPercentage + '%' : 'Default'}`, 'Settings');
+    
+    // Close modal
+    closeAdminModal('modal-affiliate-detail');
+    
+    await loadAllData();
+  } catch (err) {
+    showToast('Failed to Save', err.message || String(err), 'error');
+  }
+}
+
+async function deleteAffiliatePermanently(affiliateId) {
+  const affiliate = allAffiliates.find(a => a.id === affiliateId);
+  if (!affiliate) return;
+
+  if (!confirm(`CRITICAL ACTION: Are you sure you want to PERMANENTLY remove affiliate ${affiliate.name}? This will delete their affiliate record and payout logs. This action is irreversible!`)) return;
+
+  try {
+    const { data, error } = await supabase
+      .from('affiliates')
+      .delete()
+      .eq('id', affiliateId)
+      .select();
+
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      throw new Error('Permission denied. Please make sure database migration v27 has been run in your Supabase SQL editor to allow superadmin deletions.');
+    }
+
+    showToast('Affiliate Removed', `${affiliate.name} has been permanently deleted as an affiliate.`, 'success');
+    logAdminAction(`Permanently deleted affiliate: ${affiliate.name} (${affiliate.referral_code})`, 'Settings');
+    
+    await loadAllData();
+  } catch (err) {
+    showToast('Deletion Failed', err.message || String(err), 'error');
+  }
+}
+
+function openBulkPayoutModal() {
+  let pendingCount = 0;
+  let totalAmount = 0;
+  const defaultCommissionRate = allSettings['affiliate']?.commission_percentage || 20;
+
+  allAffiliates.forEach(affiliate => {
+    const referred = allLandlords.filter(o => o.referred_by_code === affiliate.referral_code);
+    const referredIds = referred.map(l => l.id);
+    
+    const commissionRate = affiliate.commission_percentage !== null && affiliate.commission_percentage !== undefined
+      ? Number(affiliate.commission_percentage)
+      : defaultCommissionRate;
+
+    let totalCommissions = 0;
+    if (referredIds.length > 0) {
+      const referredPayments = allPayments.filter(p => 
+        referredIds.includes(p.owner_id) && 
+        p.month_year === 'SaaS Renewal' && 
+        p.status === 'approved'
+      );
+      totalCommissions = referredPayments.reduce((sum, p) => {
+        const baseAmount = Number(p.total_amount) / 1.18;
+        const rate = p.commission_rate !== null && p.commission_rate !== undefined
+          ? Number(p.commission_rate)
+          : commissionRate;
+        return sum + Math.round(baseAmount * (rate / 100));
+      }, 0);
+    }
+
+    const payouts = allAffiliatePayouts.filter(p => p.affiliate_id === affiliate.id);
+    const totalPaid = payouts.reduce((sum, p) => sum + Number(p.amount), 0);
+    const unpaidBalance = Math.max(0, totalCommissions - totalPaid);
+
+    if (unpaidBalance > 0) {
+      pendingCount++;
+      totalAmount += unpaidBalance;
+    }
+  });
+
+  if (pendingCount === 0) {
+    showToast('No Payouts Due', 'All affiliate balances are currently paid.', 'info');
+    return;
+  }
+
+  // Populate values in modal
+  document.getElementById('bulk-pay-count').textContent = pendingCount;
+  document.getElementById('bulk-pay-total').textContent = formatCurrency(Math.round(totalAmount));
+  document.getElementById('bulk-payout-txn-id').value = '';
+
+  // Open modal
+  const modal = document.getElementById('modal-bulk-payout');
+  if (modal) modal.classList.add('active');
+}
+
+async function submitBulkPayout(event) {
+  if (event) event.preventDefault();
+  const txnId = document.getElementById('bulk-payout-txn-id').value.trim();
+
+  if (!txnId) {
+    showToast('Required', 'Please enter a transaction ID or reference.', 'warning');
+    return;
+  }
+
+  const defaultCommissionRate = allSettings['affiliate']?.commission_percentage || 20;
+  const payoutsToInsert = [];
+
+  allAffiliates.forEach(affiliate => {
+    const referred = allLandlords.filter(o => o.referred_by_code === affiliate.referral_code);
+    const referredIds = referred.map(l => l.id);
+    
+    const commissionRate = affiliate.commission_percentage !== null && affiliate.commission_percentage !== undefined
+      ? Number(affiliate.commission_percentage)
+      : defaultCommissionRate;
+
+    let totalCommissions = 0;
+    if (referredIds.length > 0) {
+      const referredPayments = allPayments.filter(p => 
+        referredIds.includes(p.owner_id) && 
+        p.month_year === 'SaaS Renewal' && 
+        p.status === 'approved'
+      );
+      totalCommissions = referredPayments.reduce((sum, p) => {
+        const baseAmount = Number(p.total_amount) / 1.18;
+        const rate = p.commission_rate !== null && p.commission_rate !== undefined
+          ? Number(p.commission_rate)
+          : commissionRate;
+        return sum + Math.round(baseAmount * (rate / 100));
+      }, 0);
+    }
+
+    const payouts = allAffiliatePayouts.filter(p => p.affiliate_id === affiliate.id);
+    const totalPaid = payouts.reduce((sum, p) => sum + Number(p.amount), 0);
+    const unpaidBalance = Math.max(0, totalCommissions - totalPaid);
+
+    if (unpaidBalance > 0) {
+      payoutsToInsert.push({
+        affiliate_id: affiliate.id,
+        amount: Math.round(unpaidBalance),
+        transaction_id: txnId,
+        status: 'paid'
+      });
+    }
+  });
+
+  if (payoutsToInsert.length === 0) {
+    showToast('No Payouts Due', 'All affiliate balances are currently paid.', 'info');
+    closeAdminModal('modal-bulk-payout');
+    return;
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('affiliate_payouts')
+      .insert(payoutsToInsert)
+      .select();
+
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      throw new Error('Permission denied. Please make sure your affiliate_payouts table policy allows superadmin writes.');
+    }
+
+    const totalRecorded = payoutsToInsert.reduce((sum, p) => sum + p.amount, 0);
+    showToast('Bulk Payout Recorded', `Successfully recorded payouts for ${payoutsToInsert.length} affiliates totaling ₹${Math.round(totalRecorded)}.`, 'success');
+    logAdminAction(`Recorded bulk payout of ₹${Math.round(totalRecorded)} for ${payoutsToInsert.length} affiliates (Ref: ${txnId})`, 'Payments');
+    
+    // Close modal
+    closeAdminModal('modal-bulk-payout');
+    
+    // Reload
+    await loadAllData();
+  } catch (err) {
+    showToast('Failed to Save', err.message || String(err), 'error');
+  }
+}
+// ═══════════════════════════════════════════════════════════════
+// WITHDRAWAL REQUEST MANAGEMENT
+// ═══════════════════════════════════════════════════════════════
+
+function renderWithdrawalRequestsTable(filter = currentWRFilter) {
+  currentWRFilter = filter;
+  const tbody = document.getElementById('wr-admin-table-body');
+  if (!tbody) return;
+
+  // Update filter button states
+  ['all', 'pending', 'verified', 'rejected'].forEach(f => {
+    const btn = document.getElementById(`wr-filter-${f}`);
+    if (btn) btn.classList.toggle('active', f === filter);
+  });
+
+  const filtered = filter === 'all'
+    ? allWithdrawalRequests
+    : allWithdrawalRequests.filter(r => r.status === filter);
+
+  // Show pending count badge
+  const pendingCount = allWithdrawalRequests.filter(r => r.status === 'pending').length;
+  const pendingCountEl = document.getElementById('wr-pending-count');
+  if (pendingCountEl) {
+    pendingCountEl.textContent = pendingCount > 0
+      ? `${pendingCount} Pending`
+      : '';
+  }
+
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted" style="padding: var(--space-lg);">
+      ${filter === 'all'
+        ? 'No withdrawal requests yet. Run migration v28 to enable this feature.'
+        : `No ${filter} withdrawal requests.`}
+    </td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(req => {
+    const date = req.created_at
+      ? new Date(req.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+      : 'N/A';
+
+    const status = req.status || 'pending';
+    const badgeClass = status === 'verified' ? 'admin-badge-success'
+                     : status === 'rejected'  ? 'admin-badge-danger'
+                     : 'admin-badge-warning';
+    const statusLabel = status === 'verified' ? '✓ Verified'
+                      : status === 'rejected' ? '✗ Rejected'
+                      : '⏳ Pending';
+
+    const isPending = status === 'pending';
+
+    return `<tr>
+      <td style="white-space:nowrap;">${date}</td>
+      <td><strong>${escHtml(req.affiliate_name || '—')}</strong></td>
+      <td>${escHtml(req.phone || '—')}</td>
+      <td style="font-family:monospace;font-size:12px;color:var(--primary-light);">${escHtml(req.upi_id || '—')}</td>
+      <td style="font-weight:700;color:var(--warning-light);">₹${Number(req.amount || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</td>
+      <td style="font-size:12px;color:var(--text-secondary);max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${escHtml(req.buildings_info || '')}">${escHtml(req.buildings_info || '—')}</td>
+      <td><span class="admin-badge ${badgeClass}">${statusLabel}</span></td>
+      <td style="text-align:right;">
+        ${isPending
+          ? `<button class="admin-btn admin-btn-primary" style="padding:4px 10px;font-size:11px;" onclick="openVerifyWRModal('${req.id}')">
+              <svg style="width:11px;height:11px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Review
+            </button>`
+          : `<span style="font-size:11px;color:var(--text-muted);font-style:italic;">${escHtml(req.note || '—')}</span>`
+        }
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function setWRFilter(filter) {
+  renderWithdrawalRequestsTable(filter);
+}
+
+function openVerifyWRModal(wrId) {
+  const req = allWithdrawalRequests.find(r => r.id === wrId);
+  if (!req) return;
+
+  document.getElementById('wr-modal-id').value = wrId;
+  document.getElementById('wr-view-name').textContent     = req.affiliate_name || '—';
+  document.getElementById('wr-view-phone').textContent    = req.phone || '—';
+  document.getElementById('wr-view-upi').textContent      = req.upi_id || '—';
+  document.getElementById('wr-view-amount').textContent   = `₹${Number(req.amount || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}`;
+  document.getElementById('wr-view-buildings').textContent = req.buildings_info || '—';
+  document.getElementById('wr-admin-note').value          = req.note || '';
+
+  document.getElementById('modal-verify-wr').classList.add('active');
+}
+
+async function processWithdrawalRequest(newStatus) {
+  const wrId   = document.getElementById('wr-modal-id')?.value;
+  const note   = document.getElementById('wr-admin-note')?.value.trim() || null;
+
+  if (!wrId) return;
+
+  const req = allWithdrawalRequests.find(r => r.id === wrId);
+
+  try {
+    const { data, error } = await supabase
+      .from('withdrawal_requests')
+      .update({ status: newStatus, note: note, updated_at: new Date().toISOString() })
+      .eq('id', wrId)
+      .select();
+
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      throw new Error('Update failed — check that migration v28 RLS policies allow superadmin writes on withdrawal_requests.');
+    }
+
+    if (newStatus === 'verified') {
+      // Auto-insert a payout record in affiliate_payouts so the affiliate's balance decreases correctly
+      const { error: payoutErr } = await supabase
+        .from('affiliate_payouts')
+        .insert({
+          affiliate_id: req.affiliate_id,
+          amount: Math.round(Number(req.amount)),
+          transaction_id: note || `WR-${req.id.slice(0, 8).toUpperCase()}`,
+          status: 'paid'
+        });
+      if (payoutErr) {
+        console.error('Failed to auto-insert affiliate payout:', payoutErr);
+      }
+    }
+
+    const statusLabel = newStatus === 'verified' ? 'Verified ✓' : 'Rejected ✗';
+    showToast('Request Updated', `Withdrawal request from ${req?.affiliate_name || 'affiliate'} marked as ${statusLabel}.`, 'success');
+    logAdminAction(`Marked withdrawal request ${wrId} (${req?.affiliate_name}, ₹${req?.amount}) as ${newStatus}${note ? ` — Note: ${note}` : ''}`, 'Payments');
+
+    closeAdminModal('modal-verify-wr');
+    await loadAllData();
+  } catch (err) {
+    showToast('Update Failed', err.message || String(err), 'error');
+  }
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
 

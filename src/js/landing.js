@@ -88,7 +88,7 @@ window.handleOwnerLogin = async function() {
 
         const isExpired = ownerProfile.plan_type !== 'Enterprise' && 
                           (ownerProfile.subscription_status === 'expired' || 
-                           ownerProfile.subscription_status !== 'active' || 
+                           (ownerProfile.subscription_status !== 'active' && ownerProfile.subscription_status !== 'trial') || 
                            (ownerProfile.subscription_expiry && new Date(ownerProfile.subscription_expiry) < new Date()));
 
         if (isExpired) {
@@ -157,6 +157,94 @@ async function checkSession() {
 
     const userId = session.user.id;
 
+    // A. Check oauthRole first (just after callback redirect)
+    const oauthRole = localStorage.getItem('pgb_oauth_role');
+    if (oauthRole) {
+      localStorage.removeItem('pgb_oauth_role');
+      if (oauthRole === 'owner') {
+        const { data: ownerProfile } = await supabase
+          .from('owners')
+          .select('id, status, subscription_status, subscription_expiry, plan_type')
+          .eq('id', userId)
+          .maybeSingle();
+        if (ownerProfile) {
+          localStorage.setItem('pgb_user_role', 'owner');
+          
+          if (ownerProfile.status === 'Locked') {
+            window.location.href = '/account-locked.html';
+            return;
+          }
+          
+          const isExpired = ownerProfile.plan_type !== 'Enterprise' && 
+                            (ownerProfile.subscription_status === 'expired' || 
+                             (ownerProfile.subscription_status !== 'active' && ownerProfile.subscription_status !== 'trial') || 
+                             (ownerProfile.subscription_expiry && new Date(ownerProfile.subscription_expiry) < new Date()));
+                            
+          if (isExpired) {
+            if (!ownerProfile.subscription_expiry) {
+              window.location.href = '/owner-register.html?upgrade=true';
+            } else {
+              window.location.href = '/subscription-expired.html';
+            }
+            return;
+          }
+          window.location.href = '/owner-dashboard.html';
+        } else {
+          window.location.href = '/owner-register.html';
+        }
+      } else if (oauthRole === 'affiliate') {
+        localStorage.setItem('pgb_user_role', 'affiliate');
+        window.location.href = '/affiliate-dashboard.html';
+      } else {
+        window.location.href = '/tenant-register.html';
+      }
+      return;
+    }
+
+    // B. Check userRole next (if navigating back to homepage while logged in)
+    const userRole = localStorage.getItem('pgb_user_role');
+    if (userRole) {
+      if (userRole === 'owner') {
+        const { data: ownerProfile } = await supabase
+          .from('owners')
+          .select('id, status, subscription_status, subscription_expiry, plan_type')
+          .eq('id', userId)
+          .maybeSingle();
+        if (ownerProfile) {
+          if (ownerProfile.status === 'Locked') {
+            window.location.href = '/account-locked.html';
+            return;
+          }
+          const isExpired = ownerProfile.plan_type !== 'Enterprise' && 
+                            (ownerProfile.subscription_status === 'expired' || 
+                             (ownerProfile.subscription_status !== 'active' && ownerProfile.subscription_status !== 'trial') || 
+                             (ownerProfile.subscription_expiry && new Date(ownerProfile.subscription_expiry) < new Date()));
+          if (isExpired) {
+            if (!ownerProfile.subscription_expiry) {
+              window.location.href = '/owner-register.html?upgrade=true';
+            } else {
+              window.location.href = '/subscription-expired.html';
+            }
+            return;
+          }
+          window.location.href = '/owner-dashboard.html';
+        } else {
+          window.location.href = '/owner-dashboard.html';
+        }
+        return;
+      } else if (userRole === 'tenant') {
+        window.location.href = '/tenant-dashboard.html';
+        return;
+      } else if (userRole === 'affiliate') {
+        const onboarded = localStorage.getItem(`pgb_aff_onboarded_${userId}`) === 'true';
+        if (onboarded) {
+          window.location.href = '/affiliate-dashboard.html';
+          return;
+        }
+      }
+    }
+
+    // C. Fallback: check tables sequentially if no role is stored
     // 1. Check owners table by auth user ID
     const { data: ownerProfile } = await supabase
       .from('owners')
@@ -176,7 +264,7 @@ async function checkSession() {
       
       const isExpired = ownerProfile.plan_type !== 'Enterprise' && 
                         (ownerProfile.subscription_status === 'expired' || 
-                         ownerProfile.subscription_status !== 'active' || 
+                         (ownerProfile.subscription_status !== 'active' && ownerProfile.subscription_status !== 'trial') || 
                          (ownerProfile.subscription_expiry && new Date(ownerProfile.subscription_expiry) < new Date()));
                         
       if (isExpired) {
@@ -228,16 +316,24 @@ async function checkSession() {
       return;
     }
 
-    // 3. No profile found — check if this is an OAuth signup/redirect in progress
-    const oauthRole = localStorage.getItem('pgb_oauth_role');
-    if (oauthRole) {
-      localStorage.removeItem('pgb_oauth_role');
-      if (oauthRole === 'owner') {
-        window.location.href = '/owner-register.html';
-      } else {
-        window.location.href = '/tenant-register.html';
+    // 3. Check affiliates table by auth user ID
+    const { data: affiliateProfile } = await supabase
+      .from('affiliates')
+      .select('id, phone, is_onboarded')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (affiliateProfile) {
+      const hasPhone = !!(affiliateProfile.phone && affiliateProfile.phone.trim());
+      const onboarded = affiliateProfile.is_onboarded === true || hasPhone;
+      
+      if (onboarded) {
+        localStorage.setItem(`pgb_aff_onboarded_${userId}`, 'true');
+        localStorage.setItem('pgb_user_role', 'affiliate');
+        localStorage.removeItem('pgb_oauth_role');
+        window.location.href = '/affiliate-dashboard.html';
+        return;
       }
-      return;
     }
 
     // Otherwise, this is an orphaned auth session (e.g. deleted user profile).

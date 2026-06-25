@@ -381,6 +381,14 @@ window.onRoomChange = function() {
       meterGroup.classList.remove('hidden');
     }
   }
+
+  // Always show bond duration group when room is selected
+  const bondGroup = document.getElementById('info-bond-group');
+  if (bondGroup) {
+    bondGroup.classList.remove('hidden');
+    const input = document.getElementById('info-bond');
+    if (input) input.value = '';
+  }
 };
 
 // ─── STEP 3 → Go to Members ───
@@ -550,6 +558,10 @@ window.handleSubmitRegistration = async function() {
     const altPhone = (isReturningTenant && existingTenantProfile) ? existingTenantProfile.alt_phone : document.getElementById('info-alt-phone').value.trim();
     const aadhaar = (isReturningTenant && existingTenantProfile) ? existingTenantProfile.aadhaar_number : document.getElementById('info-aadhaar').value.trim();
 
+    // Fetch bond agreement months
+    const bondInput = document.getElementById('info-bond');
+    const bondMonths = bondInput ? parseInt(bondInput.value) || 0 : 0;
+
     const { data: inserted, error } = await supabase
       .from('tenants')
       .insert({
@@ -567,6 +579,7 @@ window.handleSubmitRegistration = async function() {
         advance_paid: 0,
         initial_meter_reading: meterReading,
         current_meter_reading: meterReading,
+        bond_months: bondMonths,
         join_date: new Date().toISOString().split('T')[0]
       })
       .select();

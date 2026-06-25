@@ -203,7 +203,7 @@ async function checkGoogleSession() {
         const urlParams = new URLSearchParams(window.location.search);
         
         // Check if user has an active subscription
-        const isActiveSub = profile.subscription_status === 'active' && 
+        const isActiveSub = (profile.subscription_status === 'active' || profile.subscription_status === 'trial') && 
                              profile.subscription_expiry && 
                              new Date(profile.subscription_expiry) >= new Date();
         if (urlParams.get('upgrade') === 'true' && isActiveSub) {
@@ -248,7 +248,7 @@ async function checkGoogleSession() {
         } else {
           const isExpired = profile.plan_type !== 'Enterprise' && 
                             (profile.subscription_status === 'expired' ||
-                             profile.subscription_status !== 'active' || 
+                             (profile.subscription_status !== 'active' && profile.subscription_status !== 'trial') || 
                              (profile.subscription_expiry && new Date(profile.subscription_expiry) < new Date()));
           if (!isExpired) {
             window.location.href = '/owner-dashboard.html';
@@ -277,6 +277,13 @@ async function checkGoogleSession() {
       document.getElementById('reg-email').value = googleEmail;
       document.getElementById('reg-email').disabled = true;
 
+      // Prefill referral code if present in localStorage
+      const savedRef = localStorage.getItem('pgb_referral_code') || '';
+      const refInput = document.getElementById('reg-ref-code');
+      if (refInput) {
+        refInput.value = savedRef;
+      }
+
       // Toggle containers: hide sign-in button, show details inputs
       document.getElementById('google-init-container').classList.add('hidden');
       document.getElementById('google-details-container').classList.remove('hidden');
@@ -290,6 +297,7 @@ window.handleGoogleRegisterSubmit = async function () {
   const name = document.getElementById('reg-name').value.trim();
   const phone = document.getElementById('reg-phone').value.trim();
   const email = document.getElementById('reg-email').value.trim();
+  const refCode = document.getElementById('reg-ref-code')?.value.trim().toUpperCase() || '';
 
   const nameErr = validateName(name);
   if (nameErr) { showToast('Invalid Name', nameErr, 'warning'); return; }
@@ -303,6 +311,15 @@ window.handleGoogleRegisterSubmit = async function () {
     return;
   }
 
+  // Validate referral code if entered
+  if (refCode) {
+    const refRegex = /^RS[A-Z0-9]{6}$/;
+    if (!refRegex.test(refCode)) {
+      showToast('Invalid Referral Code', 'Referral code must be in the format RSXXXXXX (e.g. RS123456).', 'warning');
+      return;
+    }
+  }
+
   const btn = document.getElementById('btn-register-submit');
   if (btn) {
     btn.disabled = true;
@@ -312,6 +329,30 @@ window.handleGoogleRegisterSubmit = async function () {
   try {
     const session = await getSession();
     if (!session) throw new Error('No active session found.');
+
+    // If referral code is entered, verify it exists in affiliates table
+    if (refCode) {
+      const { data: aff, error: affErr } = await supabase
+        .from('affiliates')
+        .select('id')
+        .eq('referral_code', refCode)
+        .maybeSingle();
+
+      if (affErr || !aff) {
+        showToast('Invalid Referral Code', 'The entered referral code does not exist. Please check and try again.', 'warning');
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Complete Google Registration →';
+        }
+        return;
+      }
+      
+      // Save valid referral code in localStorage so createOwnerProfile() will retrieve it
+      localStorage.setItem('pgb_referral_code', refCode);
+    } else {
+      // Clear any pre-existing code if they cleared the field
+      localStorage.removeItem('pgb_referral_code');
+    }
 
     const ownerKey = await generateOwnerKey();
 
@@ -691,6 +732,44 @@ async function handlePaymentSuccess(paymentId, totalAmount, userId) {
       if (retryErr) throw retryErr;
     }
 
+    // Fetch referring affiliate's commission rate if any
+    let referralCommissionPercentage = null;
+    try {
+      const { data: ownerData } = await supabase
+        .from('owners')
+        .select('referred_by_code')
+        .eq('id', userId)
+        .maybeSingle();
+      
+      if (ownerData && ownerData.referred_by_code) {
+        const { data: affData } = await supabase
+          .from('affiliates')
+          .select('commission_percentage')
+          .eq('referral_code', ownerData.referred_by_code)
+          .maybeSingle();
+        
+        if (affData) {
+          if (affData.commission_percentage !== null && affData.commission_percentage !== undefined) {
+            referralCommissionPercentage = Number(affData.commission_percentage);
+          } else {
+            // Get default from settings
+            const { data: platformSettings } = await supabase
+              .from('platform_settings')
+              .select('value')
+              .eq('key', 'affiliate')
+              .maybeSingle();
+            if (platformSettings && platformSettings.value) {
+              referralCommissionPercentage = Number(platformSettings.value.commission_percentage) || 20;
+            } else {
+              referralCommissionPercentage = 20;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to fetch referred affiliate commission percentage:', e);
+    }
+
     // 2. Insert transaction record in payments table
     const { error: paymentErr } = await supabase
       .from('payments')
@@ -703,7 +782,8 @@ async function handlePaymentSuccess(paymentId, totalAmount, userId) {
         transaction_id: paymentId,
         status: 'approved',
         payment_date: new Date().toISOString().slice(0, 10),
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        commission_rate: referralCommissionPercentage
       });
 
     if (paymentErr) {

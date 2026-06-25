@@ -1720,3 +1720,122 @@
 }
 
 
+/* ── APK Download Promo Card ── */
+.download-promo-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  border-radius: var(--radius-lg, 16px);
+  background: linear-gradient(135deg, hsl(250, 65%, 28%) 0%, hsl(195, 90%, 30%) 100%);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 8px 32px rgba(108, 92, 231, 0.30), 0 2px 8px rgba(0,0,0,0.18);
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.5s ease;
+}
+
+.download-promo-card::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.download-promo-card::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  left: 40px;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(0, 210, 255, 0.10) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.download-promo-icon {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+}
+
+.download-promo-body {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.download-promo-title {
+  font-size: var(--font-md, 15px);
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+
+.download-promo-desc {
+  font-size: var(--font-xs, 12px);
+  color: rgba(255,255,255,0.75);
+  line-height: 1.5;
+}
+
+.btn-download-apk {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.95);
+  color: hsl(250, 55%, 35%);
+  font-weight: 800;
+  font-size: var(--font-sm, 13px);
+  border: none;
+  border-radius: var(--radius-sm, 8px);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.20);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.btn-download-apk:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+  background: #ffffff;
+}
+
+.btn-download-apk:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.btn-download-apk.loading svg.spin-icon {
+  animation: spin 0.8s linear infinite;
+}
+
+@media (max-width: 768px) {
+  .download-promo-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px;
+  }
+  .download-promo-icon { width: 44px; height: 44px; }
+  .btn-download-apk { width: 100%; justify-content: center; }
+}
+

@@ -6,9 +6,11 @@
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/icons/icon-192.png" />
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Tenant Dashboard — PG Builders</title>
-  <meta name="description" content="Tenant dashboard for viewing rent bills, making payments, filing complaints, and sending vacate notices." />
+  <meta name="description"
+    content="Tenant dashboard for viewing rent bills, making payments, filing complaints, and sending vacate notices." />
   <!-- PWA -->
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#6C5CE7" />
@@ -16,12 +18,13 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="PG Builders" />
-  
-  
+
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="/src/css/common.css" />
   <link rel="stylesheet" href="/src/css/dashboard.css" />
   <!-- Theme Manager -->
@@ -38,7 +41,13 @@
     <div class="sub-card"
       style="max-width: 520px; text-align: left; padding: var(--space-xl); background: var(--gradient-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); width: 90%;">
       <div style="text-align: center; margin-bottom: 20px;">
-        <div style="margin-bottom: 12px; display: flex; align-items: center; justify-content: center; color: var(--warning-dark);" id="block-icon"><svg class="svg-icon" style="width: 48px; height: 48px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
+        <div
+          style="margin-bottom: 12px; display: flex; align-items: center; justify-content: center; color: var(--warning-dark);"
+          id="block-icon"><svg class="svg-icon"
+            style="width: 48px; height: 48px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg></div>
         <h2 class="sub-title" id="block-title" style="font-size: var(--font-xl); font-weight: 800; margin-bottom: 8px;">
           Account Inactive</h2>
         <p class="sub-desc" id="block-desc"
@@ -92,10 +101,32 @@
 
           <div id="block-room-details" class="hidden"
             style="background: var(--bg-elevated); border: 1px solid var(--border-light); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 16px; font-size: var(--font-xs); line-height: 1.6;">
-            <div><svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg> <strong>Rent:</strong> <span id="block-room-rent">—</span></div>
-            <div><svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M3 22h18M6 18h2v-4H6v4zm6 0h2v-4h-2v4zm6 0h2v-4h-2v4zm-15-8h18L12 2 3 10z"></path></svg> <strong>Security Deposit:</strong> <span id="block-room-advance">—</span></div>
-            <div><svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> <strong>Maintenance:</strong> <span id="block-room-maint">—</span></div>
-            <div><svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="16"></line><line x1="15" y1="22" x2="15" y2="16"></line></svg> <strong>Room Type:</strong> <span id="block-room-type">—</span></div>
+            <div><svg class="svg-icon"
+                style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;"
+                viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="16"></line>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+              </svg> <strong>Rent:</strong> <span id="block-room-rent">—</span></div>
+            <div><svg class="svg-icon"
+                style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;"
+                viewBox="0 0 24 24">
+                <path d="M3 22h18M6 18h2v-4H6v4zm6 0h2v-4h-2v4zm6 0h2v-4h-2v4zm-15-8h18L12 2 3 10z"></path>
+              </svg> <strong>Security Deposit:</strong> <span id="block-room-advance">—</span></div>
+            <div><svg class="svg-icon"
+                style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;"
+                viewBox="0 0 24 24">
+                <path
+                  d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                </path>
+              </svg> <strong>Maintenance:</strong> <span id="block-room-maint">—</span></div>
+            <div><svg class="svg-icon"
+                style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; margin-right: 4px; vertical-align: middle;"
+                viewBox="0 0 24 24">
+                <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                <line x1="9" y1="22" x2="9" y2="16"></line>
+                <line x1="15" y1="22" x2="15" y2="16"></line>
+              </svg> <strong>Room Type:</strong> <span id="block-room-type">—</span></div>
           </div>
 
           <div style="display: flex; gap: 8px;">
@@ -108,8 +139,17 @@
         <!-- Step 3: Tenant Information -->
         <div id="block-step-info" class="hidden"
           style="margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 16px;">
-          <h4 style="font-weight: 700; font-size: var(--font-sm); margin-bottom: 12px; color: var(--text-primary); display: flex; align-items: center; gap: 6px;"><svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-            Complete Your Profile</h4>
+          <h4
+            style="font-weight: 700; font-size: var(--font-sm); margin-bottom: 12px; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
+            <svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2;"
+              viewBox="0 0 24 24">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+            Complete Your Profile
+          </h4>
 
           <div class="form-group">
             <label class="form-label" for="block-info-name" style="font-size: var(--font-xs);">Full Name *</label>
@@ -142,12 +182,28 @@
                 style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--bg-input); border: 1px solid var(--border-input); border-radius: var(--radius-sm); cursor: pointer; flex: 1;">
                 <input type="radio" name="block-living-type" value="alone" checked
                   onchange="toggleBlockMembersSection()" />
-                 <span style="font-size: var(--font-xs); font-weight: 500; display: inline-flex; align-items: center; gap: 4px;"><svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Alone</span>
+                <span
+                  style="font-size: var(--font-xs); font-weight: 500; display: inline-flex; align-items: center; gap: 4px;"><svg
+                    class="svg-icon"
+                    style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;"
+                    viewBox="0 0 24 24">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg> Alone</span>
               </label>
               <label
                 style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--bg-input); border: 1px solid var(--border-input); border-radius: var(--radius-sm); cursor: pointer; flex: 1;">
                 <input type="radio" name="block-living-type" value="family" onchange="toggleBlockMembersSection()" />
-                 <span style="font-size: var(--font-xs); font-weight: 500; display: inline-flex; align-items: center; gap: 4px;"><svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Only Members</span>
+                <span
+                  style="font-size: var(--font-xs); font-weight: 500; display: inline-flex; align-items: center; gap: 4px;"><svg
+                    class="svg-icon"
+                    style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;"
+                    viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg> Only Members</span>
               </label>
             </div>
           </div>
@@ -169,10 +225,22 @@
             <input class="form-input" type="number" id="block-info-meter" placeholder="e.g. 1030" />
           </div>
 
+          <div class="form-group hidden" id="block-info-bond-group" style="margin-top: 16px;">
+            <label class="form-label" for="block-info-bond" style="font-size: var(--font-xs);">Bond Agreement Duration
+              (Months) - Optional / बांड समझौता (महीने) - वैकल्पिक</label>
+            <input class="form-input" type="number" id="block-info-bond" placeholder="e.g. 6 or 12" min="0"
+              style="padding: 6px 10px; height: 32px; font-size: var(--font-sm); background: var(--bg-input); border-radius: var(--radius-sm); color: var(--text-primary); border: 1px solid var(--border-input); width: 100%;" />
+          </div>
+
           <div style="display: flex; gap: 8px; margin-top: 20px;">
             <button class="btn btn-secondary btn-sm" onclick="goBackToBlockSelect()">← Back</button>
-             <button class="btn btn-primary btn-sm btn-full" onclick="submitBlockReRegistration()" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">Submit Request
-              <svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></button>
+            <button class="btn btn-primary btn-sm btn-full" onclick="submitBlockReRegistration()"
+              style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">Submit Request
+              <svg class="svg-icon"
+                style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5;"
+                viewBox="0 0 24 24">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg></button>
           </div>
         </div>
       </div>
@@ -184,14 +252,25 @@
   </div>
 
   <!-- Mobile Sidebar Toggle -->
-  <button class="sidebar-toggle" id="sidebar-toggle"><svg class="svg-icon" style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+  <button class="sidebar-toggle" id="sidebar-toggle"><svg class="svg-icon"
+      style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg></button>
   <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
   <!-- ═══════════════ SIDEBAR ═══════════════ -->
   <aside class="sidebar" id="sidebar">
     <a class="sidebar-brand" href="/">
-      <div class="brand-icon" style="background: transparent; display: flex; align-items: center; justify-content: center; color: var(--primary-light);">
-        <svg class="svg-icon" style="width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="16"></line><line x1="15" y1="22" x2="15" y2="16"></line></svg>
+      <div class="brand-icon"
+        style="background: transparent; display: flex; align-items: center; justify-content: center; color: var(--primary-light);">
+        <svg class="svg-icon" style="width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2;"
+          viewBox="0 0 24 24">
+          <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+          <line x1="9" y1="22" x2="9" y2="16"></line>
+          <line x1="15" y1="22" x2="15" y2="16"></line>
+        </svg>
       </div>
       <span class="brand-text">PG <span>Builders</span></span>
     </a>
@@ -199,52 +278,106 @@
     <div class="sidebar-menu">
       <button class="menu-item active" data-tab="home" onclick="switchTab('home', this)">
         <span class="icon">
-          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          <svg class="svg-icon" viewBox="0 0 24 24">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
         </span>
         <span>Dashboard</span>
       </button>
       <button class="menu-item" data-tab="payment" onclick="switchTab('payment', this)">
         <span class="icon">
-          <svg class="svg-icon" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+          <svg class="svg-icon" viewBox="0 0 24 24">
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+            <line x1="1" y1="10" x2="23" y2="10"></line>
+          </svg>
         </span>
         <span>Pay Rent</span>
       </button>
       <button class="menu-item" data-tab="history" onclick="switchTab('history', this)">
         <span class="icon">
-          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          <svg class="svg-icon" viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+          </svg>
         </span>
         <span>Payment History</span>
       </button>
       <button class="menu-item" data-tab="complaints" onclick="switchTab('complaints', this)">
         <span class="icon">
-          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+          <svg class="svg-icon" viewBox="0 0 24 24">
+            <path
+              d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+            </path>
+          </svg>
         </span>
         <span>Complaints</span>
       </button>
       <button class="menu-item" data-tab="vacate" onclick="switchTab('vacate', this)">
         <span class="icon">
-          <svg class="svg-icon" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          <svg class="svg-icon" viewBox="0 0 24 24">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
         </span>
         <span>Vacate Notice</span>
       </button>
       <button class="menu-item" data-tab="settings" onclick="switchTab('settings', this)">
         <span class="icon">
-          <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <svg class="svg-icon" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z">
+            </path>
+          </svg>
         </span>
         <span>Settings</span>
       </button>
-      <button class="menu-item show-mobile flex" onclick="handleLogout()" style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: 12px;">
+      <!-- Download APK (Mobile Sidebar) -->
+      <button class="menu-item show-mobile flex" id="sidebar-download-apk-btn" onclick="window.downloadAPK(this)"
+        style="margin-top: 8px; margin-bottom: 4px;">
         <span class="icon">
-          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+        </span>
+        <span>Download APK</span>
+      </button>
+      <button class="menu-item show-mobile flex" onclick="handleLogout()"
+        style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: 12px;">
+        <span class="icon">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
         </span>
         <span>Logout</span>
       </button>
     </div>
 
     <div class="sidebar-footer" style="padding: 12px 20px;">
+      <!-- Logout button (desktop visible) -->
+      <button onclick="handleLogout()" style="margin-bottom:8px;width:100%;background:transparent;border:1px solid var(--border-color);color:var(--text-secondary);font-weight:600;font-size:12px;padding:8px 10px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s ease;" onmouseover="this.style.background='var(--bg-button-secondary-hover)';this.style.color='var(--text-primary)'" onmouseout="this.style.background='transparent';this.style.color='var(--text-secondary)'">
+        <svg style="width:1.1em;height:1.1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        Logout
+      </button>
       <!-- Install App button -->
-      <button id="sidebar-install-btn" onclick="window.showPremiumInstallModal()" style="width:100%;background:linear-gradient(135deg,#6C5CE7,#00D2FF);border:none;color:white;font-weight:700;font-size:12px;padding:10px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;">
-        <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; vertical-align: middle;" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg> Install App
+      <button id="sidebar-install-btn" onclick="window.showPremiumInstallModal()"
+        style="width:100%;background:linear-gradient(135deg,#6C5CE7,#00D2FF);border:none;color:white;font-weight:700;font-size:12px;padding:10px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;">
+        <svg class="svg-icon"
+          style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2; vertical-align: middle;"
+          viewBox="0 0 24 24">
+          <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+          <line x1="12" y1="18" x2="12.01" y2="18"></line>
+        </svg> Install App
       </button>
     </div>
   </aside>
@@ -262,14 +395,20 @@
         </div>
         <button class="btn btn-secondary btn-sm" id="notice-board-btn" onclick="openNoticeBoard()"
           style="position: relative; display: inline-flex; align-items: center; gap: 6px;">
-          <svg style="width:1.2em; height:1.2em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; vertical-align:middle; display:inline-block;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Notice Board
+          <svg
+            style="width:1.2em; height:1.2em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; vertical-align:middle; display:inline-block;"
+            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+          </svg> Notice Board
           <span id="notice-board-dot" class="hidden"
             style="position: absolute; top: -4px; right: -4px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; border: 2px solid var(--bg-surface);"></span>
         </button>
         <!-- Theme Toggle Switcher -->
-        <button id="theme-toggle-btn" onclick="toggleTheme()" class="btn btn-ghost btn-sm" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;padding:0;font-size:16px;" title="Switch Theme">
+        <button id="theme-toggle-btn" onclick="toggleTheme()" class="btn btn-ghost btn-sm"
+          style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;padding:0;font-size:16px;"
+          title="Switch Theme">
         </button>
-        <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Logout</button>
       </div>
     </header>
 
@@ -278,7 +417,12 @@
       <!-- ═══════════════ TAB: DASHBOARD ═══════════════ -->
       <section class="tab-content active" id="tab-home">
         <div class="section-header">
-          <h2 class="section-title-main" style="display: flex; align-items: center; gap: 8px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> My Dashboard</h2>
+          <h2 class="section-title-main" style="display: flex; align-items: center; gap: 8px;"><svg class="svg-icon"
+              style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;"
+              viewBox="0 0 24 24">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg> My Dashboard</h2>
         </div>
 
 
@@ -286,49 +430,86 @@
         <div class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
           <div class="kpi-card">
             <div class="kpi-icon">
-              <svg class="svg-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <svg class="svg-icon" viewBox="0 0 24 24">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
             </div>
             <div class="kpi-label">Join Date</div>
             <div class="kpi-value" id="kpi-join" style="font-size: var(--font-lg);">—</div>
           </div>
-          <div class="kpi-card" style="border-left: 4px solid var(--warning); background: linear-gradient(135deg, rgba(253, 203, 110, 0.05), var(--bg-kpi-gradient-end));">
+          <div class="kpi-card"
+            style="border-left: 4px solid var(--warning); background: linear-gradient(135deg, rgba(253, 203, 110, 0.05), var(--bg-kpi-gradient-end));">
             <div class="kpi-icon">
-              <svg class="svg-icon" style="color: var(--warning);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <svg class="svg-icon" style="color: var(--warning);" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
             </div>
             <div class="kpi-label">Next Payment</div>
             <div class="kpi-value" id="kpi-next-payment" style="font-size: var(--font-lg);">—</div>
           </div>
           <div class="kpi-card">
             <div class="kpi-icon">
-              <svg class="svg-icon" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+              <svg class="svg-icon" viewBox="0 0 24 24">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+              </svg>
             </div>
             <div class="kpi-label">Monthly Rent</div>
             <div class="kpi-value" id="kpi-rent">₹0</div>
           </div>
           <div class="kpi-card">
             <div class="kpi-icon">
-              <svg class="svg-icon" style="color: var(--success);" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <svg class="svg-icon" style="color: var(--success);" viewBox="0 0 24 24">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
             </div>
             <div class="kpi-label">Security Deposit Paid</div>
             <div class="kpi-value" id="kpi-advance" style="color: var(--success);">₹0</div>
           </div>
+          <div class="kpi-card" id="kpi-bond-card"
+            style="border-left: 4px solid var(--primary); background: linear-gradient(135deg, rgba(108, 92, 231, 0.05), var(--bg-kpi-gradient-end));">
+            <div class="kpi-icon">
+              <svg class="svg-icon" style="color: var(--primary);" viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
+            </div>
+            <div class="kpi-label">Bond Agreement / बांड</div>
+            <div class="kpi-value" id="kpi-bond-value" style="font-size: var(--font-lg);">No Bond</div>
+          </div>
           <div class="kpi-card">
             <div class="kpi-icon">
-              <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+              <svg class="svg-icon" viewBox="0 0 24 24">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                <polyline points="17 6 23 6 23 12"></polyline>
+              </svg>
             </div>
             <div class="kpi-label">Total Paid</div>
             <div class="kpi-value" id="kpi-total-paid">₹0</div>
           </div>
           <div class="kpi-card" id="kpi-elec-card">
             <div class="kpi-icon">
-              <svg class="svg-icon" style="color: var(--accent);" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              <svg class="svg-icon" style="color: var(--accent);" viewBox="0 0 24 24">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
             </div>
             <div class="kpi-label">Total Elec Paid</div>
             <div class="kpi-value" id="kpi-total-elec" style="color: var(--accent);">₹0</div>
           </div>
           <div class="kpi-card" id="kpi-maint-card">
             <div class="kpi-icon">
-              <svg class="svg-icon" style="color: #a29bfe;" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+              <svg class="svg-icon" style="color: #a29bfe;" viewBox="0 0 24 24">
+                <path
+                  d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                </path>
+              </svg>
             </div>
             <div class="kpi-label">Total Maint Paid</div>
             <div class="kpi-value" id="kpi-maint-val" style="color: #a29bfe;">₹0</div>
@@ -338,7 +519,13 @@
         <!-- Room & Roommate Details -->
         <div class="card mt-base" id="pg-info-card">
           <div class="card-header">
-            <h3 class="card-title" style="display: flex; align-items: center; gap: 6px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="16"></line><line x1="15" y1="22" x2="15" y2="16"></line></svg> Room Details</h3>
+            <h3 class="card-title" style="display: flex; align-items: center; gap: 6px;"><svg class="svg-icon"
+                style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;"
+                viewBox="0 0 24 24">
+                <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+                <line x1="9" y1="22" x2="9" y2="16"></line>
+                <line x1="15" y1="22" x2="15" y2="16"></line>
+              </svg> Room Details</h3>
           </div>
           <div
             style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--space-lg); margin-bottom: var(--space-base);">
@@ -355,7 +542,8 @@
               <strong style="font-size: var(--font-sm);" id="info-room-number">—</strong>
             </div>
             <div id="info-elec-rate-wrapper" class="hidden">
-              <div style="font-size: var(--font-xs); color: var(--text-muted); margin-bottom: 4px;">Electricity Rate</div>
+              <div style="font-size: var(--font-xs); color: var(--text-muted); margin-bottom: 4px;">Electricity Rate
+              </div>
               <strong style="font-size: var(--font-sm);" id="info-elec-rate">—</strong>
             </div>
             <div id="info-maint-charge-wrapper" class="hidden">
@@ -375,17 +563,41 @@
         <!-- My Members (permanent) -->
         <div class="card mt-base" id="my-members-card">
           <div class="card-header">
-            <h3 class="card-title" style="display: flex; align-items: center; gap: 6px;"><svg class="svg-icon" style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> My Members</h3>
+            <h3 class="card-title" style="display: flex; align-items: center; gap: 6px;"><svg class="svg-icon"
+                style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2;"
+                viewBox="0 0 24 24">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg> My Members</h3>
           </div>
           <div id="my-members-list" style="display: flex; flex-direction: column; gap: 8px;">
-            <div style="color: var(--text-muted); font-size: var(--font-xs); text-align: center; padding: 16px 0; display: flex; align-items: center; justify-content: center; gap: 6px;"><svg class="svg-icon" style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> No members added yet.</div>
+            <div
+              style="color: var(--text-muted); font-size: var(--font-xs); text-align: center; padding: 16px 0; display: flex; align-items: center; justify-content: center; gap: 6px;">
+              <svg class="svg-icon"
+                style="width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2;"
+                viewBox="0 0 24 24">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg> No members added yet.
+            </div>
           </div>
         </div>
 
         <!-- Current Month Dues -->
         <div class="card mt-base" id="dues-card">
           <div class="card-header">
-            <h3 class="card-title" style="display: flex; align-items: center; gap: 6px;"><svg class="svg-icon" style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> Current Month Dues</h3>
+            <h3 class="card-title" style="display: flex; align-items: center; gap: 6px;"><svg class="svg-icon"
+                style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2;"
+                viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg> Current Month Dues</h3>
             <span class="badge badge-warning" id="due-month">June 2026</span>
           </div>
 
@@ -400,7 +612,8 @@
                     id="due-rate">0</span>)</span>
                 <strong id="due-elec">₹0</strong>
               </div>
-              <div class="invoice-row" id="due-maint-row"><span>Maintenance</span><strong id="due-maint">₹0</strong></div>
+              <div class="invoice-row" id="due-maint-row"><span>Maintenance</span><strong id="due-maint">₹0</strong>
+              </div>
               <div class="invoice-total">
                 <span>Total Due</span>
                 <span class="gradient-text" id="due-total">₹0</span>
@@ -409,7 +622,12 @@
 
             <div
               style="background: var(--primary-bg); border: 1px solid var(--primary-border); border-radius: var(--radius); padding: var(--space-lg); text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-              <div style="margin-bottom: 8px; color: var(--primary-light);"><svg class="svg-icon" style="width: 32px; height: 32px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></div>
+              <div style="margin-bottom: 8px; color: var(--primary-light);"><svg class="svg-icon"
+                  style="width: 32px; height: 32px; stroke: currentColor; fill: none; stroke-width: 2;"
+                  viewBox="0 0 24 24">
+                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                  <line x1="1" y1="10" x2="23" y2="10"></line>
+                </svg></div>
               <p style="font-size: var(--font-sm); color: var(--text-secondary); margin-bottom: var(--space-base);">Pay
                 via UPI to owner</p>
               <strong style="color: var(--primary-light); font-size: var(--font-md);" id="owner-upi-display">—</strong>
@@ -423,7 +641,11 @@
         <!-- Meter Reading -->
         <div class="card mt-base" id="meter-card">
           <div class="card-header">
-            <h3 class="card-title" style="display: flex; align-items: center; gap: 6px;"><svg class="svg-icon" style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> Electricity Meter</h3>
+            <h3 class="card-title" style="display: flex; align-items: center; gap: 6px;"><svg class="svg-icon"
+                style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2;"
+                viewBox="0 0 24 24">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg> Electricity Meter</h3>
           </div>
           <div class="form-row" style="max-width: 500px;">
             <div>
@@ -446,7 +668,13 @@
       <!-- ═══════════════ TAB: PAYMENT ═══════════════ -->
       <section class="tab-content" id="tab-payment">
         <div class="section-header">
-          <h2 class="section-title-main" style="display: flex; align-items: center; gap: 8px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12" y2="6"></line><path d="M15 9h-4.5a1.5 1.5 0 0 0 0 3h3a1.5 1.5 0 0 1 0 3H9"></path></svg> Pay Rent</h2>
+          <h2 class="section-title-main" style="display: flex; align-items: center; gap: 8px;"><svg class="svg-icon"
+              style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;"
+              viewBox="0 0 24 24">
+              <rect x="2" y="2" width="20" height="20" rx="2" ry="2"></rect>
+              <line x1="12" y1="18" x2="12" y2="6"></line>
+              <path d="M15 9h-4.5a1.5 1.5 0 0 0 0 3h3a1.5 1.5 0 0 1 0 3H9"></path>
+            </svg> Pay Rent</h2>
         </div>
 
         <div class="grid-2col-responsive" style="display: grid; gap: var(--space-xl); max-width: 800px;">
@@ -466,47 +694,76 @@
             <!-- Electricity Meter Reading Input Section -->
             <div class="mt-lg hidden" id="pay-meter-section"
               style="border-top: 1px solid var(--border-color); padding-top: var(--space-base);">
-              <h4 id="pay-meter-title" style="font-weight: 700; font-size: var(--font-xs); margin-bottom: 12px; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
-                <svg class="svg-icon" style="color: var(--warning); width: 14px; height: 14px;" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              <h4 id="pay-meter-title"
+                style="font-weight: 700; font-size: var(--font-xs); margin-bottom: 12px; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
+                <svg class="svg-icon" style="color: var(--warning); width: 14px; height: 14px;" viewBox="0 0 24 24">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
                 Electricity Meter Reading
               </h4>
               <div class="form-row-3col-responsive" style="margin-bottom: 12px; align-items: stretch;">
-                <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 12px; display: flex; flex-direction: column; justify-content: center; min-height: 58px; position: relative;">
+                <div
+                  style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 12px; display: flex; flex-direction: column; justify-content: center; min-height: 58px; position: relative;">
                   <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
-                    <span style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600;">Joining Reading</span>
-                    <span style="font-size: 8px; font-weight: 700; color: var(--accent); background: rgba(14, 165, 233, 0.1); padding: 1px 4px; border-radius: 4px; text-transform: uppercase;">Fixed</span>
+                    <span
+                      style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600;">Joining
+                      Reading</span>
+                    <span
+                      style="font-size: 8px; font-weight: 700; color: var(--accent); background: rgba(14, 165, 233, 0.1); padding: 1px 4px; border-radius: 4px; text-transform: uppercase;">Fixed</span>
                   </div>
-                  <div style="font-size: var(--font-md); font-weight: 700; color: var(--text-secondary); display: flex; align-items: baseline; gap: 4px;">
+                  <div
+                    style="font-size: var(--font-md); font-weight: 700; color: var(--text-secondary); display: flex; align-items: baseline; gap: 4px;">
                     <span id="pay-joining-reading-val">0</span>
-                    <span style="font-size: 9px; font-weight: 500; color: var(--text-muted); text-transform: uppercase;">Units</span>
+                    <span
+                      style="font-size: 9px; font-weight: 500; color: var(--text-muted); text-transform: uppercase;">Units</span>
                   </div>
                   <input type="hidden" id="pay-joining-reading" value="0" />
                 </div>
-                <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 12px; display: flex; flex-direction: column; justify-content: center; min-height: 58px;">
+                <div
+                  style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 12px; display: flex; flex-direction: column; justify-content: center; min-height: 58px;">
                   <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2px;">
-                    <span id="pay-prev-reading-label" style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600;">Previous Reading</span>
-                    <span style="font-size: 8px; font-weight: 700; color: var(--warning); background: rgba(245, 158, 11, 0.1); padding: 1px 4px; border-radius: 4px; text-transform: uppercase;">Start</span>
+                    <span id="pay-prev-reading-label"
+                      style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 600;">Previous
+                      Reading</span>
+                    <span
+                      style="font-size: 8px; font-weight: 700; color: var(--warning); background: rgba(245, 158, 11, 0.1); padding: 1px 4px; border-radius: 4px; text-transform: uppercase;">Start</span>
                   </div>
-                  <div style="font-size: var(--font-md); font-weight: 700; color: var(--text-secondary); display: flex; align-items: baseline; gap: 4px;">
+                  <div
+                    style="font-size: var(--font-md); font-weight: 700; color: var(--text-secondary); display: flex; align-items: baseline; gap: 4px;">
                     <span id="pay-prev-reading-val">0</span>
-                    <span style="font-size: 9px; font-weight: 500; color: var(--text-muted); text-transform: uppercase;">Units</span>
+                    <span
+                      style="font-size: 9px; font-weight: 500; color: var(--text-muted); text-transform: uppercase;">Units</span>
                   </div>
                   <input type="hidden" id="pay-prev-reading" value="0" />
                 </div>
-                <div class="form-group" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between; min-height: 58px;">
-                  <label class="form-label" style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary-light); font-weight: 600; margin-bottom: 4px; display: block; line-height: 1;">Current Reading *</label>
+                <div class="form-group"
+                  style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between; min-height: 58px;">
+                  <label class="form-label"
+                    style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary-light); font-weight: 600; margin-bottom: 4px; display: block; line-height: 1;">Current
+                    Reading *</label>
                   <input class="form-input" type="number" id="pay-curr-reading" placeholder="e.g. 350" min="0"
-                    oninput="updatePaymentCalculation()" style="border-color: rgba(99, 102, 241, 0.3); box-shadow: 0 0 8px rgba(99, 102, 241, 0.08); padding: 6px 10px; height: 32px; font-size: var(--font-sm); background: var(--bg-input); border-radius: var(--radius-sm); color: var(--text-primary); margin-top: auto;" />
+                    oninput="updatePaymentCalculation()"
+                    style="border-color: rgba(99, 102, 241, 0.3); box-shadow: 0 0 8px rgba(99, 102, 241, 0.08); padding: 6px 10px; height: 32px; font-size: var(--font-sm); background: var(--bg-input); border-radius: var(--radius-sm); color: var(--text-primary); margin-top: auto;" />
                 </div>
               </div>
               <div id="pay-meter-error" class="hidden"
                 style="color: var(--danger); font-size: var(--font-xs); margin-bottom: 12px; font-weight: 500;">
-                <span style="display:inline-flex; align-items:center; gap:4px;"><svg style="width:1.2em; height:1.2em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> Current reading must be greater than or equal to previous reading.</span>
+                <span style="display:inline-flex; align-items:center; gap:4px;"><svg
+                    style="width:1.2em; height:1.2em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;"
+                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                    </path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg> Current reading must be greater than or equal to previous reading.</span>
               </div>
-              <div style="background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.15); border-radius: var(--radius-sm); padding: 10px 14px; font-size: var(--font-xs); color: var(--text-secondary); line-height: 1.5; display: flex; align-items: center; justify-content: space-between;"
+              <div
+                style="background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.15); border-radius: var(--radius-sm); padding: 10px 14px; font-size: var(--font-xs); color: var(--text-secondary); line-height: 1.5; display: flex; align-items: center; justify-content: space-between;"
                 id="pay-calc-summary-row">
                 <div>
-                  Units Consumed: <strong id="pay-calc-units" style="color: var(--text-primary);">0</strong> units <span id="pay-calc-split-info" style="font-size: 11px; opacity: 0.85;"></span> @ ₹<span id="pay-calc-rate">10</span>/unit
+                  Units Consumed: <strong id="pay-calc-units" style="color: var(--text-primary);">0</strong> units <span
+                    id="pay-calc-split-info" style="font-size: 11px; opacity: 0.85;"></span> @ ₹<span
+                    id="pay-calc-rate">10</span>/unit
                 </div>
                 <div style="font-weight: 700; color: var(--primary-light); font-size: var(--font-sm);">
                   Total: <span id="pay-calc-elec">₹0</span>
@@ -526,38 +783,57 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Transaction ID / UTR (Required - Exactly 12 Digits)</label>
-                <input class="form-input" type="text" id="pay-txn" placeholder="Enter 12-digit numeric UTR" maxlength="12" pattern="\d{12}" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+                <input class="form-input" type="text" id="pay-txn" placeholder="Enter 12-digit numeric UTR"
+                  maxlength="12" pattern="\d{12}" inputmode="numeric"
+                  oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
               </div>
             </div>
           </div>
 
           <!-- UPI / QR Section -->
-          <div class="card" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+          <div class="card"
+            style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <h3 class="card-title mb-lg">Pay via UPI</h3>
-            
+
             <!-- QR Code container (hidden by default) -->
             <div id="payment-qrcode-container" class="hidden"
               style="background: white; padding: 12px; border-radius: var(--radius-sm); margin: 0 auto var(--space-base); box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: inline-block;">
               <div id="payment-qrcode"></div>
             </div>
-            
+
             <!-- Default smartphone placeholder (shown when no UPI is set) -->
             <div id="payment-qr-placeholder"
               style="width: 160px; height: 160px; background: white; border-radius: var(--radius); margin: 0 auto var(--space-base); display: flex; align-items: center; justify-content: center;">
-              <svg style="width:64px; height:64px; fill:none; stroke:var(--text-muted); stroke-width:2; stroke-linecap:round; stroke-linejoin:round;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+              <svg
+                style="width:64px; height:64px; fill:none; stroke:var(--text-muted); stroke-width:2; stroke-linecap:round; stroke-linejoin:round;"
+                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+              </svg>
             </div>
-            
-            <p style="font-size: var(--font-sm); color: var(--text-muted); margin-bottom: 8px;">Scan QR or pay to UPI ID:</p>
-            <strong style="color: var(--primary-light); font-size: var(--font-md); word-break: break-all;" id="pay-upi-id">—</strong>
+
+            <p style="font-size: var(--font-sm); color: var(--text-muted); margin-bottom: 8px;">Scan QR or pay to UPI
+              ID:</p>
+            <strong style="color: var(--primary-light); font-size: var(--font-md); word-break: break-all;"
+              id="pay-upi-id">—</strong>
 
             <!-- Pay via UPI App / Link -->
             <a id="mobile-upi-pay-btn" href="#" class="btn btn-primary btn-full btn-lg mt-lg"
               style="display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none;">
-              <span style="display:inline-flex; align-items:center; gap:6px;"><svg style="width:1.2em; height:1.2em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg> Direct Pay with UPI</span>
+              <span style="display:inline-flex; align-items:center; gap:6px;"><svg
+                  style="width:1.2em; height:1.2em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;"
+                  viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg> Direct Pay with UPI</span>
             </a>
 
-            <button class="btn btn-success btn-full btn-lg mt-lg" onclick="submitPayment()" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-              <svg style="width:1.2em; height:1.2em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polyline points="20 6 9 17 4 12"></polyline></svg> I've Paid — Submit Proof
+            <button class="btn btn-success btn-full btn-lg mt-lg" onclick="submitPayment()"
+              style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+              <svg
+                style="width:1.2em; height:1.2em; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;"
+                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg> I've Paid — Submit Proof
             </button>
             <p style="font-size: var(--font-xs); color: var(--text-muted); margin-top: 8px;">
               Payment will be verified by the owner
@@ -569,7 +845,14 @@
       <!-- ═══════════════ TAB: PAYMENT HISTORY ═══════════════ -->
       <section class="tab-content" id="tab-history">
         <div class="section-header">
-          <h2 class="section-title-main" style="display: flex; align-items: center; gap: 8px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> Payment History</h2>
+          <h2 class="section-title-main" style="display: flex; align-items: center; gap: 8px;"><svg class="svg-icon"
+              style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;"
+              viewBox="0 0 24 24">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg> Payment History</h2>
         </div>
 
         <div class="kpi-grid" style="margin-bottom: var(--space-lg);">
@@ -618,7 +901,13 @@
       <!-- ═══════════════ TAB: COMPLAINTS ═══════════════ -->
       <section class="tab-content" id="tab-complaints">
         <div class="section-header">
-          <h2 class="section-title-main" style="display: flex; align-items: center; gap: 8px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> Complaints</h2>
+          <h2 class="section-title-main" style="display: flex; align-items: center; gap: 8px;"><svg class="svg-icon"
+              style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;"
+              viewBox="0 0 24 24">
+              <path
+                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+              </path>
+            </svg> Complaints</h2>
         </div>
 
         <div class="grid-complaints-responsive" style="display: grid; gap: var(--space-xl);">
@@ -647,7 +936,12 @@
             <h3 class="card-title mb-lg">My Complaints</h3>
             <div id="complaints-list">
               <div class="empty-state">
-                <div class="empty-state-icon" style="margin-bottom: 8px;"><svg class="svg-icon" style="width: 36px; height: 36px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></div>
+                <div class="empty-state-icon" style="margin-bottom: 8px;"><svg class="svg-icon"
+                    style="width: 36px; height: 36px; stroke: currentColor; fill: none; stroke-width: 2;"
+                    viewBox="0 0 24 24">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg></div>
                 <div class="empty-state-desc">No complaints filed yet</div>
               </div>
             </div>
@@ -658,7 +952,13 @@
       <!-- ═══════════════ TAB: VACATE NOTICE ═══════════════ -->
       <section class="tab-content" id="tab-vacate">
         <div class="section-header">
-          <h2 class="section-title-main" style="display: flex; align-items: center; gap: 8px;"><svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Vacate Notice</h2>
+          <h2 class="section-title-main" style="display: flex; align-items: center; gap: 8px;"><svg class="svg-icon"
+              style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;"
+              viewBox="0 0 24 24">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg> Vacate Notice</h2>
         </div>
 
         <div class="card" style="max-width: 550px;">
@@ -667,6 +967,10 @@
             As per agreement, please give <strong>30 days advance notice</strong> before vacating.
             Your security deposit will be refunded after room inspection.
           </p>
+
+          <div id="vacate-bond-warning" class="hidden"
+            style="margin-bottom: 20px; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: var(--font-sm); line-height: 1.5;">
+          </div>
 
           <div id="vacate-form">
             <div class="form-group">
@@ -678,15 +982,32 @@
               <label class="form-label">Preferred Checkout Date</label>
               <input class="form-input" type="date" id="vacate-date" />
             </div>
-            <button class="btn btn-danger btn-full btn-lg" onclick="submitVacateNotice()" style="display: flex; align-items: center; justify-content: center; gap: 6px;">
-              <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Submit Vacate Notice
+            <button class="btn btn-danger btn-full btn-lg" onclick="submitVacateNotice()"
+              style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+              <svg class="svg-icon"
+                style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;"
+                viewBox="0 0 24 24">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg> Submit Vacate Notice
             </button>
           </div>
 
           <div id="vacate-submitted" class="hidden">
             <div
               style="background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: var(--radius); padding: var(--space-lg); text-align: center;">
-              <div style="margin-bottom: 12px; color: var(--warning-dark); display: flex; align-items: center; justify-content: center;"><svg class="svg-icon" style="width: 36px; height: 36px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div>
+              <div
+                style="margin-bottom: 12px; color: var(--warning-dark); display: flex; align-items: center; justify-content: center;">
+                <svg class="svg-icon"
+                  style="width: 36px; height: 36px; stroke: currentColor; fill: none; stroke-width: 2;"
+                  viewBox="0 0 24 24">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+              </div>
               <h4>Vacate Notice Submitted</h4>
               <p style="font-size: var(--font-sm); color: var(--text-muted); margin-top: 8px;">
                 Your vacate notice has been sent to the owner.
@@ -695,8 +1016,14 @@
               <div style="margin-top: var(--space-base); font-size: var(--font-sm);">
                 <strong>Checkout Date:</strong> <span id="vacate-date-display">—</span>
               </div>
-              <button class="btn btn-secondary btn-full" id="btn-cancel-vacate" onclick="cancelVacateNotice()" style="margin-top: 16px; background: var(--bg-body); border: 1px solid var(--border-light); color: var(--text-primary); display: flex; align-items: center; justify-content: center; gap: 6px;">
-                <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Cancel Vacate Notice (खाली करने का नोटिस रद्द करें)
+              <button class="btn btn-secondary btn-full" id="btn-cancel-vacate" onclick="cancelVacateNotice()"
+                style="margin-top: 16px; background: var(--bg-body); border: 1px solid var(--border-light); color: var(--text-primary); display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <svg class="svg-icon"
+                  style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;"
+                  viewBox="0 0 24 24">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg> Cancel Vacate Notice (खाली करने का नोटिस रद्द करें)
               </button>
             </div>
           </div>
@@ -707,16 +1034,22 @@
       <section class="tab-content" id="tab-settings">
         <div class="section-header">
           <h2 class="section-title-main" style="display: flex; align-items: center; gap: 8px;">
-            <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <svg class="svg-icon" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z">
+              </path>
+            </svg>
             Settings
           </h2>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--space-xl); max-width: 1000px; align-items: start;">
+        <div
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--space-xl); max-width: 1000px; align-items: start;">
           <!-- Edit Profile Card -->
           <div class="card">
             <h3 class="card-title mb-lg">Edit Profile (प्रोफ़ाइल एडिट करें)</h3>
-            
+
             <div class="form-group">
               <label class="form-label" for="settings-tenant-name">Full Name (पूरा नाम) *</label>
               <input class="form-input" type="text" id="settings-tenant-name" placeholder="Enter your full name" />
@@ -729,14 +1062,29 @@
                 <button class="btn btn-sm btn-secondary" onclick="addSettingsMemberRow()">+ Add Member</button>
               </div>
               <div id="settings-members-list"></div>
-              <p style="font-size: 11px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; display: flex; align-items: flex-start; gap: 4px;">
-                <svg class="svg-icon" style="width: 14px; height: 14px; color: var(--accent); flex-shrink: 0; margin-top: 2px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A7 7 0 0 0 4 8c0 1 .5 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5h8Z"></path><path d="M9 18h6M10 22h4"></path></svg>
-                <span>Members stay with your profile permanently — they move with you even if you shift rooms or buildings.</span>
+              <p
+                style="font-size: 11px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; display: flex; align-items: flex-start; gap: 4px;">
+                <svg class="svg-icon"
+                  style="width: 14px; height: 14px; color: var(--accent); flex-shrink: 0; margin-top: 2px;"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path
+                    d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A7 7 0 0 0 4 8c0 1 .5 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5h8Z">
+                  </path>
+                  <path d="M9 18h6M10 22h4"></path>
+                </svg>
+                <span>Members stay with your profile permanently — they move with you even if you shift rooms or
+                  buildings.</span>
               </p>
             </div>
 
-            <button class="btn btn-primary btn-full btn-lg mt-base" onclick="saveTenantProfile()" style="display: flex; align-items: center; justify-content: center; gap: 6px;">
-              <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <button class="btn btn-primary btn-full btn-lg mt-base" onclick="saveTenantProfile()"
+              style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+              <svg class="svg-icon"
+                style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;"
+                viewBox="0 0 24 24">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
               Save Profile (प्रोफ़ाइल सहेजें)
             </button>
           </div>
@@ -745,16 +1093,28 @@
         </div>
 
         <!-- Legal Footer -->
-        <div style="margin-top: 32px; padding: 18px 24px; border: 1px solid var(--border-color); border-radius: var(--radius); background: rgba(255,255,255,0.02); text-align: center; max-width: 1000px;">
-          <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;">Legal &amp; Policies</p>
+        <div
+          style="margin-top: 32px; padding: 18px 24px; border: 1px solid var(--border-color); border-radius: var(--radius); background: rgba(255,255,255,0.02); text-align: center; max-width: 1000px;">
+          <p
+            style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;">
+            Legal &amp; Policies</p>
           <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; font-size: 12px;">
-            <a href="/privacy-policy.html" target="_blank" style="color: var(--primary-light); text-decoration: none; opacity: 0.85;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">Privacy Policy</a>
+            <a href="/privacy-policy.html" target="_blank"
+              style="color: var(--primary-light); text-decoration: none; opacity: 0.85;"
+              onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">Privacy Policy</a>
             <span style="color: var(--border-color);">|</span>
-            <a href="/terms-conditions.html" target="_blank" style="color: var(--primary-light); text-decoration: none; opacity: 0.85;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">Terms &amp; Conditions</a>
+            <a href="/terms-conditions.html" target="_blank"
+              style="color: var(--primary-light); text-decoration: none; opacity: 0.85;"
+              onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">Terms &amp; Conditions</a>
             <span style="color: var(--border-color);">|</span>
-            <a href="/refund-policy.html" target="_blank" style="color: var(--primary-light); text-decoration: none; opacity: 0.85;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">Refund Policy</a>
+            <a href="/refund-policy.html" target="_blank"
+              style="color: var(--primary-light); text-decoration: none; opacity: 0.85;"
+              onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">Refund Policy</a>
           </div>
-          <p style="font-size: 11px; color: var(--text-muted); margin-top: 10px; margin-bottom: 0;">© 2026 PG Builders · <a href="mailto:supportpgbuilderss@gmail.com" style="color: var(--text-muted); text-decoration: underline;">supportpgbuilderss@gmail.com</a></p>
+          <p style="font-size: 11px; color: var(--text-muted); margin-top: 10px; margin-bottom: 0;">© 2026 PG Builders ·
+            <a href="mailto:supportpgbuilderss@gmail.com"
+              style="color: var(--text-muted); text-decoration: underline;">supportpgbuilderss@gmail.com</a>
+          </p>
         </div>
       </section>
 
@@ -810,7 +1170,8 @@
       ">
         <div style="display: flex; align-items: center; gap: 10px;">
           <div style="color: var(--primary-light); display: flex; align-items: center;">
-            <svg class="svg-icon" style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24">
+            <svg class="svg-icon" style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2;"
+              viewBox="0 0 24 24">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
               <polyline points="14 2 14 8 20 8"></polyline>
               <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -818,7 +1179,8 @@
             </svg>
           </div>
           <div>
-            <h3 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0; line-height: 1.2;">Notice Board</h3>
+            <h3 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0; line-height: 1.2;">
+              Notice Board</h3>
             <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">सूचना पट्ट — Rules & Notices</div>
           </div>
         </div>
@@ -868,7 +1230,8 @@
           color: var(--text-secondary);
         ">
           <span style="display:inline-flex; align-items:center; color:var(--primary-light);">
-            <svg class="svg-icon" style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24">
+            <svg class="svg-icon" style="width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2;"
+              viewBox="0 0 24 24">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
               <circle cx="12" cy="7" r="4"></circle>
             </svg>
@@ -893,7 +1256,8 @@
         flex-shrink: 0;
       ">
         <span>
-          <svg class="svg-icon" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24">
+          <svg class="svg-icon" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;"
+            viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="12" y1="16" x2="12" y2="12"></line>
             <line x1="12" y1="8" x2="12.01" y2="8"></line>
@@ -911,7 +1275,13 @@
   <div class="modal-overlay hidden" id="modal-members">
     <div class="modal-content" style="max-width: 500px;">
       <div class="modal-header">
-        <h3 class="modal-title" style="display:flex; align-items:center; gap:6px;"><svg class="svg-icon" style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Manage My Members</h3>
+        <h3 class="modal-title" style="display:flex; align-items:center; gap:6px;"><svg class="svg-icon"
+            style="width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg> Manage My Members</h3>
         <button class="modal-close" onclick="closeModal('modal-members')">×</button>
       </div>
 
@@ -935,23 +1305,50 @@
   <!-- ═══════════════ MOBILE BOTTOM NAVIGATION (phones only) ═══════════════ -->
   <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
     <button class="mobile-nav-item active" id="mn-home" onclick="switchTab('home', this); setMobileNav('mn-home')">
-      <span class="mn-icon"><svg class="svg-icon" style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></span>
+      <span class="mn-icon"><svg class="svg-icon"
+          style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg></span>
       <span>Home</span>
     </button>
     <button class="mobile-nav-item" id="mn-payment" onclick="switchTab('payment', this); setMobileNav('mn-payment')">
-      <span class="mn-icon"><svg class="svg-icon" style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>
+      <span class="mn-icon"><svg class="svg-icon"
+          style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="16"></line>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+        </svg></span>
       <span>Pay</span>
     </button>
     <button class="mobile-nav-item" id="mn-history" onclick="switchTab('history', this); setMobileNav('mn-history')">
-      <span class="mn-icon"><svg class="svg-icon" style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></span>
+      <span class="mn-icon"><svg class="svg-icon"
+          style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+        </svg></span>
       <span>History</span>
     </button>
-    <button class="mobile-nav-item" id="mn-complaints" onclick="switchTab('complaints', this); setMobileNav('mn-complaints')">
-      <span class="mn-icon"><svg class="svg-icon" style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>
+    <button class="mobile-nav-item" id="mn-complaints"
+      onclick="switchTab('complaints', this); setMobileNav('mn-complaints')">
+      <span class="mn-icon"><svg class="svg-icon"
+          style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path
+            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z">
+          </path>
+        </svg></span>
       <span>Issues</span>
     </button>
     <button class="mobile-nav-item" id="mn-vacate" onclick="switchTab('vacate', this); setMobileNav('mn-vacate')">
-      <span class="mn-icon"><svg class="svg-icon" style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></span>
+      <span class="mn-icon"><svg class="svg-icon"
+          style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg></span>
       <span>Vacate</span>
     </button>
   </nav>

@@ -138,6 +138,11 @@ export async function generateOwnerKey() {
 
 /** Create owner profile in database */
 export async function createOwnerProfile(userId, name, phone, email, ownerKey) {
+  const expiryDate = new Date();
+  expiryDate.setMonth(expiryDate.getMonth() + 1); // 1 month from now (date to date)
+
+  const referredByCode = localStorage.getItem('pgb_referral_code') || null;
+
   const { data, error } = await supabase
     .from('owners')
     .insert({
@@ -146,14 +151,19 @@ export async function createOwnerProfile(userId, name, phone, email, ownerKey) {
       phone,
       email,
       owner_key: ownerKey,
-      subscription_status: 'expired',
-      subscription_expiry: null,
-      allowed_buildings: 0,
+      subscription_status: 'trial',
+      subscription_expiry: expiryDate.toISOString(),
+      allowed_buildings: 1,
+      referred_by_code: referredByCode,
       created_at: new Date().toISOString()
     })
     .select()
     .single();
   if (error) throw error;
+  
+  // Clean up referral code from localStorage on successful registration
+  localStorage.removeItem('pgb_referral_code');
+  
   return data;
 }
 

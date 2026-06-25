@@ -17,6 +17,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <!-- Razorpay Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script>
+    (function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const ref = urlParams.get('ref') || urlParams.get('referrer');
+      if (ref) {
+        localStorage.setItem('pgb_referral_code', ref);
+      }
+    })();
+  </script>
   <style>
     /* ═══════════════════════════════════════════════════
        PG Builders — Ultra-Premium Stripe-Style CSS System
@@ -720,6 +729,10 @@
           <label class="form-label" for="reg-email">Email Address</label>
           <input class="form-input" type="email" id="reg-email" placeholder="ramesh@gmail.com" />
         </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-ref-code">Referral Code (Optional) / रेफरल कोड (वैकल्पिक)</label>
+          <input class="form-input" type="text" id="reg-ref-code" placeholder="e.g. RS123456" style="text-transform: uppercase;" />
+        </div>
         <div class="form-group" style="margin: 16px 0; text-align: left;">
           <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; color: var(--text-secondary); font-size: 13px; line-height: 1.5;">
             <input type="checkbox" id="reg-terms-privacy" style="margin-top: 3px; width: 16px; height: 16px; min-width: 16px; accent-color: var(--primary);" />
@@ -812,11 +825,11 @@
         </div>
       </div>
 
-      <!-- Next to Payment Button -->
+      <!-- Next to Dashboard Button -->
       <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 16px; text-align: center; width: 100%;">
-        <button class="btn btn-primary btn-full btn-lg" onclick="goToPaymentStep()" style="background: var(--gradient-primary); color: white; padding: 14px; font-size: 16px; font-weight: 700; width: 100%;">
-          Next: Choose Plan & Activate →
-        </button>
+        <a class="btn btn-primary btn-full btn-lg" href="/owner-dashboard.html" style="background: var(--gradient-primary); color: white; padding: 14px; font-size: 16px; font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+          Go to Dashboard (डैशबोर्ड पर जाएं) →
+        </a>
       </div>
     </div>
 

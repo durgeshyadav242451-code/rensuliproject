@@ -96,6 +96,13 @@
         <span>Complaints</span>
         <span id="complaints-badge" style="display:none; background: var(--danger); color: #fff; font-size: 10px; font-weight: 700; border-radius: 9999px; padding: 1px 6px; margin-left: auto;"></span>
       </button>
+      <button class="menu-item" data-tab="whatsapp" onclick="switchTab('whatsapp', this)">
+        <span class="icon">
+          <svg class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+        </span>
+        <span>WhatsApp Link</span>
+        <span id="whatsapp-status-badge" class="badge badge-warning" style="font-size: 9px; padding: 1px 4px; margin-left: auto;">Offline</span>
+      </button>
       <button class="menu-item" data-tab="settings" onclick="switchTab('settings', this)">
         <span class="icon">
           <svg class="svg-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
@@ -135,6 +142,11 @@
       <button id="sidebar-install-btn" onclick="handleInstallApp()" style="width:100%;background:linear-gradient(135deg,#6C5CE7,#00D2FF);border:none;color:white;font-weight:700;font-size:12px;padding:10px;border-radius:8px;cursor:pointer;text-align:center">
         <svg class="svg-icon" style="width:1.2em; height:1.2em; vertical-align:middle; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; display:inline-block; margin-right:4px;" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line><line x1="12" y1="6" x2="12" y2="12"></line><polyline points="9 9 12 12 15 9"></polyline></svg> Install App
       </button>
+      <!-- Logout button (desktop visible) -->
+      <button onclick="handleLogout()" style="margin-top:8px;width:100%;background:transparent;border:1px solid var(--border-color);color:var(--text-secondary);font-weight:600;font-size:12px;padding:8px 10px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s ease;" onmouseover="this.style.background='var(--bg-button-secondary-hover)';this.style.color='var(--text-primary)'" onmouseout="this.style.background='transparent';this.style.color='var(--text-secondary)'">
+        <svg style="width:1.1em;height:1.1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        Logout
+      </button>
     </div>
   </aside>
 
@@ -157,7 +169,7 @@
       <!-- Spacer -->
       <div style="flex:1;"></div>
 
-      <!-- Right: Live Sync + Theme + Logout -->
+      <!-- Right: Live Sync + Theme -->
       <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
         <div class="sync-indicator">
           <span class="sync-dot"></span>
@@ -166,15 +178,6 @@
         <!-- Theme Toggle Switcher -->
         <button id="theme-toggle-btn" onclick="toggleTheme()" class="btn btn-ghost btn-sm" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;padding:0;font-size:16px;" title="Switch Theme">
           <svg class="svg-icon" style="width: 1.2em; height: 1.2em; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-        </button>
-        <!-- Download App Button -->
-        <button class="btn btn-ghost btn-sm" onclick="window.downloadAPK(this)" style="display:flex;align-items:center;gap:4px;" title="Download Android APK">
-          <svg class="svg-icon" style="width:1.2em;height:1.2em;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-          <span class="hide-mobile">Download App</span>
-        </button>
-        <button class="btn btn-ghost btn-sm" onclick="handleLogout()" style="display:flex;align-items:center;gap:4px;">
-          <svg class="svg-icon" style="width:1.2em;height:1.2em;margin-right:0;" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-          <span class="hide-mobile">Logout</span>
         </button>
       </div>
     </header>
@@ -567,6 +570,7 @@
                     <th>Vacate Date</th>
                     <th>Reason</th>
                     <th>Refund Amount (Deposit)</th>
+                    <th>Bond Status / Suggestion</th>
                     <th style="text-align: right;">Action</th>
                   </tr>
                 </thead>
@@ -1009,6 +1013,7 @@
                     <th>Room & Building</th>
                     <th>Vacate Date</th>
                     <th>Deposit Amount</th>
+                    <th>Bond Status / Suggestion</th>
                     <th style="text-align: right;">Action</th>
                   </tr>
                 </thead>
@@ -1532,6 +1537,104 @@
         </div>
       </section>
 
+      <!-- ═══════════════ TAB: WHATSAPP AUTOMATION ═══════════════ -->
+      <section class="tab-content" id="tab-whatsapp">
+        <div class="section-header">
+          <h2 class="section-title-main" style="display: flex; align-items: center; gap: 8px;">
+            <svg class="svg-icon" style="width: 1.2em; height: 1.2em;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            WhatsApp Web Automation
+          </h2>
+          <div class="sync-indicator">
+            <span class="sync-dot" id="whatsapp-sync-dot" style="background-color: var(--danger);"></span>
+            <span class="sync-label" id="whatsapp-sync-label">Offline</span>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <!-- WhatsApp Link QR / Status Card -->
+          <div class="card settings-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 380px;">
+            <h3 class="card-title mb-sm" style="text-align: center;">Link Your Device</h3>
+            <p style="font-size: var(--font-xs); color: var(--text-muted); text-align: center; margin-bottom: 20px; max-width: 320px;">
+              Scan this QR code using WhatsApp on your phone (Menu > Linked Devices) to connect.
+            </p>
+
+            <!-- QR code and status elements -->
+            <div id="wa-qr-container" style="background: white; padding: 16px; border-radius: var(--radius-sm); margin-bottom: 16px; display: inline-flex; justify-content: center; align-items: center; min-width: 180px; min-height: 180px; position: relative;">
+              <div id="wa-qr-status-msg" style="color: #0f0f1a; font-size: 13px; font-weight: 600; text-align: center;">Connecting to server...</div>
+              <img id="wa-qr-image" style="display: none; width: 180px; height: 180px;" alt="Scan QR Code" />
+            </div>
+
+            <div id="wa-connection-info" style="font-size: var(--font-sm); font-weight: 700; color: var(--text-primary); margin-bottom: 16px; text-align: center;">
+              Status: <span id="wa-status-text" style="color: var(--danger);">Disconnected</span>
+            </div>
+
+            <button class="btn btn-danger btn-sm" id="btn-wa-disconnect" onclick="disconnectWhatsApp()" style="display: none; width: 100%;">
+              Disconnect Device
+            </button>
+          </div>
+
+          <!-- Automation Configuration Card -->
+          <div class="card settings-card">
+            <h3 class="card-title mb-lg">Automation Settings</h3>
+            
+            <div class="form-group">
+              <label class="form-label" style="display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none;">
+                <input type="checkbox" id="wa-enabled" onchange="toggleWaEnabled()" />
+                <span style="font-size: var(--font-xs); font-weight: 700;">Enable Automatic Rent Reminders</span>
+              </label>
+              <p class="form-hint" style="margin-top: 4px; line-height: 1.4;">If enabled, the companion server will automatically send WhatsApp rent reminders to unpaid tenants daily at 9:00 AM.</p>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Send Reminders (Offset)</label>
+              <select class="form-input form-select" id="wa-offset">
+                <option value="1">1 Day Before Due Date</option>
+                <option value="2">2 Days Before Due Date</option>
+                <option value="3" selected>3 Days Before Due Date</option>
+                <option value="5">5 Days Before Due Date</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">WhatsApp Server URL</label>
+              <input class="form-input" type="text" id="wa-server-url" placeholder="http://localhost:3001" value="http://localhost:3001" />
+              <p class="form-hint" style="line-height: 1.4;">The HTTP URL where your companion Node.js gateway server is running.</p>
+            </div>
+
+            <div class="form-group" style="margin-bottom: var(--space-base);">
+              <label class="form-label">Message Template</label>
+              <textarea class="form-input form-textarea" id="wa-msg-template" rows="5" placeholder="Dear {name}, rent of ₹{amount} for room {room_number} is pending. Please pay by {due_date} to UPI: {upi_id}."></textarea>
+              <div style="margin-top: var(--space-xs); font-size: 10px; color: var(--text-muted); line-height: 1.4;">
+                Available Tags: <code style="color: var(--primary-light);">{name}</code>, <code style="color: var(--primary-light);">{amount}</code>, <code style="color: var(--primary-light);">{room_number}</code>, <code style="color: var(--primary-light);">{due_date}</code>, <code style="color: var(--primary-light);">{upi_id}</code>, <code style="color: var(--primary-light);">{building_name}</code>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="saveWaSettings()" style="width: 100%;">Save Settings</button>
+          </div>
+
+          <!-- Recently Sent Auto Reminders Log Card -->
+          <div class="card" style="grid-column: 1 / -1;">
+            <h3 class="card-title mb-lg">Automation Logs (भेजे गए रिमाइंडर की सूची)</h3>
+            <div class="table-wrap" style="max-height: 300px; overflow: auto;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date & Time</th>
+                    <th>Tenant</th>
+                    <th>Mobile</th>
+                    <th>Message</th>
+                    <th>Status</th>
+                    <th>Details</th>
+                  </tr>
+                </thead>
+                <tbody id="wa-logs-tbody">
+                  <tr><td colspan="6" class="text-center text-muted" style="padding: 24px;">No auto-reminders sent yet</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
 
     </div>
   </main>
@@ -2054,6 +2157,8 @@
               <div><strong>Deposit Status:</strong> <br><span id="tp-deposit-status" class="badge"></span></div>
               <div><strong>Refund Status:</strong> <br><span id="tp-refund-status" class="badge"></span></div>
               <div><strong>Initial Meter:</strong> <br><span id="tp-initial-meter" style="color: var(--text-secondary);"></span></div>
+              <div><strong>Bond Agreement:</strong> <br><span id="tp-bond-months" style="color: var(--text-secondary);"></span></div>
+              <div><strong>Remaining Bond:</strong> <br><span id="tp-bond-remaining" style="color: var(--text-secondary);"></span></div>
             </div>
           </div>
         </div>

@@ -86,6 +86,9 @@
         <button class="admin-menu-item" data-tab="refunds" onclick="switchAdminTab('refunds', this); closeAdminSidebar();">
           <span class="icon"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1.2em; height:1.2em; vertical-align:middle; display:inline-block;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></span><span>Refund Requests</span>
         </button>
+        <button class="admin-menu-item" data-tab="affiliates" onclick="switchAdminTab('affiliates', this); closeAdminSidebar();">
+          <span class="icon"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1.2em; height:1.2em; vertical-align:middle; display:inline-block;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span><span>Affiliate Program</span>
+        </button>
         <button class="admin-menu-item" data-tab="broadcasts" onclick="switchAdminTab('broadcasts', this); closeAdminSidebar();">
           <span class="icon"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1.2em; height:1.2em; vertical-align:middle; display:inline-block;"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg></span><span>Broadcasting Hub</span>
         </button>
@@ -157,6 +160,7 @@
                 <select id="landlord-filter-status" class="admin-table-select" onchange="filterLandlordsTable()">
                   <option value="all">All Statuses</option>
                   <option value="Active">Active</option>
+                  <option value="Trial">Trial (ट्रायल)</option>
                   <option value="Suspended">Suspended</option>
                   <option value="Locked">Locked (Manual Activation)</option>
                   <option value="Expired">Expired</option>
@@ -856,8 +860,230 @@
           </div>
         </section>
 
+        <!-- ═══════════════ TAB: AFFILIATES ═══════════════ -->
+        <section class="admin-tab-pane" id="tab-affiliates">
+          <!-- Affiliate KPIs Overview -->
+          <div class="admin-stats-grid" style="margin-bottom: 24px;">
+            <div class="admin-stat-card">
+              <div class="admin-stat-header">
+                <span class="admin-stat-label">Total Affiliate Partners</span>
+                <span class="admin-stat-icon" style="color: var(--primary-light);">
+                  <svg style="width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M9 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/></svg>
+                </span>
+              </div>
+              <div class="admin-stat-value" id="stat-total-affiliates">0</div>
+              <div style="font-size: var(--font-xs); color: var(--text-muted); margin-top: 4px;">Registered on platform</div>
+            </div>
+
+            <div class="admin-stat-card">
+              <div class="admin-stat-header">
+                <span class="admin-stat-label">Referred Buildings</span>
+                <span class="admin-stat-icon" style="color: var(--warning-light);">
+                  <svg style="width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="9" y1="22" x2="9" y2="16"/><line x1="15" y1="22" x2="15" y2="16"/></svg>
+                </span>
+              </div>
+              <div class="admin-stat-value" style="color: var(--warning-light);" id="stat-total-buildings">0</div>
+              <div style="font-size: var(--font-xs); color: var(--text-muted); margin-top: 4px;">SaaS properties referred</div>
+            </div>
+
+            <div class="admin-stat-card">
+              <div class="admin-stat-header">
+                <span class="admin-stat-label">Total Paid Out</span>
+                <span class="admin-stat-icon" style="color: var(--success-light);">
+                  <svg style="width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2;" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </span>
+              </div>
+              <div class="admin-stat-value" style="color: var(--success-light);" id="stat-total-payouts">₹0</div>
+              <div style="font-size: var(--font-xs); color: var(--text-muted); margin-top: 4px;">Total commissions cleared</div>
+            </div>
+          </div>
+
+          <div class="affiliate-settings-row" style="margin-bottom: 24px;">
+            <!-- Commission Settings -->
+            <div class="admin-chart-card" style="padding: 20px;">
+              <h4 class="admin-chart-title" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                <svg class="icon-svg" style="width: 1.2em; height: 1.2em; color: var(--warning-light);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Commission Settings
+              </h4>
+              <form id="affiliate-settings-form" onsubmit="saveAffiliateCommission(event)">
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Default Commission Rate (%)</label>
+                  <input type="number" id="settings-commission-rate" class="admin-form-input" min="1" max="100" required placeholder="e.g. 20" />
+                  <small style="color: var(--text-muted); display: block; margin-top: 6px; font-size: 11px;">Percentage of subscription payments paid as affiliate rewards.</small>
+                </div>
+                <button type="submit" class="admin-btn admin-btn-primary" style="width: 100%;">Save Commission Settings</button>
+              </form>
+            </div>
+
+            <!-- Withdrawal Window Settings -->
+            <div class="admin-chart-card" style="padding: 20px;">
+              <h4 class="admin-chart-title" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                <svg class="icon-svg" style="width: 1.2em; height: 1.2em; color: var(--warning-light);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Withdrawal Window Settings
+              </h4>
+              <form id="withdrawal-settings-form" onsubmit="saveWithdrawalWindowSettings(event)">
+                <div class="admin-form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                  <div>
+                    <label class="admin-form-label">Start Day of Month</label>
+                    <input type="number" id="settings-wr-start-day" class="admin-form-input" min="1" max="31" required placeholder="e.g. 1" />
+                  </div>
+                  <div>
+                    <label class="admin-form-label">End Day of Month</label>
+                    <input type="number" id="settings-wr-end-day" class="admin-form-input" min="1" max="31" required placeholder="e.g. 5" />
+                  </div>
+                </div>
+                <div class="admin-form-group">
+                  <label class="admin-form-label">Window Status Override</label>
+                  <select id="settings-wr-window-status" class="admin-form-input" style="cursor: pointer;">
+                    <option value="auto">Automatic (Date-based)</option>
+                    <option value="force_open">Force Open (Bypass Date)</option>
+                    <option value="force_closed">Force Closed</option>
+                  </select>
+                  <small style="color: var(--text-muted); display: block; margin-top: 6px; font-size: 11px;">Control when affiliates can submit withdrawal requests.</small>
+                </div>
+                <button type="submit" class="admin-btn admin-btn-primary" style="width: 100%;">Save Window Settings</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Affiliates Table -->
+          <div class="admin-table-card">
+            <div class="admin-table-header" style="flex-wrap: wrap; gap: 12px;">
+              <h3 class="admin-table-title">Affiliate Partners</h3>
+              <div class="admin-table-filters" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                <div class="admin-filter-group" style="display: flex; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 2px;">
+                  <button type="button" class="aff-filter-btn active" id="aff-filter-all" onclick="setAffiliateFilter('all')">All</button>
+                  <button type="button" class="aff-filter-btn" id="aff-filter-pending" onclick="setAffiliateFilter('pending')">Pending Payout</button>
+                  <button type="button" class="aff-filter-btn" id="aff-filter-completed" onclick="setAffiliateFilter('completed')">Paid/No Due</button>
+                </div>
+                <button type="button" class="admin-btn admin-btn-primary" onclick="openBulkPayoutModal()" style="padding: 6px 12px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; background: var(--success); border-color: var(--success);">
+                  <svg style="width:12px; height:12px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="12" y1="10" x2="12" y2="10.01"/><line x1="12" y1="14" x2="12" y2="14.01"/></svg>
+                  Bulk Payout All
+                </button>
+                <input type="text" id="affiliate-search-input" class="admin-table-search" placeholder="Search affiliates by name, email, phone..." oninput="filterAffiliatesTable()" />
+              </div>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Affiliate Name</th>
+                    <th>Email (Gmail)</th>
+                    <th>Phone Number</th>
+                    <th>UPI ID</th>
+                    <th>Referral Code</th>
+                    <th>Comm %</th>
+                    <th>Current Balance</th>
+                    <th>Joined On</th>
+                    <th style="text-align: right; width: 1%;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="affiliates-table-body">
+                  <tr>
+                    <td colspan="9" class="text-center text-muted" style="padding: var(--space-lg);">Fetching affiliates...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════
+               WITHDRAWAL REQUESTS
+          ═══════════════════════════════════════════════ -->
+          <div class="admin-table-card" style="margin-top: 24px;">
+            <div class="admin-table-header" style="flex-wrap: wrap; gap: 12px;">
+              <div>
+                <h3 class="admin-table-title">Affiliate Withdrawal Requests</h3>
+                <p style="font-size:12px; color:var(--text-secondary); margin-top:4px;">Review and verify payout requests submitted by affiliates</p>
+              </div>
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <div class="admin-filter-group" style="display: flex; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 2px;">
+                  <button type="button" class="aff-filter-btn active" id="wr-filter-all"    onclick="setWRFilter('all')">All</button>
+                  <button type="button" class="aff-filter-btn"        id="wr-filter-pending" onclick="setWRFilter('pending')">Pending</button>
+                  <button type="button" class="aff-filter-btn"        id="wr-filter-verified" onclick="setWRFilter('verified')">Verified</button>
+                  <button type="button" class="aff-filter-btn"        id="wr-filter-rejected" onclick="setWRFilter('rejected')">Rejected</button>
+                </div>
+                <span style="font-size:12px;color:var(--warning-light);font-weight:700;" id="wr-pending-count"></span>
+              </div>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Affiliate Name</th>
+                    <th>Phone</th>
+                    <th>UPI ID</th>
+                    <th>Amount</th>
+                    <th>Buildings Info</th>
+                    <th>Status</th>
+                    <th style="text-align:right; width:1%;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="wr-admin-table-body">
+                  <tr><td colspan="8" class="text-center text-muted" style="padding: var(--space-lg);">Loading withdrawal requests...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
       </div>
     </main>
+  </div>
+
+  <!-- ═══════════════ MODAL: VERIFY WITHDRAWAL ═══════════════ -->
+  <div class="admin-modal" id="modal-verify-wr">
+    <div class="admin-modal-card" style="max-width: 520px;">
+      <div class="admin-modal-header">
+        <h3 class="admin-modal-title">Verify Withdrawal Request</h3>
+        <button class="admin-modal-close" onclick="closeAdminModal('modal-verify-wr')">×</button>
+      </div>
+      <div class="admin-modal-body">
+        <input type="hidden" id="wr-modal-id" />
+        <!-- Summary card -->
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 20px;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div>
+              <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px;">Affiliate Name</div>
+              <div style="font-weight:700;color:#fff;" id="wr-view-name">—</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px;">Phone</div>
+              <div style="font-weight:600;" id="wr-view-phone">—</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px;">UPI ID</div>
+              <div style="font-family:monospace;font-size:13px;color:var(--primary-light);" id="wr-view-upi">—</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px;">Amount Requested</div>
+              <div style="font-size:20px;font-weight:800;color:var(--warning-light);" id="wr-view-amount">₹0</div>
+            </div>
+          </div>
+          <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border-color);">
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px;">Buildings Info</div>
+            <div style="font-size:13px;color:var(--text-secondary);" id="wr-view-buildings">—</div>
+          </div>
+        </div>
+        <!-- Admin Note -->
+        <div class="admin-form-group">
+          <label class="admin-form-label">Admin Note (Optional)</label>
+          <textarea id="wr-admin-note" class="admin-form-input" rows="3" placeholder="e.g. Paid via NEFT on 25 June 2026, Ref: AXISI123456" style="height:auto; resize:vertical;"></textarea>
+        </div>
+        <!-- Action Buttons -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:4px;">
+          <button class="admin-btn" style="background: var(--danger); border-color: var(--danger); color:#fff;" onclick="processWithdrawalRequest('rejected')">
+            <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Reject Request
+          </button>
+          <button class="admin-btn admin-btn-primary" style="background: var(--success); border-color: var(--success);" onclick="processWithdrawalRequest('verified')">
+            <svg style="width:13px;height:13px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Mark as Verified
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ═══════════════ MODAL: PLAN MANAGEMENT ═══════════════ -->
@@ -874,6 +1100,7 @@
             <label class="admin-form-label">Subscription Tier Plan</label>
             <select id="sub-modal-plan" class="admin-form-input">
               <option value="Basic">(paid) plan</option>
+              <option value="Trial">Free Trial (1 Month)</option>
               <option value="Enterprise">unlocked account</option>
             </select>
           </div>
@@ -1146,6 +1373,165 @@
       <div class="admin-modal-footer">
         <button class="admin-btn admin-btn-secondary" onclick="closeAdminModal('modal-landlord-detail')">Close Profile</button>
       </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MODAL: AFFILIATE DETAIL & PAYOUTS ═══════════════ -->
+  <div class="admin-modal" id="modal-affiliate-detail">
+    <div class="admin-modal-card" style="max-width: 700px;">
+      <div class="admin-modal-header">
+        <h3 class="admin-modal-title">Affiliate Account Details</h3>
+        <button class="admin-modal-close" onclick="closeAdminModal('modal-affiliate-detail')">×</button>
+      </div>
+      <div class="admin-modal-body" style="padding: var(--space-lg); max-height: 75vh; overflow-y: auto;">
+        
+        <!-- Header Summary -->
+        <div class="affiliate-detail-header" style="background: var(--bg-elevated); padding: 12px 16px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); margin-bottom: 16px;">
+          <div>
+            <span style="font-size: var(--font-xs); text-transform: uppercase; color: var(--text-muted); display: block;">Affiliate Partner</span>
+            <strong id="aff-detail-name" style="font-size: var(--font-md); color: #ffffff;">—</strong>
+          </div>
+          <div>
+            <span style="font-size: var(--font-xs); text-transform: uppercase; color: var(--text-muted); display: block; text-align: right;">Current Unpaid Balance</span>
+            <strong id="aff-detail-balance" style="font-size: var(--font-lg); color: var(--warning-light);">₹0</strong>
+          </div>
+        </div>
+
+        <div class="affiliate-modal-grid" style="margin-bottom: 20px;">
+          <!-- Affiliate Contact Information -->
+          <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); padding: 12px; border-radius: var(--radius-sm);">
+            <h4 style="margin: 0 0 10px 0; color: var(--primary-light); font-size: var(--font-xs); text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 4px;">Contact Profile</h4>
+            <div style="display: flex; flex-direction: column; gap: 6px; font-size: var(--font-sm);">
+              <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Email:</span> <span id="aff-detail-email">—</span></div>
+              <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Phone:</span> <span id="aff-detail-phone">—</span></div>
+              <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">UPI ID:</span> <strong id="aff-detail-upi" style="color: var(--warning-light);">—</strong></div>
+              <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Referral Code:</span> <code id="aff-detail-code" style="color: var(--primary-light);">—</code></div>
+            </div>
+          </div>
+
+          <!-- Referral Stats -->
+          <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); padding: 12px; border-radius: var(--radius-sm);">
+            <h4 style="margin: 0 0 10px 0; color: var(--success); font-size: var(--font-xs); text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 4px;">Earnings Summary</h4>
+            <div style="display: flex; flex-direction: column; gap: 6px; font-size: var(--font-sm);">
+              <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Total Referred:</span> <span id="aff-detail-referred">0</span></div>
+              <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Total Commission:</span> <strong style="color: #ffffff;" id="aff-detail-total-earned">₹0</strong></div>
+              <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Total Paid Out:</span> <strong style="color: var(--success-light);" id="aff-detail-total-paid">₹0</strong></div>
+              <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);">Payout Count:</span> <span id="aff-detail-payout-count">0 times</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Set Custom Commission Percentage -->
+        <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--radius-sm); margin-bottom: 20px;">
+          <h4 style="margin: 0 0 12px 0; color: var(--primary-light); font-size: var(--font-xs); text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">Set Custom Commission Rate / कमीशन दर बदलें</h4>
+          <form id="custom-commission-form" onsubmit="submitCustomCommission(event)">
+            <div class="affiliate-input-group">
+              <div class="admin-form-group" style="margin-bottom: 0; flex: 1;">
+                <label class="admin-form-label">Commission Percentage (%) (Leave empty for default)</label>
+                <input type="number" id="custom-comm-rate" class="admin-form-input" min="1" max="100" placeholder="e.g. 15" />
+              </div>
+              <button type="submit" class="admin-btn admin-btn-primary" style="padding: 11px 20px;">Update Rate</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Record a Payout -->
+        <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); padding: 16px; border-radius: var(--radius-sm); margin-bottom: 20px;">
+          <h4 style="margin: 0 0 12px 0; color: var(--success); font-size: var(--font-xs); text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">Record a Payout / भुगतान दर्ज करें</h4>
+          <form id="record-payout-form" onsubmit="submitAffiliatePayout(event)">
+            <input type="hidden" id="payout-affiliate-id" />
+            <div class="affiliate-modal-grid" style="gap: 12px; margin-bottom: 12px;">
+              <div class="admin-form-group" style="margin-bottom: 0;">
+                <label class="admin-form-label">Payout Amount (₹)</label>
+                <input type="number" id="payout-amount" class="admin-form-input" min="1" step="0.01" required />
+              </div>
+              <div class="admin-form-group" style="margin-bottom: 0;">
+                <label class="admin-form-label">Transaction ID / Reference</label>
+                <input type="text" id="payout-txn-id" class="admin-form-input" placeholder="e.g. TXN98765432" required />
+              </div>
+            </div>
+            <button type="submit" class="admin-btn admin-btn-primary" style="width: 100%; background: var(--success); border-color: var(--success);">Record Payout Details</button>
+          </form>
+        </div>
+
+        <!-- Payout History Logs -->
+        <div>
+          <h4 style="margin: 0 0 10px 0; color: #ffffff; font-size: 13px;">Payout History Log</h4>
+          <div class="admin-table-wrap" style="max-height: 200px; overflow: auto;">
+            <table class="admin-table" style="font-size: var(--font-sm);">
+              <thead>
+                <tr>
+                  <th>Payout Date</th>
+                  <th>Amount Paid</th>
+                  <th>Transaction ID</th>
+                </tr>
+              </thead>
+              <tbody id="aff-payouts-log-body">
+                <tr><td colspan="3" class="text-center text-muted">No payouts recorded yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Referred Landlords Detail List -->
+        <div style="margin-top: 20px;">
+          <h4 style="margin: 0 0 10px 0; color: #ffffff; font-size: 13px;">Referred Landlords & SaaS Payments Status</h4>
+          <div class="admin-table-wrap" style="max-height: 250px; overflow: auto;">
+            <table class="admin-table" style="font-size: var(--font-sm);">
+              <thead>
+                <tr>
+                  <th>Landlord Name</th>
+                  <th>Allowed Buildings</th>
+                  <th>Status</th>
+                  <th>Total SaaS Paid</th>
+                  <th>Commission Earned</th>
+                  <th>Last Paid Date</th>
+                </tr>
+              </thead>
+              <tbody id="aff-landlords-log-body">
+                <tr><td colspan="6" class="text-center text-muted">No referred landlords yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+      <div class="admin-modal-footer">
+        <button class="admin-btn admin-btn-secondary" onclick="closeAdminModal('modal-affiliate-detail')">Close Profile</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ═══════════════ MODAL: BULK PAYOUT ═══════════════ -->
+  <div class="admin-modal" id="modal-bulk-payout">
+    <div class="admin-modal-card" style="max-width: 450px;">
+      <div class="admin-modal-header">
+        <h3 class="admin-modal-title">Record Bulk Payout</h3>
+        <button class="admin-modal-close" onclick="closeAdminModal('modal-bulk-payout')">×</button>
+      </div>
+      <form id="bulk-payout-form" onsubmit="submitBulkPayout(event)">
+        <div class="admin-modal-body" style="padding: var(--space-lg);">
+          <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: var(--font-sm);">
+              <span style="color: var(--text-muted);">Affiliates to Pay:</span>
+              <strong id="bulk-pay-count" style="color: #ffffff;">0</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: var(--font-sm);">
+              <span style="color: var(--text-muted);">Total Unpaid Balance:</span>
+              <strong id="bulk-pay-total" style="color: var(--warning-light);">₹0.00</strong>
+            </div>
+          </div>
+          <div class="admin-form-group">
+            <label class="admin-form-label">Batch Transaction ID / Reference</label>
+            <input type="text" id="bulk-payout-txn-id" class="admin-form-input" placeholder="e.g. UPI-BATCH-98765" required />
+            <small style="color: var(--text-muted); display: block; margin-top: 4px; font-size: 11px;">This transaction reference will be saved for all recorded payouts.</small>
+          </div>
+        </div>
+        <div class="admin-modal-footer">
+          <button type="button" class="admin-btn admin-btn-secondary" onclick="closeAdminModal('modal-bulk-payout')">Cancel</button>
+          <button type="submit" class="admin-btn admin-btn-primary" style="background: var(--success); border-color: var(--success);">Record Payouts</button>
+        </div>
+      </form>
     </div>
   </div>
 

@@ -42,6 +42,19 @@ function getFloorNumberForRoom(roomId) {
   return null;
 }
 
+// Helper to calculate bond remaining months
+function getBondRemainingMonths(tenant) {
+  if (!tenant || !tenant.bond_months || tenant.bond_months <= 0) return 0;
+  const joinDate = tenant.join_date ? new Date(tenant.join_date) : new Date();
+  const today = new Date();
+  
+  let elapsed = (today.getFullYear() - joinDate.getFullYear()) * 12 + today.getMonth() - joinDate.getMonth();
+  if (today.getDate() < joinDate.getDate()) {
+    elapsed = Math.max(0, elapsed - 1);
+  }
+  return Math.max(0, tenant.bond_months - elapsed);
+}
+
 // ── Initialize ──
 // ── Initialize ──
 let dashboardInitialized = false;
@@ -128,6 +141,11 @@ async function init() {
       renderDashboard();
       renderBuildingsList();
       renderBuildingSelect();
+
+      // Check WhatsApp Status silently on load
+      if (ownerData && ownerData.whatsapp_server_url) {
+        pollWhatsAppStatus();
+      }
 
       // ── Restore last active tab on page refresh ──
       const savedTab = localStorage.getItem('pgb_owner_active_tab');
@@ -235,7 +253,7 @@ function checkAccessGates(ownerData) {
   // Check Subscription expiry
   const isExpired = ownerData.plan_type !== 'Enterprise' &&
     (ownerData.subscription_status === 'expired' ||
-      ownerData.subscription_status !== 'active' ||
+      (ownerData.subscription_status !== 'active' && ownerData.subscription_status !== 'trial') ||
       (ownerData.subscription_expiry && new Date(ownerData.subscription_expiry) < new Date()));
 
   if (isExpired) {
@@ -2470,9 +2488,23 @@ function renderTenantsTable() {
     }
 
     if (vacateFiltered.length === 0) {
-      vacateTbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted" style="padding: 24px;">No pending vacate requests</td></tr>';
+      vacateTbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted" style="padding: 24px;">No pending vacate requests</td></tr>';
     } else {
-      vacateTbody.innerHTML = vacateFiltered.map(n => `
+      vacateTbody.innerHTML = vacateFiltered.map(n => {
+        const tenant = allTenants.find(t => t.id === n.tenant_id);
+        let suggestionHtml = '';
+        if (tenant && tenant.bond_months && tenant.bond_months > 0) {
+          const remaining = getBondRemainingMonths(tenant);
+          if (remaining > 0) {
+            suggestionHtml = `<span class="badge badge-danger" style="font-size:11px; font-weight:700; white-space:nowrap;">No Refund (Bond Active - ${remaining} Mo Left) / रिफंड न करें</span>`;
+          } else {
+            suggestionHtml = `<span class="badge badge-success" style="font-size:11px; font-weight:700; white-space:nowrap;">Refund Deposit (Bond Completed) / रिफंड करें</span>`;
+          }
+        } else {
+          suggestionHtml = `<span class="badge badge-success" style="font-size:11px; font-weight:700; white-space:nowrap;">Refund Deposit (No Bond) / रिफंड करें</span>`;
+        }
+
+        return `
         <tr>
           <td><strong>${n.tenant_name}</strong></td>
           <td>Room ${n.room_number || '—'}</td>
@@ -2480,10 +2512,12 @@ function renderTenantsTable() {
           <td>${formatDate(n.preferred_date)}</td>
           <td><span style="font-size: var(--font-xs); color: var(--text-secondary);">${n.reason || '—'}</span></td>
           <td>${formatCurrency(n.deposit_amount || 0)}</td>
-          <td style="text-align: right;">
+          <td>${suggestionHtml}</td>
+          <td style="text-align: right; white-space: nowrap;">
             <button class="btn btn-success btn-sm" onclick="approveVacate('${n.id}', '${n.tenant_id}')" style="display: inline-flex; align-items: center; gap: 4px;"><svg class="icon-svg" style="width:1.2em; height:1.2em; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Approve Vacate</button>
           </td>
-        </tr>`).join('');
+        </tr>`;
+      }).join('');
     }
   }
   // Calculate totals for badge
@@ -2587,6 +2621,23 @@ window.viewTenantDetails = function (tenantId) {
       initialMeterEl.textContent = t.initial_meter_reading !== undefined && t.initial_meter_reading !== null
         ? t.initial_meter_reading + ' Units'
         : '0 Units';
+    }
+
+    // Bond Agreement info
+    const bondMonthsEl = document.getElementById('tp-bond-months');
+    if (bondMonthsEl) {
+      bondMonthsEl.textContent = t.bond_months && t.bond_months > 0
+        ? `${t.bond_months} Months`
+        : 'No Bond / कोई बांड नहीं';
+    }
+    const bondRemainingEl = document.getElementById('tp-bond-remaining');
+    if (bondRemainingEl) {
+      if (t.bond_months && t.bond_months > 0) {
+        const remaining = getBondRemainingMonths(t);
+        bondRemainingEl.textContent = `${remaining} Months Left / ${remaining} माह शेष`;
+      } else {
+        bondRemainingEl.textContent = '—';
+      }
     }
 
     // Members
@@ -4575,6 +4626,11 @@ window.switchTab = async function (tabId, el, skipLoad = false) {
   if (tabId === 'settings') {
     renderSettingsForm();
     renderSupportTicketsList();
+  }
+  if (tabId === 'whatsapp') {
+    window.initWhatsAppTab();
+  } else {
+    stopWhatsAppPolling();
   }
 
   // Close mobile sidebar
@@ -6693,19 +6749,39 @@ window.renderRentDeposits = function () {
       : pendingRefunds.filter(n => n.building_id === currentBuildingFilter);
 
     if (filteredPending.length === 0) {
-      pendingTbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted" style="padding: 24px;">No pending refunds (कोई लंबित रिफंड नहीं है)</td></tr>';
+      pendingTbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted" style="padding: 24px;">No pending refunds (कोई लंबित रिफंड नहीं है)</td></tr>';
     } else {
       pendingTbody.innerHTML = filteredPending.map(n => {
         const tenantName = n.tenant_name || 'Unknown';
         const roomBld = `Room ${n.room_number || '—'} (${n.building_name || '—'})`;
+        const tenant = allTenants.find(t => t.id === n.tenant_id);
+
+        let suggestionHtml = '';
+        let showForfeit = false;
+        if (tenant && tenant.bond_months && tenant.bond_months > 0) {
+          const remaining = getBondRemainingMonths(tenant);
+          if (remaining > 0) {
+            suggestionHtml = `<span class="badge badge-danger" style="font-size:11px; font-weight:700; white-space:nowrap;">No Refund (Bond Active - ${remaining} Mo Left) / रिफंड न करें</span>`;
+            showForfeit = true;
+          } else {
+            suggestionHtml = `<span class="badge badge-success" style="font-size:11px; font-weight:700; white-space:nowrap;">Refund Deposit (Bond Completed) / रिफंड करें</span>`;
+          }
+        } else {
+          suggestionHtml = `<span class="badge badge-success" style="font-size:11px; font-weight:700; white-space:nowrap;">Refund Deposit (No Bond) / रिफंड करें</span>`;
+        }
+
+        const actionButtonsHtml = showForfeit
+          ? `<button class="btn btn-danger btn-sm" onclick="forfeitDeposit('${n.id}')" style="margin-right: 6px; display: inline-flex; align-items: center; gap: 4px;">Forfeit Deposit</button><button class="btn btn-success btn-sm" onclick="markDepositRefunded('${n.id}')">${ICONS.successCheck()} Mark Refunded</button>`
+          : `<button class="btn btn-success btn-sm" onclick="markDepositRefunded('${n.id}')">${ICONS.successCheck()} Mark Refunded</button>`;
 
         return `<tr>
           <td><strong>${tenantName}</strong></td>
           <td>${roomBld}</td>
           <td>${n.preferred_date ? formatDate(n.preferred_date) : '—'}</td>
           <td><strong>${formatCurrency(n.deposit_amount || 0)}</strong></td>
-          <td style="text-align: right;">
-            <button class="btn btn-success btn-sm" onclick="markDepositRefunded('${n.id}')">${ICONS.successCheck()} Mark Refunded</button>
+          <td>${suggestionHtml}</td>
+          <td style="text-align: right; white-space: nowrap;">
+            ${actionButtonsHtml}
           </td>
         </tr>`;
       }).join('');
@@ -6755,6 +6831,26 @@ window.markDepositRefunded = async function (noticeId) {
   } catch (err) {
     console.error('Error marking deposit refunded:', err);
     showToast('Error', 'Failed to update deposit: ' + err.message, 'error');
+  }
+};
+
+window.forfeitDeposit = async function (noticeId) {
+  if (!confirm('Are you sure you want to forfeit this security deposit? (क्या आप वाकई इस सिक्योरिटी डिपॉजिट राशि को जब्त करना चाहते हैं? इससे रिफंड राशि ₹0 हो जाएगी।)')) return;
+
+  try {
+    const { error } = await supabase
+      .from('vacate_notices')
+      .update({ deposit_amount: 0, deposit_refunded: true })
+      .eq('id', noticeId);
+
+    if (error) throw error;
+
+    showToast('Deposit Forfeited!', 'Deposit amount set to ₹0 and marked as processed.', 'success');
+    await loadRealData();
+    renderRentDeposits();
+  } catch (err) {
+    console.error('Error forfeiting deposit:', err);
+    showToast('Error', 'Failed to forfeit deposit: ' + err.message, 'error');
   }
 };
 
@@ -7579,5 +7675,262 @@ window.submitRefundRequest = async function () {
       btn.disabled = false;
       btn.textContent = originalText;
     }
+  }
+};
+
+// ═══════════════════════════════════════════════════
+// WHATSAPP WEB AUTOMATION TAB LOGIC
+// ═══════════════════════════════════════════════════
+let waPollInterval = null;
+
+window.initWhatsAppTab = function () {
+  if (!ownerData) return;
+
+  // Load configuration from database ownerData profile
+  const waEnabledCheckbox = document.getElementById('wa-enabled');
+  if (waEnabledCheckbox) waEnabledCheckbox.checked = ownerData.whatsapp_enabled || false;
+
+  const waOffsetSelect = document.getElementById('wa-offset');
+  if (waOffsetSelect) waOffsetSelect.value = ownerData.whatsapp_reminder_offset !== undefined ? ownerData.whatsapp_reminder_offset : 3;
+
+  const waServerUrlInput = document.getElementById('wa-server-url');
+  if (waServerUrlInput) waServerUrlInput.value = ownerData.whatsapp_server_url || 'http://localhost:3001';
+
+  const waMsgTemplateTextarea = document.getElementById('wa-msg-template');
+  if (waMsgTemplateTextarea) waMsgTemplateTextarea.value = ownerData.whatsapp_message_template || 'Dear {name}, rent of ₹{amount} for room {room_number} is pending. Please pay by {due_date} to UPI: {upi_id}.';
+
+  // Load sent logs
+  window.loadWhatsAppLogs();
+
+  // Start fast status polling
+  startWhatsAppPolling();
+};
+
+window.toggleWaEnabled = function () {
+  console.log('WhatsApp reminder toggle changed');
+};
+
+async function pollWhatsAppStatus() {
+  const serverUrlInput = document.getElementById('wa-server-url');
+  const serverUrl = serverUrlInput ? serverUrlInput.value.trim() : 'http://localhost:3001';
+  const ownerId = ownerData?.id;
+  if (!ownerId) return;
+
+  const statusLabel = document.getElementById('whatsapp-sync-label');
+  const syncDot = document.getElementById('whatsapp-sync-dot');
+  const statusBadge = document.getElementById('whatsapp-status-badge');
+  const statusText = document.getElementById('wa-status-text');
+  const qrImage = document.getElementById('wa-qr-image');
+  const qrStatusMsg = document.getElementById('wa-qr-status-msg');
+  const disconnectBtn = document.getElementById('btn-wa-disconnect');
+
+  try {
+    const res = await fetch(`${serverUrl}/api/status?ownerId=${ownerId}`);
+    if (!res.ok) throw new Error('Server returned error status');
+    const data = await res.json();
+
+    // Update state if status changed
+    const status = data.status || 'disconnected';
+    if (status !== ownerData.whatsapp_status) {
+      ownerData.whatsapp_status = status;
+    }
+
+    // Sync to DOM UI
+    if (statusBadge) {
+      statusBadge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+      statusBadge.className = 'badge ' + (status === 'connected' ? 'badge-success' : status === 'connecting' ? 'badge-warning' : 'badge-danger');
+    }
+    if (statusLabel) {
+      statusLabel.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+    }
+    if (syncDot) {
+      syncDot.style.backgroundColor = status === 'connected' ? 'var(--success)' : status === 'connecting' ? 'var(--warning)' : 'var(--danger)';
+    }
+    if (statusText) {
+      statusText.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+      statusText.style.color = status === 'connected' ? 'var(--success)' : status === 'connecting' ? 'var(--warning)' : 'var(--danger)';
+    }
+
+    if (status === 'connected') {
+      if (qrImage) qrImage.style.display = 'none';
+      if (qrStatusMsg) {
+        qrStatusMsg.style.display = 'block';
+        qrStatusMsg.innerHTML = `✅ <strong>Connected!</strong><br/><span style="font-size: 11px; color: var(--text-muted);">${data.phone ? 'Phone: +' + data.phone : 'Device successfully linked'}</span>`;
+      }
+      if (disconnectBtn) disconnectBtn.style.display = 'block';
+    } else if (status === 'connecting') {
+      if (qrImage) qrImage.style.display = 'none';
+      if (qrStatusMsg) {
+        qrStatusMsg.style.display = 'block';
+        qrStatusMsg.textContent = 'Setting up browser session...';
+      }
+      if (disconnectBtn) disconnectBtn.style.display = 'none';
+    } else {
+      if (disconnectBtn) disconnectBtn.style.display = 'none';
+      
+      try {
+        const qrRes = await fetch(`${serverUrl}/api/qr?ownerId=${ownerId}`);
+        if (!qrRes.ok) throw new Error('QR endpoint failed');
+        const qrData = await qrRes.json();
+        
+        if (qrData.qr) {
+          if (qrImage) {
+            qrImage.src = qrData.qr;
+            qrImage.style.display = 'block';
+          }
+          if (qrStatusMsg) qrStatusMsg.style.display = 'none';
+        } else {
+          if (qrImage) qrImage.style.display = 'none';
+          if (qrStatusMsg) {
+            qrStatusMsg.style.display = 'block';
+            qrStatusMsg.textContent = qrData.message || 'Waiting for QR generation...';
+          }
+        }
+      } catch (qrErr) {
+        if (qrImage) qrImage.style.display = 'none';
+        if (qrStatusMsg) {
+          qrStatusMsg.style.display = 'block';
+          qrStatusMsg.textContent = 'Connecting and generating QR code...';
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('WhatsApp status polling failed:', err.message);
+    if (statusBadge) {
+      statusBadge.textContent = 'Offline';
+      statusBadge.className = 'badge badge-warning';
+    }
+    if (statusLabel) statusLabel.textContent = 'Offline';
+    if (syncDot) syncDot.style.backgroundColor = 'var(--danger)';
+    if (statusText) {
+      statusText.textContent = 'Server Unreachable';
+      statusText.style.color = 'var(--danger)';
+    }
+    if (qrImage) qrImage.style.display = 'none';
+    if (qrStatusMsg) {
+      qrStatusMsg.style.display = 'block';
+      qrStatusMsg.innerHTML = `<span style="color: var(--danger);">Companion server offline.</span><br/><span style="font-size: 11px; color: var(--text-muted);">Please start your companion server at ${serverUrl}</span>`;
+    }
+    if (disconnectBtn) disconnectBtn.style.display = 'none';
+  }
+}
+
+function startWhatsAppPolling() {
+  if (waPollInterval) clearInterval(waPollInterval);
+  pollWhatsAppStatus();
+  waPollInterval = setInterval(pollWhatsAppStatus, 5000);
+}
+
+function stopWhatsAppPolling() {
+  if (waPollInterval) {
+    clearInterval(waPollInterval);
+    waPollInterval = null;
+  }
+}
+
+window.saveWaSettings = async function () {
+  if (!ownerData) return;
+
+  const enabled = document.getElementById('wa-enabled').checked;
+  const offset = parseInt(document.getElementById('wa-offset').value) || 3;
+  const serverUrl = document.getElementById('wa-server-url').value.trim();
+  const template = document.getElementById('wa-msg-template').value.trim();
+
+  if (!serverUrl) {
+    showToast('Validation Error', 'Server URL is required', 'warning');
+    return;
+  }
+
+  try {
+    const { error } = await supabase
+      .from('owners')
+      .update({
+        whatsapp_enabled: enabled,
+        whatsapp_reminder_offset: offset,
+        whatsapp_server_url: serverUrl,
+        whatsapp_message_template: template
+      })
+      .eq('id', ownerData.id);
+
+    if (error) throw error;
+
+    ownerData.whatsapp_enabled = enabled;
+    ownerData.whatsapp_reminder_offset = offset;
+    ownerData.whatsapp_server_url = serverUrl;
+    ownerData.whatsapp_message_template = template;
+
+    showToast('Settings Saved', 'WhatsApp settings updated successfully', 'success');
+    startWhatsAppPolling();
+  } catch (err) {
+    showToast('Save Failed', 'Failed to save settings: ' + err.message, 'error');
+  }
+};
+
+window.disconnectWhatsApp = async function () {
+  if (!ownerData) return;
+
+  const serverUrlInput = document.getElementById('wa-server-url');
+  const serverUrl = serverUrlInput ? serverUrlInput.value.trim() : 'http://localhost:3001';
+  const ownerId = ownerData.id;
+
+  if (!confirm('Are you sure you want to disconnect your WhatsApp device?')) return;
+
+  try {
+    const res = await fetch(`${serverUrl}/api/disconnect`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ownerId })
+    });
+    
+    if (!res.ok) throw new Error('Server returned error status');
+    
+    showToast('Device Disconnected', 'WhatsApp session terminated successfully', 'success');
+    pollWhatsAppStatus();
+  } catch (err) {
+    showToast('Disconnect Failed', 'Could not disconnect: ' + err.message, 'error');
+  }
+};
+
+window.loadWhatsAppLogs = async function () {
+  if (!ownerData) return;
+  const tbody = document.getElementById('wa-logs-tbody');
+  if (!tbody) return;
+
+  try {
+    const { data: logs, error } = await supabase
+      .from('whatsapp_logs')
+      .select('*')
+      .eq('owner_id', ownerData.id)
+      .order('created_at', { ascending: false })
+      .limit(100);
+
+    if (error) throw error;
+
+    if (!logs || logs.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted" style="padding: 24px;">No auto-reminders sent yet</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = logs.map(log => {
+      const dateStr = formatDate(log.created_at) + ' ' + new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const statusClass = log.status === 'sent' ? 'badge-success' : 'badge-danger';
+      const statusLabel = log.status === 'sent' ? 'Sent' : 'Failed';
+      const detailMsg = log.error_message ? `<span class="text-danger" style="font-size: 11px;">Error: ${log.error_message}</span>` : '—';
+      
+      return `
+        <tr>
+          <td>${dateStr}</td>
+          <td><strong>${log.tenant_name}</strong></td>
+          <td>${log.phone}</td>
+          <td><div style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${log.message}">${log.message}</div></td>
+          <td><span class="badge ${statusClass}">${statusLabel}</span></td>
+          <td>${detailMsg}</td>
+        </tr>
+      `;
+    }).join('');
+
+  } catch (err) {
+    console.error('Failed to load WhatsApp logs:', err);
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger" style="padding: 24px;">Error loading logs: ${err.message}</td></tr>`;
   }
 };

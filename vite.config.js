@@ -16,6 +16,8 @@ export default defineConfig({
         refundPolicy: resolve(__dirname, 'refund-policy.html'),
         subscriptionExpired: resolve(__dirname, 'subscription-expired.html'),
         accountLocked: resolve(__dirname, 'account-locked.html'),
+        affiliate: resolve(__dirname, 'affiliate.html'),
+        affiliateDashboard: resolve(__dirname, 'affiliate-dashboard.html'),
       },
     },
     outDir: 'dist',

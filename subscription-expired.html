@@ -362,7 +362,7 @@
         // Check if actually active and redirect if they got activated manually or by payments
         const isExpired = owner.plan_type !== 'Enterprise' && 
                           (owner.subscription_status === 'expired' ||
-                           owner.subscription_status !== 'active' || 
+                           (owner.subscription_status !== 'active' && owner.subscription_status !== 'trial') || 
                            (owner.subscription_expiry && new Date(owner.subscription_expiry) < new Date()));
         
         if (!isExpired && owner.status !== 'Locked') {

@@ -514,6 +514,17 @@ function renderDashboard() {
   // KPIs
   document.getElementById('kpi-join').textContent = formatDate(tenantData.join_date);
 
+  // Render Bond Agreement Status
+  const kpiBondValueEl = document.getElementById('kpi-bond-value');
+  if (kpiBondValueEl) {
+    if (tenantData.bond_months && tenantData.bond_months > 0) {
+      const remaining = getBondRemainingMonths(tenantData);
+      kpiBondValueEl.textContent = `${tenantData.bond_months} Months (${remaining} Left / ${remaining} माह शेष)`;
+    } else {
+      kpiBondValueEl.textContent = 'No Bond / कोई बांड नहीं';
+    }
+  }
+
   // Calculate Next Payment Date (exactly based on Join Date + number of submitted payments)
   const joinDate = tenantData.join_date ? new Date(tenantData.join_date) : new Date();
   const submittedPaymentsCount = tenantPayments.filter(p => p.status === 'approved' || p.status === 'pending').length;
@@ -786,9 +797,33 @@ function renderDashboard() {
       if (vacateDateDisplay) {
         vacateDateDisplay.textContent = formatDate(tenantData.vacate_date);
       }
+      document.getElementById('vacate-bond-warning')?.classList.add('hidden');
     } else {
       vacateForm.classList.remove('hidden');
       vacateSubmitted.classList.add('hidden');
+
+      // Populate bond warning dynamically
+      const bondWarningEl = document.getElementById('vacate-bond-warning');
+      if (bondWarningEl && tenantData) {
+        if (tenantData.bond_months && tenantData.bond_months > 0) {
+          const remaining = getBondRemainingMonths(tenantData);
+          if (remaining > 0) {
+            bondWarningEl.classList.remove('hidden');
+            bondWarningEl.innerHTML = `⚠️ <strong>Warning / चेतावनी:</strong> Your bond agreement of ${tenantData.bond_months} months has ${remaining} months remaining. If you vacate now, your security deposit will <strong>NOT</strong> be refunded. (बांड समय से पहले खाली करने पर सिक्योरिटी डिपॉजिट रिफंड नहीं मिलेगा)`;
+            bondWarningEl.style.borderColor = 'var(--danger-border, #f87171)';
+            bondWarningEl.style.background = 'var(--danger-bg, rgba(239, 68, 68, 0.08))';
+            bondWarningEl.style.color = 'var(--danger-light, #f87171)';
+          } else {
+            bondWarningEl.classList.remove('hidden');
+            bondWarningEl.innerHTML = `✅ <strong>Agreement Completed:</strong> Your bond agreement of ${tenantData.bond_months} months has completed. Your security deposit will be refunded after checkout. (बांड अवधि पूरी हो चुकी है, सिक्योरिटी डिपॉजिट वापस किया जाएगा)`;
+            bondWarningEl.style.borderColor = 'var(--success-border, #34d399)';
+            bondWarningEl.style.background = 'var(--success-bg, rgba(16, 185, 129, 0.08))';
+            bondWarningEl.style.color = 'var(--success-light, #34d399)';
+          }
+        } else {
+          bondWarningEl.classList.add('hidden');
+        }
+      }
     }
   }
 }
@@ -970,7 +1005,18 @@ window.saveMembers = async function () {
   }
 };
 
-
+// ─── Bond Agreement Helpers ───
+window.getBondRemainingMonths = function (tenant) {
+  if (!tenant.bond_months || tenant.bond_months <= 0) return 0;
+  const joinDate = tenant.join_date ? new Date(tenant.join_date) : new Date();
+  const today = new Date();
+  
+  let elapsed = (today.getFullYear() - joinDate.getFullYear()) * 12 + today.getMonth() - joinDate.getMonth();
+  if (today.getDate() < joinDate.getDate()) {
+    elapsed = Math.max(0, elapsed - 1);
+  }
+  return Math.max(0, tenant.bond_months - elapsed);
+};
 
 
 function openModal(modalId) {
@@ -1822,6 +1868,14 @@ window.onBlockRoomChange = function () {
       meterGroup.classList.remove('hidden');
     }
   }
+
+  // Always show bond duration group when room is selected during block re-registration
+  const bondGroup = document.getElementById('block-info-bond-group');
+  if (bondGroup) {
+    bondGroup.classList.remove('hidden');
+    const input = document.getElementById('block-info-bond');
+    if (input) input.value = '';
+  }
 };
 
 window.goBackToBlockKey = function () {
@@ -2020,6 +2074,10 @@ window.submitBlockReRegistration = async function () {
     const session = await getSession();
     if (!session) throw new Error('No active session. Please log in again.');
 
+    // Fetch bond agreement months
+    const bondInput = document.getElementById('block-info-bond');
+    const bondMonths = bondInput ? parseInt(bondInput.value) || 0 : 0;
+
     const query = supabase
       .from('tenants')
       .insert({
@@ -2034,6 +2092,7 @@ window.submitBlockReRegistration = async function () {
         aadhaar_number: aadhaar,
         living_type: livingType,
         initial_meter_reading: parseFloat(meterReading) || 0,
+        bond_months: bondMonths,
         join_date: new Date().toISOString().split('T')[0],
         auth_user_id: session.user.id,
         vacate_date: null

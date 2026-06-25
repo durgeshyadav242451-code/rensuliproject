@@ -13,6 +13,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/src/css/common.css" />
   <link rel="stylesheet" href="/src/css/landing.css" />
+  <script>
+    (function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const ref = urlParams.get('ref') || urlParams.get('referrer');
+      if (ref) {
+        localStorage.setItem('pgb_referral_code', ref);
+      }
+    })();
+  </script>
 </head>
 <body class="landing-page">
   <div class="bg-gradient"></div>
@@ -34,7 +43,7 @@
       <button class="nav-pill" onclick="scrollToSection('hero')">Home</button>
       <button class="nav-pill" onclick="scrollToSection('features')">Features</button>
       <button class="nav-pill" onclick="scrollToSection('faq')">FAQ</button>
-      <span class="nav-pill" style="opacity: 0.5; cursor: not-allowed; color: var(--text-muted); font-size: var(--font-sm); font-weight: 600; padding: 8px 18px; display: inline-block; white-space: nowrap;">Affiliate Program (Coming Soon)</span>
+      <a class="nav-pill" href="/affiliate.html" style="color: var(--warning-light); font-weight: 600;">Affiliate Program 🤝</a>
     </div>
     <div class="nav-spacer" style="justify-self: end;"></div>
     <!-- Hamburger — only visible on mobile -->
@@ -53,10 +62,10 @@
       </button>
     </div>
     <nav class="mobile-nav-links">
-      <button onclick="closeMobileMenu(); scrollToSection('hero')">🏠 Home</button>
-      <button onclick="closeMobileMenu(); scrollToSection('features')">⚡ Features</button>
-      <button onclick="closeMobileMenu(); scrollToSection('faq')">❓ FAQ</button>
-      <button onclick="closeMobileMenu(); scrollToSection('affiliate')" style="opacity:0.5; cursor:not-allowed;" disabled>🤝 Affiliate (Coming Soon)</button>
+      <button onclick="closeMobileMenu(); scrollToSection('hero')">Home</button>
+      <button onclick="closeMobileMenu(); scrollToSection('features')">Features</button>
+      <button onclick="closeMobileMenu(); scrollToSection('faq')">FAQ</button>
+      <a href="/affiliate.html" onclick="closeMobileMenu()" style="color: var(--warning-light); font-weight: 600; display: block; text-decoration: none; padding: 10px 16px;">Affiliate Program</a>
     </nav>
     <div class="mobile-nav-footer">
       <p>© 2026 PG Builders</p>
@@ -432,19 +441,6 @@
     </div>
   </section>
 
-  <!-- ═══════════════ AFFILIATE PROGRAM SECTION ═══════════════ -->
-  <section class="affiliate-section" id="affiliate" style="padding: 70px 24px; max-width: var(--max-content); margin: 0 auto; text-align: center; position: relative; z-index: 1;">
-    <div class="scroll-reveal" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.05) 100%); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 16px; padding: 48px 32px; box-shadow: var(--shadow-glow), var(--shadow-card); max-width: 800px; margin: 0 auto; box-sizing: border-box; backdrop-filter: var(--backdrop-blur);">
-      <div class="section-badge" style="display: inline-flex; align-items: center; gap: 4px; margin-bottom: 16px;">
-        <svg class="svg-icon" style="width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> Earn Money
-      </div>
-      <h2 class="section-title" style="margin-bottom: 12px;">Join Our Affiliate Program</h2>
-      <p class="section-desc" style="margin: 0 auto 24px; max-width: 580px;">Recommend PG Builders to other hostel or PG owners. Earn a recurring <strong>20% commission</strong> for every active subscription referred by you, paid out monthly.</p>
-      <button class="btn btn-primary" disabled style="padding: 12px 28px; font-size: 14px; font-weight: 700; height: auto; display: inline-flex; align-items: center; gap: 8px; opacity: 0.5; cursor: not-allowed; background: var(--text-muted); border-color: transparent;">
-        Coming Soon
-      </button>
-    </div>
-  </section>
 
   <!-- ═══════════════ FOOTER ═══════════════ -->
   <footer class="site-footer">
