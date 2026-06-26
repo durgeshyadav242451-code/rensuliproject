@@ -201,7 +201,8 @@
           </div>
           <div style="display: flex; gap: 8px; align-items: center;">
             <div id="dashboard-plan-expiry-pill" class="hidden" style="background: var(--danger, #ff4c4c); color: #ffffff; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; align-items: center; justify-content: center; gap: 6px; border: 1px solid rgba(255,255,255,0.1); height: 36px; white-space: nowrap;"></div>
-            <select id="dashboard-month-filter" class="form-input form-select" style="width: auto; padding: 6px 12px; font-size: var(--font-sm); height: 36px; margin: 0;" onchange="onMonthFilterChange(this.value)">
+            <!-- Hidden month filter kept for JS sync compatibility, not visible on Dashboard -->
+            <select id="dashboard-month-filter" class="form-input form-select" style="display: none;" onchange="onMonthFilterChange(this.value)">
               <!-- Dynamic -->
             </select>
           </div>
@@ -594,18 +595,18 @@
                     <th>Join Date</th>
                     <th>Vacate Date</th>
                     <th>Status</th>
-                    <th style="text-align: right;">Action</th>
                   </tr>
                 </thead>
                 <tbody id="tenants-archived-table-body">
                   <tr>
-                    <td colspan="8" class="text-center text-muted" style="padding: 24px;">No archived tenants</td>
+                    <td colspan="7" class="text-center text-muted" style="padding: 24px;">No archived tenants</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-          </div>
         </div>
+
+
       </section>
 
       <!-- ═══════════════ TAB: RENT REVENUE ═══════════════ -->
@@ -2055,6 +2056,7 @@
               <div><strong>Initial Meter:</strong> <br><span id="tp-initial-meter" style="color: var(--text-secondary);"></span></div>
               <div><strong>Bond Agreement:</strong> <br><span id="tp-bond-months" style="color: var(--text-secondary);"></span></div>
               <div><strong>Remaining Bond:</strong> <br><span id="tp-bond-remaining" style="color: var(--text-secondary);"></span></div>
+              <div><strong>Aadhaar Card:</strong> <br><span id="tp-aadhaar" style="color: var(--text-secondary);"></span></div>
             </div>
           </div>
         </div>
@@ -2078,8 +2080,23 @@
             </div>
             
             <h5 style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Payment History</h5>
-            <div id="tp-payment-history" style="max-height: 200px; overflow-y: auto; padding-right: 8px; display: flex; flex-direction: column; gap: 8px; font-size: 14px;">
-              <!-- Dynamically populated -->
+            <div class="table-wrap" style="max-height: 300px; overflow-y: auto; margin-top: 10px;">
+              <table class="data-table" style="font-size: 13px; width: 100%;">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Total Amount</th>
+                    <th>Breakdown</th>
+                    <th>Method</th>
+                    <th>Transaction ID</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tp-payment-history-tbody">
+                  <tr><td colspan="7" class="text-center text-muted" style="padding: 16px;">No payment history found.</td></tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

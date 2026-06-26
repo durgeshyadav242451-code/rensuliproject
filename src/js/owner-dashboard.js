@@ -175,11 +175,8 @@ async function init() {
 function setDateDisplay() {
   const el = document.getElementById('dash-date');
   if (el) {
-    if (currentSelectedMonth === 'all') {
-      el.textContent = 'All Time';
-    } else {
-      el.textContent = formatMonthYear(currentSelectedMonth + '-01');
-    }
+    // Dashboard always shows current month
+    el.textContent = formatMonthYear(getCurrentMonthYear() + '-01');
   }
 }
 
@@ -326,6 +323,9 @@ function refreshActiveViews() {
     renderBuildingsList();
   } else if (activeTab === 'tenants') {
     renderTenantsTable();
+    const activeBtn = document.querySelector('#tab-tenants .inner-tab-btn.active');
+    const innerTabId = activeBtn ? activeBtn.getAttribute('onclick').match(/'([^']+)'/)[1] : 'tenants-active';
+
   } else if (activeTab === 'rent') {
     renderMonthlyChecklist();
     const activeBtn = document.querySelector('#tab-rent .inner-tab-btn.active');
@@ -668,16 +668,19 @@ function renderDashboard() {
 }
 
 function renderKPIs() {
+  // Dashboard always shows current month — filter is only used in Revenue/Expenses tabs
+  const dashboardMonth = getCurrentMonthYear();
+
   // Filter active tenants by building if not 'all'
   const filteredTenants = currentBuildingFilter === 'all'
     ? allTenants.filter(t => t.status === 'active' || t.status === 'vacating')
     : allTenants.filter(t => (t.status === 'active' || t.status === 'vacating') && t.building_id === currentBuildingFilter);
 
-  // Filter payments by building and selected month
+  // Filter payments by building and CURRENT month (all tenants incl. vacated)
   const filteredPayments = allPayments.filter(p => {
     const matchesBuilding = currentBuildingFilter === 'all' || p.building_id === currentBuildingFilter;
     const payDateStr = p.payment_date || p.created_at || '';
-    const matchesMonth = currentSelectedMonth === 'all' || payDateStr.startsWith(currentSelectedMonth);
+    const matchesMonth = payDateStr.startsWith(dashboardMonth);
     return matchesBuilding && matchesMonth;
   });
 
@@ -721,18 +724,17 @@ function renderKPIs() {
     });
   });
 
-  // Calculate expenses (recorded expenses + paid staff salaries)
+  // Calculate expenses for current month
   const filteredExpenses = expensesList.filter(e => {
     const matchesBuilding = currentBuildingFilter === 'all' || e.building_id === currentBuildingFilter;
-    const matchesMonth = currentSelectedMonth === 'all' || (e.date && e.date.startsWith(currentSelectedMonth));
+    const matchesMonth = e.date && e.date.startsWith(dashboardMonth);
     return matchesBuilding && matchesMonth;
   });
 
   let totalExpenses = filteredExpenses.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0);
 
-  // General staff salaries are added under overall 'all' context only for the current month
-  const isCurrentMonthOrAll = currentSelectedMonth === getCurrentMonthYear() || currentSelectedMonth === 'all';
-  if (isCurrentMonthOrAll && currentBuildingFilter === 'all') {
+  // Always add current-month staff salaries (all-building context only)
+  if (currentBuildingFilter === 'all') {
     const paidStaffSalary = staffList
       .filter(s => s.payment_status === 'Paid')
       .reduce((acc, curr) => acc + (parseFloat(curr.salary) || 0), 0);
@@ -1223,7 +1225,64 @@ window.openRoomInfoModal = function (buildingId, floorId, roomId) {
 
   let tenantsHTML = '';
   if (tenants.length > 0) {
-    tenantsHTML = tenants.map((t, index) => `
+    tenantsHTML = tenants.map((t, index) => {
+      const tPayments = allPayments.filter(p => p.tenant_id === t.id);
+      tPayments.sort((a, b) => new Date(b.created_at || b.payment_date) - new Date(a.created_at || a.payment_date));
+      
+      let paymentsTableHTML = '';
+      if (tPayments.length > 0) {
+        paymentsTableHTML = `
+          <div class="table-wrap" style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border-light); border-radius: var(--radius-sm); margin-top: 8px;">
+            <table class="data-table" style="font-size: 11px; width: 100%;">
+              <thead>
+                <tr>
+                  <th style="padding: 4px 8px;">Date</th>
+                  <th style="padding: 4px 8px;">Amount</th>
+                  <th style="padding: 4px 8px;">Breakdown</th>
+                  <th style="padding: 4px 8px;">Method</th>
+                  <th style="padding: 4px 8px;">Txn ID</th>
+                  <th style="padding: 4px 8px;">Status</th>
+                  <th style="padding: 4px 8px; text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${tPayments.map(p => {
+                  let statusClass = 'badge-warning';
+                  if (p.status === 'approved') statusClass = 'badge-success';
+                  if (p.status === 'rejected') statusClass = 'badge-danger';
+                  
+                  const breakdown = `Rent: ${formatCurrency(p.rent_amount || 0)} • Elec: ${formatCurrency(p.electricity_amount || 0)} • Maint: ${formatCurrency(p.maintenance_amount || 0)}`;
+                  
+                  let actionsHTML = '';
+                  if (p.status === 'pending') {
+                    actionsHTML = `<button class="btn btn-success btn-sm" style="padding: 2px 6px; font-size: 9px; min-height: auto;" onclick="event.stopPropagation(); window.approvePaymentFromRoomModal('${p.id}', '${t.id}', '${buildingId}', '${floorId}', '${roomId}')">Approve</button>`;
+                  } else if (p.status === 'approved') {
+                    actionsHTML = `<button class="btn btn-secondary btn-sm" style="padding: 2px 6px; font-size: 9px; min-height: auto; display: inline-flex; align-items: center; gap: 2px;" onclick="event.stopPropagation(); window.downloadOwnerReceipt('${p.id}')">${ICONS.receipt()} Receipt</button>`;
+                  } else {
+                    actionsHTML = `<span class="text-muted">—</span>`;
+                  }
+                  
+                  return `
+                    <tr>
+                      <td style="padding: 4px 8px; white-space: nowrap;">${formatDate(p.payment_date || p.created_at)}</td>
+                      <td style="padding: 4px 8px; font-weight: bold;">${formatCurrency(p.total_amount)}</td>
+                      <td style="padding: 4px 8px; color: var(--text-muted); font-size: 10px;">${breakdown}</td>
+                      <td style="padding: 4px 8px;">${p.payment_method || 'UPI'}</td>
+                      <td style="padding: 4px 8px; font-family: monospace; color: var(--text-muted); font-size: 10px;">${p.transaction_id || '—'}</td>
+                      <td style="padding: 4px 8px;"><span class="badge ${statusClass}" style="font-size: 9px; padding: 1px 4px;">${p.status.toUpperCase()}</span></td>
+                      <td style="padding: 4px 8px; text-align: right;">${actionsHTML}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } else {
+        paymentsTableHTML = `<div style="font-size: 12px; color: var(--text-muted); font-style: italic; padding: 8px 0;">No payment history found.</div>`;
+      }
+
+      return `
       <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: var(--space-md); margin-top: 12px; position: relative;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <h4 style="font-weight: 700; color: var(--text-primary); font-size: var(--font-sm); display: inline-flex; align-items: center; gap: 4px;">${ICONS.users()} Tenant ${tenants.length > 1 ? `#${index + 1}` : ''}: ${t.name}</h4>
@@ -1240,6 +1299,11 @@ window.openRoomInfoModal = function (buildingId, floorId, roomId) {
           <div style="display: inline-flex; align-items: center; gap: 4px;">${ICONS.electricity()} <strong>Initial Meter:</strong> ${t.initial_meter_reading || 0} units</div>
           <div style="display: inline-flex; align-items: center; gap: 4px;">${ICONS.electricity()} <strong>Current Meter:</strong> ${t.current_meter_reading || t.initial_meter_reading || 0} units</div>
           <div style="display: inline-flex; align-items: center; gap: 4px;">${ICONS.home()} <strong>Living Type:</strong> ${t.living_type?.toUpperCase() || 'ALONE'}</div>
+        </div>
+
+        <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border-color);">
+          <strong style="color: var(--text-primary); font-size: 11px; display: inline-flex; align-items: center; gap: 4px;">${ICONS.receipt()} Payment History &amp; Transactions:</strong>
+          ${paymentsTableHTML}
         </div>
         
         ${t.members && t.members.length > 0 ? `
@@ -1260,7 +1324,7 @@ window.openRoomInfoModal = function (buildingId, floorId, roomId) {
           </button>
         </div>
       </div>
-    `).join('');
+    `; }).join('');
   } else {
     tenantsHTML = `
       <div style="background: rgba(255, 255, 255, 0.02); border: 1px dashed var(--border-light); border-radius: var(--radius); padding: var(--space-lg); text-align: center; margin-top: 12px;">
@@ -2338,6 +2402,16 @@ window.approvePayment = async function (paymentId) {
   }
 };
 
+window.approvePaymentFromRoomModal = async function (paymentId, tenantId, buildingId, floorId, roomId) {
+  await window.approvePayment(paymentId);
+  window.openRoomInfoModal(buildingId, floorId, roomId);
+};
+
+window.approvePaymentFromProfileModal = async function (paymentId, tenantId) {
+  await window.approvePayment(paymentId);
+  window.viewTenantDetails(tenantId);
+};
+
 
 function renderTenantsTable() {
   renderPendingRentPaymentsList();
@@ -2489,9 +2563,11 @@ function renderTenantsTable() {
       vacateTbody.innerHTML = vacateFiltered.map(n => {
         const tenant = allTenants.find(t => t.id === n.tenant_id);
         let suggestionHtml = '';
+        let bondActive = false;
         if (tenant && tenant.bond_months && tenant.bond_months > 0) {
           const remaining = getBondRemainingMonths(tenant);
           if (remaining > 0) {
+            bondActive = true;
             suggestionHtml = `<span class="badge badge-danger" style="font-size:11px; font-weight:700; white-space:nowrap;">No Refund (Bond Active - ${remaining} Mo Left) / रिफंड न करें</span>`;
           } else {
             suggestionHtml = `<span class="badge badge-success" style="font-size:11px; font-weight:700; white-space:nowrap;">Refund Deposit (Bond Completed) / रिफंड करें</span>`;
@@ -2499,6 +2575,11 @@ function renderTenantsTable() {
         } else {
           suggestionHtml = `<span class="badge badge-success" style="font-size:11px; font-weight:700; white-space:nowrap;">Refund Deposit (No Bond) / रिफंड करें</span>`;
         }
+
+        // Show Decline Refund button only when bond is still active
+        const declineBtn = bondActive
+          ? `<button class="btn btn-danger btn-sm" onclick="declineRefund('${n.id}', '${n.tenant_id}')" style="margin-right:6px; display:inline-flex; align-items:center; gap:4px;">✕ Decline Refund</button>`
+          : '';
 
         return `
         <tr>
@@ -2510,6 +2591,7 @@ function renderTenantsTable() {
           <td>${formatCurrency(n.deposit_amount || 0)}</td>
           <td>${suggestionHtml}</td>
           <td style="text-align: right; white-space: nowrap;">
+            ${declineBtn}
             <button class="btn btn-success btn-sm" onclick="approveVacate('${n.id}', '${n.tenant_id}')" style="display: inline-flex; align-items: center; gap: 4px;"><svg class="icon-svg" style="width:1.2em; height:1.2em; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Approve Vacate</button>
           </td>
         </tr>`;
@@ -2544,7 +2626,7 @@ function renderTenantsTable() {
       : allTenants.filter(t => (t.status === 'vacated' || t.status === 'rejected') && t.building_id === currentBuildingFilter);
 
     if (archivedFiltered.length === 0) {
-      archivedTbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted" style="padding: 24px;">No archived tenants</td></tr>';
+      archivedTbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted" style="padding: 24px;">No archived tenants</td></tr>';
     } else {
       archivedTbody.innerHTML = archivedFiltered.map(t => `
         <tr onclick="viewTenantDetails('${t.id}')" style="cursor: pointer;" class="hover-row">
@@ -2555,17 +2637,12 @@ function renderTenantsTable() {
           <td>${formatDate(t.join_date)}</td>
           <td>${t.vacate_date ? formatDate(t.vacate_date) : '—'}</td>
           <td><span class="badge ${t.status === 'vacated' ? 'badge-warning' : 'badge-danger'}">${t.status.toUpperCase()}</span></td>
-          <td style="text-align: right;">
-            <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteTenantPermanently('${t.id}')" style="padding: 4px 8px; font-size: var(--font-xs); display: inline-flex; align-items: center; gap: 4px;">
-              ${ICONS.trash()} Delete
-            </button>
-          </td>
         </tr>`).join('');
     }
   }
 }
 
-window.viewTenantDetails = function (tenantId) {
+window.viewTenantDetails = function (tenantId, preserveTab = false) {
   try {
     console.log('viewTenantDetails called with tenantId:', tenantId);
     const t = allTenants.find(x => x.id === tenantId);
@@ -2586,6 +2663,10 @@ window.viewTenantDetails = function (tenantId) {
     document.getElementById('tp-maintenance').textContent = t.maintenance_included ? 'Included in Rent' : `₹${t.maintenance_charge || 0}`;
     document.getElementById('tp-electricity').textContent = t.electricity_included ? 'Included in Rent' : `₹${t.electricity_rate || 0} / unit`;
     document.getElementById('tp-deposit-amount').textContent = formatCurrency(t.advance_paid || 0);
+    const tpAadhaarEl = document.getElementById('tp-aadhaar');
+    if (tpAadhaarEl) {
+      tpAadhaarEl.textContent = t.aadhaar_number || '—';
+    }
 
     const depBadge = document.getElementById('tp-deposit-status');
     if (t.advance_paid > 0) {
@@ -2597,7 +2678,12 @@ window.viewTenantDetails = function (tenantId) {
     }
 
     const refundBadge = document.getElementById('tp-refund-status');
-    if (t.status === 'vacated') {
+    // Check if there's a refund_declined vacate notice for this tenant
+    const declinedNotice = allVacateNotices.find(n => n.tenant_id === t.id && n.status === 'refund_declined');
+    if (declinedNotice) {
+      refundBadge.textContent = 'Refund Declined';
+      refundBadge.className = 'badge badge-danger';
+    } else if (t.status === 'vacated') {
       refundBadge.textContent = 'Refunded';
       refundBadge.className = 'badge badge-success';
     } else if (t.status === 'vacating') {
@@ -2683,42 +2769,41 @@ window.viewTenantDetails = function (tenantId) {
       }
     }
 
-    // Payment history list
-    const historyUl = document.getElementById('tp-payment-history');
-    if (tPayments.length > 0) {
-      historyUl.innerHTML = tPayments.map(p => {
-        let displayMonth = 'Unknown';
-        if (p.month_year && typeof p.month_year === 'string' && p.month_year.includes('-')) {
-          const parts = p.month_year.split('-');
-          if (parts.length === 2) {
-            const [year, month] = parts;
-            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            const monthIdx = parseInt(month) - 1;
-            if (monthIdx >= 0 && monthIdx < 12) {
-              displayMonth = monthNames[monthIdx] + ' ' + year;
-            } else {
-              displayMonth = p.month_year;
-            }
+    // Payment history list table
+    const historyTbody = document.getElementById('tp-payment-history-tbody');
+    if (historyTbody) {
+      if (tPayments.length > 0) {
+        historyTbody.innerHTML = tPayments.map(p => {
+          let statusClass = 'badge-warning';
+          if (p.status === 'approved') statusClass = 'badge-success';
+          if (p.status === 'rejected') statusClass = 'badge-danger';
+          
+          const breakdown = `Rent: ${formatCurrency(p.rent_amount || 0)} • Elec: ${formatCurrency(p.electricity_amount || 0)} • Maint: ${formatCurrency(p.maintenance_amount || 0)}`;
+          
+          let actionsHTML = '';
+          if (p.status === 'pending') {
+            actionsHTML = `<button class="btn btn-success btn-sm" style="padding: 2px 6px; font-size: 9px; min-height: auto;" onclick="event.stopPropagation(); window.approvePaymentFromProfileModal('${p.id}', '${t.id}')">Approve</button>`;
+          } else if (p.status === 'approved') {
+            actionsHTML = `<button class="btn btn-secondary btn-sm" style="padding: 2px 6px; font-size: 9px; min-height: auto; display: inline-flex; align-items: center; gap: 2px;" onclick="event.stopPropagation(); window.downloadOwnerReceipt('${p.id}')">${ICONS.receipt()} Receipt</button>`;
           } else {
-            displayMonth = p.month_year;
+            actionsHTML = `<span class="text-muted">—</span>`;
           }
-        } else {
-          displayMonth = p.month_year || 'Unknown';
-        }
-
-        let statusColor = 'var(--warning)';
-        let statusText = 'Pending';
-        if (p.status === 'approved') { statusColor = 'var(--success)'; statusText = 'Paid'; }
-        else if (p.status === 'rejected') { statusColor = 'var(--danger)'; statusText = 'Rejected'; }
-
-        return `
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed var(--border-light); padding-bottom:4px;">
-          <span>${displayMonth}</span>
-          <span style="color:${statusColor}; font-weight:bold; font-size:12px;">${statusText}</span>
-        </div>`;
-      }).join('');
-    } else {
-      historyUl.innerHTML = '<div class="text-muted">No payment history found.</div>';
+          
+          return `
+            <tr>
+              <td style="white-space: nowrap;">${formatDate(p.payment_date || p.created_at)}</td>
+              <td style="font-weight: bold;">${formatCurrency(p.total_amount)}</td>
+              <td style="color: var(--text-muted); font-size: 10px; white-space: normal;">${breakdown}</td>
+              <td>${p.payment_method || 'UPI'}</td>
+              <td style="font-family: monospace; color: var(--text-muted); font-size: 10px;">${p.transaction_id || '—'}</td>
+              <td><span class="badge ${statusClass}" style="font-size: 9px; padding: 1px 4px;">${p.status.toUpperCase()}</span></td>
+              <td style="text-align: right;">${actionsHTML}</td>
+            </tr>
+          `;
+        }).join('');
+      } else {
+        historyTbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted" style="padding: 16px;">No payment history found.</td></tr>';
+      }
     }
 
     // Fetch and render tenant room history
@@ -2753,10 +2838,12 @@ window.viewTenantDetails = function (tenantId) {
         });
     }
 
-    // Reset profile tab to first tab
-    const firstTabBtn = document.querySelector('.profile-tab-btn');
-    if (firstTabBtn) {
-      window.switchProfileTab('room-deposit', firstTabBtn);
+    // Reset profile tab to first tab if not preserving
+    if (!preserveTab) {
+      const firstTabBtn = document.querySelector('.profile-tab-btn');
+      if (firstTabBtn) {
+        window.switchProfileTab('room-deposit', firstTabBtn);
+      }
     }
 
     openModal('modal-tenant-profile');
@@ -4499,6 +4586,8 @@ window.switchInnerTab = function (targetId, btnElement) {
   // Save active inner tab
   if (parentTab.id === 'tab-rent') {
     localStorage.setItem('pgb_owner_active_inner_tab_rent', targetId);
+  } else if (parentTab.id === 'tab-tenants') {
+    localStorage.setItem('pgb_owner_active_inner_tab_tenants', targetId);
   }
 
   const contents = parentTab.querySelectorAll('.inner-tab-content');
@@ -4575,7 +4664,20 @@ window.switchTab = async function (tabId, el, skipLoad = false) {
   // Trigger tab-specific renders
   if (tabId === 'plan') renderPlanTab();
   if (tabId === 'buildings') renderBuildingsList();
-  if (tabId === 'tenants') renderTenantsTable();
+  if (tabId === 'tenants') {
+    renderTenantsTable();
+    
+    // Find saved active inner sub-tab or default to 'tenants-active'
+    const savedInnerTabId = localStorage.getItem('pgb_owner_active_inner_tab_tenants') || 'tenants-active';
+    const innerBtn = document.querySelector(`#tab-tenants .inner-tab-btn[onclick*="${savedInnerTabId}"]`);
+    if (innerBtn) {
+      window.switchInnerTab(savedInnerTabId, innerBtn);
+    } else {
+      const activeBtn = document.querySelector('#tab-tenants .inner-tab-btn.active');
+      const innerTabId = activeBtn ? activeBtn.getAttribute('onclick').match(/'([^']+)'/)[1] : 'tenants-active';
+
+    }
+  }
   if (tabId === 'rent') {
     initRentCalculator();
 
@@ -5451,6 +5553,13 @@ window.populateAllMonthFilters = function () {
     const prevVal = txnSel.value;
     txnSel.innerHTML = optionsWithAllHTML;
     txnSel.value = prevVal || 'all';
+  }
+
+  const tenantsTxnSel = document.getElementById('tenants-txn-month-filter');
+  if (tenantsTxnSel) {
+    const prevVal = tenantsTxnSel.value;
+    tenantsTxnSel.innerHTML = optionsWithAllHTML;
+    tenantsTxnSel.value = prevVal || 'all';
   }
 
   const expSel = document.getElementById('expenses-month-filter');
@@ -6710,7 +6819,7 @@ window.renderRentDeposits = function () {
   const totalActiveDeposit = activeTenants.reduce((sum, t) => sum + (parseFloat(t.advance_paid) || 0), 0);
 
   // Refunded deposits from vacate_notices (processed and refunded)
-  const refundedNotices = allVacateNotices.filter(n => n.deposit_refunded === true);
+  const refundedNotices = allVacateNotices.filter(n => n.deposit_refunded === true && n.status !== 'refund_declined');
   const totalRefundedDeposit = refundedNotices.reduce((sum, n) => sum + (parseFloat(n.deposit_amount) || 0), 0);
 
   // Pending refunds: vacate_notices where status is processed/submitted and deposit_refunded is false
@@ -6763,7 +6872,7 @@ window.renderRentDeposits = function () {
         }
 
         const actionButtonsHtml = showForfeit
-          ? `<button class="btn btn-danger btn-sm" onclick="forfeitDeposit('${n.id}')" style="margin-right: 6px; display: inline-flex; align-items: center; gap: 4px;">Forfeit Deposit</button><button class="btn btn-success btn-sm" onclick="markDepositRefunded('${n.id}')">${ICONS.successCheck()} Mark Refunded</button>`
+          ? `<button class="btn btn-danger btn-sm" onclick="forfeitDeposit('${n.id}', '${n.tenant_id}')" style="margin-right: 6px; display: inline-flex; align-items: center; gap: 4px;">✕ Reject Refund</button><button class="btn btn-success btn-sm" onclick="markDepositRefunded('${n.id}')">${ICONS.successCheck()} Mark Refunded</button>`
           : `<button class="btn btn-success btn-sm" onclick="markDepositRefunded('${n.id}')">${ICONS.successCheck()} Mark Refunded</button>`;
 
         return `<tr>
@@ -6780,12 +6889,16 @@ window.renderRentDeposits = function () {
     }
   }
 
-  // Populate History Table
+  // Populate History Table (refunded + declined)
   const historyTbody = document.getElementById('dep-history-tbody');
   if (historyTbody) {
+    // Include both refunded and declined notices in history
+    const declinedNotices = allVacateNotices.filter(n => n.status === 'refund_declined');
+    const allHistoryNotices = [...refundedNotices, ...declinedNotices];
+
     const filteredHistory = currentBuildingFilter === 'all'
-      ? refundedNotices
-      : refundedNotices.filter(n => n.building_id === currentBuildingFilter);
+      ? allHistoryNotices
+      : allHistoryNotices.filter(n => n.building_id === currentBuildingFilter);
 
     if (filteredHistory.length === 0) {
       historyTbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted" style="padding: 24px;">No refund history yet (कोई रिफंड इतिहास नहीं है)</td></tr>';
@@ -6793,13 +6906,17 @@ window.renderRentDeposits = function () {
       historyTbody.innerHTML = filteredHistory.map(n => {
         const tenantName = n.tenant_name || 'Unknown';
         const roomBld = `Room ${n.room_number || '—'} (${n.building_name || '—'})`;
+        const isDeclined = n.status === 'refund_declined';
+        const statusBadge = isDeclined
+          ? `<span class="badge badge-danger">REJECTED</span>`
+          : `<span class="badge badge-success">REFUNDED</span>`;
 
         return `<tr>
           <td><strong>${tenantName}</strong></td>
           <td>${roomBld}</td>
           <td>${n.preferred_date ? formatDate(n.preferred_date) : '—'}</td>
           <td><strong>${formatCurrency(n.deposit_amount || 0)}</strong></td>
-          <td><span class="badge badge-success">REFUNDED</span></td>
+          <td>${statusBadge}</td>
         </tr>`;
       }).join('');
     }
@@ -6826,26 +6943,152 @@ window.markDepositRefunded = async function (noticeId) {
   }
 };
 
-window.forfeitDeposit = async function (noticeId) {
-  if (!confirm('Are you sure you want to forfeit this security deposit? (क्या आप वाकई इस सिक्योरिटी डिपॉजिट राशि को जब्त करना चाहते हैं? इससे रिफंड राशि ₹0 हो जाएगी।)')) return;
+window.forfeitDeposit = async function (noticeId, tenantId) {
+  const tenant = allTenants.find(t => t.id === tenantId);
+  const tenantName = tenant ? tenant.name : 'this tenant';
+
+  if (!confirm(`Reject refund for ${tenantName}? (क्या आप ${tenantName} का रिफंड Reject करना चाहते हैं? इससे उनका status REJECTED हो जाएगा और उन्हें खाली (vacate) चिह्नित किया जाएगा।)`)) return;
 
   try {
-    const { error } = await supabase
+    // 1. Mark vacate notice as refund_declined
+    const { error: noticeErr } = await supabase
       .from('vacate_notices')
-      .update({ deposit_amount: 0, deposit_refunded: true })
+      .update({ status: 'refund_declined' })
       .eq('id', noticeId);
 
-    if (error) throw error;
+    if (noticeErr) throw noticeErr;
 
-    showToast('Deposit Forfeited!', 'Deposit amount set to ₹0 and marked as processed.', 'success');
+    // 2. Mark tenant as vacated
+    if (tenantId) {
+      const { error: tenantErr } = await supabase
+        .from('tenants')
+        .update({
+          status: 'vacated',
+          vacate_date: new Date().toISOString().split('T')[0]
+        })
+        .eq('id', tenantId);
+
+      if (tenantErr) throw tenantErr;
+
+      // Delete members when vacating
+      await supabase.from('members').delete().eq('tenant_id', tenantId);
+
+      // 3. Update room occupancy
+      const roomId = tenant?.room_id;
+      if (roomId) {
+        const { data: roomData, error: roomGetErr } = await supabase
+          .from('rooms')
+          .select('*')
+          .eq('id', roomId)
+          .maybeSingle();
+
+        if (!roomGetErr && roomData) {
+          const nextBedsOccupied = Math.max(0, roomData.beds_occupied - 1);
+          const nextStatus = nextBedsOccupied === 0 ? 'vacant' : (nextBedsOccupied < roomData.beds_count ? 'partial' : 'occupied');
+
+          await supabase
+            .from('rooms')
+            .update({ beds_occupied: nextBedsOccupied, status: nextStatus })
+            .eq('id', roomId);
+        }
+      }
+    }
+
+    showToast('Refund Rejected!', `Deposit refund for ${tenantName} has been REJECTED. Tenant marked as vacated.`, 'warning');
     await loadRealData();
     renderRentDeposits();
+    refreshActiveViews();
   } catch (err) {
-    console.error('Error forfeiting deposit:', err);
-    showToast('Error', 'Failed to forfeit deposit: ' + err.message, 'error');
+    console.error('Error rejecting deposit refund:', err);
+    showToast('Error', 'Failed to reject refund: ' + err.message, 'error');
   }
 };
 
+// Decline refund for bond-active tenants — marks the vacate notice as 'refund_declined' and vacates the tenant
+window.declineRefund = async function (noticeId, tenantId) {
+  const tenant = allTenants.find(t => t.id === tenantId);
+  const tenantName = tenant ? tenant.name : 'this tenant';
+
+  if (!confirm(`Decline refund for ${tenantName}? (क्या आप ${tenantName} का रिफंड नामंजूर करना चाहते हैं? बॉन्ड अवधि सक्रिय होने से डिपॉजिट वापस नहीं किया जाएगा और उन्हें खाली (vacate) चिह्नित किया जाएगा।)`)) return;
+
+  try {
+    // 1. Update vacate notice status
+    const { error: noticeErr } = await supabase
+      .from('vacate_notices')
+      .update({ status: 'refund_declined' })
+      .eq('id', noticeId);
+
+    if (noticeErr) throw noticeErr;
+
+    // 2. Update tenant status to vacated and unlink them
+    const { error: tenantErr } = await supabase
+      .from('tenants')
+      .update({
+        status: 'vacated',
+        vacate_date: new Date().toISOString().split('T')[0]
+      })
+      .eq('id', tenantId);
+
+    if (tenantErr) throw tenantErr;
+
+    // Delete members when vacating
+    await supabase.from('members').delete().eq('tenant_id', tenantId);
+
+    // 3. Update room occupancy using tenant's room_id
+    const roomId = tenant?.room_id;
+    if (roomId) {
+      const { data: roomData, error: roomGetErr } = await supabase
+        .from('rooms')
+        .select('*')
+        .eq('id', roomId)
+        .maybeSingle();
+
+      if (!roomGetErr && roomData) {
+        const nextBedsOccupied = Math.max(0, roomData.beds_occupied - 1);
+        const nextStatus = nextBedsOccupied === 0 ? 'vacant' : (nextBedsOccupied < roomData.beds_count ? 'partial' : 'occupied');
+
+        await supabase
+          .from('rooms')
+          .update({
+            beds_occupied: nextBedsOccupied,
+            status: nextStatus
+          })
+          .eq('id', roomId);
+      }
+    } else {
+      // Fallback: look up by building_id and room_number from vacate notice
+      const notice = allVacateNotices.find(n => n.id === noticeId);
+      if (notice && notice.building_id && notice.room_number && notice.room_number !== '—') {
+        const { data: roomsList } = await supabase
+          .from('rooms')
+          .select('*')
+          .eq('building_id', notice.building_id)
+          .eq('room_number', notice.room_number);
+
+        if (roomsList && roomsList.length > 0) {
+          const roomData = roomsList[0];
+          const nextBedsOccupied = Math.max(0, roomData.beds_occupied - 1);
+          const nextStatus = nextBedsOccupied === 0 ? 'vacant' : (nextBedsOccupied < roomData.beds_count ? 'partial' : 'occupied');
+
+          await supabase
+            .from('rooms')
+            .update({
+              beds_occupied: nextBedsOccupied,
+              status: nextStatus
+            })
+            .eq('id', roomData.id);
+        }
+      }
+    }
+
+    showToast('Refund Declined & Vacated', `Deposit refund for ${tenantName} has been declined and tenant marked as vacated.`, 'warning');
+    await loadRealData();
+    refreshActiveViews();
+  } catch (err) {
+    console.error('Error declining refund:', err);
+    showToast('Error', 'Failed to decline refund: ' + err.message, 'error');
+  }
+};
 
 // ═══════════════ STAFF & EXPENSES SUB-TAB SWITCHER ═══════════════
 window.switchExpensesSubTab = function (subTab) {
@@ -7668,5 +7911,110 @@ window.submitRefundRequest = async function () {
       btn.textContent = originalText;
     }
   }
+};
+
+window.initTenantsTransactionFilters = function () {
+  const bSel = document.getElementById('tenants-txn-building-filter');
+  if (bSel) {
+    const prevVal = bSel.value || 'all';
+    bSel.innerHTML = '<option value="all">All Buildings</option>';
+    buildings.forEach(b => {
+      bSel.innerHTML += `<option value="${b.id}">${b.name}</option>`;
+    });
+    bSel.value = prevVal;
+  }
+
+  const mSel = document.getElementById('tenants-txn-month-filter');
+  if (mSel) {
+    const prevVal = mSel.value || 'all';
+    const activeMonths = getOwnerActiveMonths();
+    const optionsHTML = activeMonths.map(m => `<option value="${m.val}">${m.label}</option>`).join('');
+    mSel.innerHTML = '<option value="all">All Months</option>' + optionsHTML;
+    mSel.value = prevVal;
+  }
+};
+
+window.renderTenantsTransactionsTable = function () {
+  const tbody = document.getElementById('tenants-txns-tbody');
+  if (!tbody) return;
+
+  const searchQuery = (document.getElementById('tenants-txn-search-input')?.value || '').toLowerCase().trim();
+  const buildingFilter = document.getElementById('tenants-txn-building-filter')?.value || 'all';
+  const statusFilter = document.getElementById('tenants-txn-status-filter')?.value || 'all';
+  const monthFilter = document.getElementById('tenants-txn-month-filter')?.value || 'all';
+
+  // Filter allPayments
+  const filtered = allPayments.filter(p => {
+    // Search query: matches tenant name, room number, building name
+    const matchesSearch = !searchQuery ||
+      (p.tenant_name || '').toLowerCase().includes(searchQuery) ||
+      (p.room_number || '').toString().includes(searchQuery) ||
+      (p.building_name || '').toLowerCase().includes(searchQuery);
+
+    // Building filter
+    const matchesBuilding = buildingFilter === 'all' || p.building_id === buildingFilter;
+
+    // Status filter
+    const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
+
+    // Month filter
+    const payDateStr = p.payment_date || p.created_at || '';
+    const matchesMonth = monthFilter === 'all' || payDateStr.startsWith(monthFilter);
+
+    return matchesSearch && matchesBuilding && matchesStatus && matchesMonth;
+  });
+
+  // Sort filtered transactions chronologically (newest first)
+  filtered.sort((a, b) => new Date(b.created_at || b.payment_date) - new Date(a.created_at || a.payment_date));
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="11" class="text-center text-muted" style="padding: 24px;">No transactions found</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(p => {
+    let statusClass = 'badge-warning';
+    if (p.status === 'approved') statusClass = 'badge-success';
+    if (p.status === 'rejected') statusClass = 'badge-danger';
+
+    // Breakdown text
+    const breakdown = `Rent: ${formatCurrency(p.rent_amount || 0)} • Elec: ${formatCurrency(p.electricity_amount || 0)} • Maint: ${formatCurrency(p.maintenance_amount || 0)}`;
+
+    // Actions
+    let actionsHTML = '';
+    if (p.status === 'pending') {
+      actionsHTML = `<button class="btn btn-success btn-sm" onclick="approvePayment('${p.id}')">Approve</button>`;
+    } else if (p.status === 'approved') {
+      actionsHTML = `<button class="btn btn-secondary btn-sm" onclick="downloadOwnerReceipt('${p.id}')">${ICONS.receipt()} Receipt</button>`;
+    } else {
+      actionsHTML = `<span class="text-muted" style="font-size: var(--font-xs);">—</span>`;
+    }
+
+    // Get floor number
+    let floorNum = getFloorNumberForRoom(p.room_id);
+    if (!floorNum && p.tenant_id) {
+      const tenant = allTenants.find(t => t.id === p.tenant_id);
+      if (tenant) floorNum = tenant.floor_number;
+    }
+    if (!floorNum) floorNum = '—';
+
+    // Full Date formatting
+    const paymentDateObj = p.payment_date || p.created_at || new Date();
+    const fullDate = formatDate(paymentDateObj);
+
+    return `<tr>
+      <td><strong>${p.tenant_name || '—'}</strong></td>
+      <td>${p.building_name || '—'}</td>
+      <td>Floor ${floorNum}</td>
+      <td><strong>Room ${p.room_number || '—'}</strong></td>
+      <td style="white-space: nowrap;">${fullDate}</td>
+      <td><strong>${formatCurrency(p.total_amount)}</strong></td>
+      <td style="font-size: var(--font-xs); color: var(--text-muted);">${breakdown}</td>
+      <td>${p.payment_method || 'UPI'}</td>
+      <td style="font-family: monospace; font-size: var(--font-xs); color: var(--text-muted);">${p.transaction_id || '—'}</td>
+      <td><span class="badge ${statusClass}">${p.status.toUpperCase()}</span></td>
+      <td>${actionsHTML}</td>
+    </tr>`;
+  }).join('');
 };
 

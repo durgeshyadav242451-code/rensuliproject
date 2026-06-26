@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS vacate_notices (
   preferred_date DATE,
   deposit_refunded BOOLEAN DEFAULT FALSE,
   deposit_amount NUMERIC DEFAULT 0,
-  status TEXT DEFAULT 'submitted' CHECK (status IN ('submitted', 'acknowledged', 'processed')),
+  status TEXT DEFAULT 'submitted' CHECK (status IN ('submitted', 'acknowledged', 'processed', 'refund_declined')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
