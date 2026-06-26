@@ -30,4 +30,7 @@ dist-ssr
 .env.production
 .env.development
 .firebase
-
+# Supabase CLI Local Binaries
+supabase.exe
+supabase-go.exe
+supabase/.temp/
