@@ -3257,15 +3257,36 @@ window.collectRentPayment = async function () {
   }
 };
 
-window.sendBulkReminder = function () {
+window.sendBulkReminder = async function () {
   const unpaid = allTenants.filter(t => t.status === 'active' || t.status === 'vacating');
   if (unpaid.length === 0) { showToast('No Tenants', 'No active tenants to remind', 'info'); return; }
 
-  showToast('WhatsApp Reminders', `Sending to ${unpaid.length} tenants...`, 'info');
-  // Open first tenant's WhatsApp
-  const t = unpaid[0];
-  const msg = `Rent Reminder: Your monthly rent is due. Please pay via UPI: ${ownerData.upi_id || 'N/A'}.\n\n— PG Builders`;
-  sendWhatsAppReminder(t.phone, msg);
+  try {
+    showToast('Bulk Reminders', `Sending cloud reminders to ${unpaid.length} tenants...`, 'info');
+
+    const { data, error } = await supabase.functions.invoke('whatsapp-reminder', {
+      body: {
+        bulk: true,
+        ownerId: ownerData.id
+      }
+    });
+
+    if (error) throw error;
+
+    if (data && data.success) {
+      showToast('Success', `Sent ${data.sent} reminders successfully! (Skipped: ${data.skipped || 0}, Failed: ${data.failed || 0})`, 'success');
+    } else {
+      throw new Error(data?.error || 'Failed to send bulk reminders via API');
+    }
+  } catch (err) {
+    console.warn('Bulk API sending failed, falling back to manual sending:', err);
+    showToast('API Offline', 'Failed to send automatically. Opening manual WhatsApp Web instead.', 'warning');
+    
+    // Fallback: Open first tenant's manual chat window
+    const t = unpaid[0];
+    const msg = `Rent Reminder: Your monthly rent is due. Please pay via UPI: ${ownerData.upi_id || 'N/A'}.\n\n— PG Builders`;
+    sendWhatsAppReminder(t.phone, msg);
+  }
 };
 
 // ═══════════════ DEPOSIT / DC SYSTEM ═══════════════
@@ -4725,6 +4746,9 @@ window.switchTab = async function (tabId, el, skipLoad = false) {
     renderSettingsForm();
     renderSupportTicketsList();
   }
+  if (tabId === 'whatsapp') {
+    initWhatsAppTab();
+  }
 
 
   // Close mobile sidebar
@@ -5931,11 +5955,34 @@ function renderMonthlyChecklist() {
   renderRentDues();
 }
 
-window.remindUnpaidWhatsApp = function (tenantId) {
+window.remindUnpaidWhatsApp = async function (tenantId) {
   const tenant = allTenants.find(t => t.id === tenantId);
   if (!tenant) return;
   const msg = `Hello ${tenant.name},\n\nYour rent for Room ${tenant.room_number} is pending. Please pay at your earliest convenience via UPI: ${ownerData.upi_id || 'N/A'}.\n\n— PG Builders`;
-  sendWhatsAppReminder(tenant.phone, msg);
+  
+  try {
+    showToast('Sending', 'Triggering Cloud WhatsApp Reminder...', 'info');
+
+    // Call Supabase Edge Function
+    const { data, error } = await supabase.functions.invoke('whatsapp-reminder', {
+      body: {
+        manual: true,
+        tenantId: tenant.id
+      }
+    });
+
+    if (error) throw error;
+
+    if (data && data.success) {
+      showToast('Success', `Rent reminder sent to ${tenant.name} successfully!`, 'success');
+    } else {
+      throw new Error(data?.error || 'Failed to send via API');
+    }
+  } catch (err) {
+    console.warn('API Sending failed, falling back to manual WhatsApp:', err);
+    showToast('API Offline', 'Failed to send automatically. Opening WhatsApp Web instead.', 'warning');
+    sendWhatsAppReminder(tenant.phone, msg);
+  }
 };
 
 // Expose renderers globally for HTML event attributes
@@ -8016,5 +8063,161 @@ window.renderTenantsTransactionsTable = function () {
       <td>${actionsHTML}</td>
     </tr>`;
   }).join('');
+};
+
+
+// ═══════════════ WHATSAPP AUTOMATION SYSTEM ═══════════════
+
+window.toggleWhatsAppModePanel = function() {
+  const mode = document.querySelector('input[name="wa-api-mode"]:checked')?.value || 'platform';
+  const panel = document.getElementById('wa-credentials-panel');
+  if (panel) {
+    if (mode === 'personal') {
+      panel.classList.remove('hidden');
+    } else {
+      panel.classList.add('hidden');
+    }
+  }
+};
+
+window.initWhatsAppTab = async function() {
+  if (!ownerData) return;
+  
+  try {
+    let { data: waSettings, error: selectErr } = await supabase
+      .from('owner_whatsapp_settings')
+      .select('*')
+      .eq('owner_id', ownerData.id)
+      .maybeSingle();
+
+    if (selectErr) throw selectErr;
+
+    if (!waSettings) {
+      // Create default settings row
+      const { data: newSettings, error: insertErr } = await supabase
+        .from('owner_whatsapp_settings')
+        .insert({
+          owner_id: ownerData.id,
+          reminder_enabled: true,
+          reminder_days: 2,
+          api_mode: 'platform',
+          meta_template_name: 'rent_reminder',
+          meta_template_language: 'en'
+        })
+        .select()
+        .single();
+        
+      if (insertErr) throw insertErr;
+      waSettings = newSettings;
+    }
+
+    // Populate inputs
+    const enabledEl = document.getElementById('wa-reminders-enabled');
+    if (enabledEl) enabledEl.checked = waSettings.reminder_enabled;
+
+    const daysEl = document.getElementById('wa-reminder-days');
+    if (daysEl) daysEl.value = waSettings.reminder_days || 2;
+
+    const modeRadios = document.getElementsByName('wa-api-mode');
+    modeRadios.forEach(radio => {
+      if (radio.value === waSettings.api_mode) radio.checked = true;
+    });
+
+    const tokenEl = document.getElementById('wa-access-token');
+    if (tokenEl) tokenEl.value = waSettings.meta_access_token || '';
+
+    const phoneIdEl = document.getElementById('wa-phone-number-id');
+    if (phoneIdEl) phoneIdEl.value = waSettings.meta_phone_number_id || '';
+
+    window.toggleWhatsAppModePanel();
+    await window.renderWhatsAppLogs();
+
+  } catch (err) {
+    console.error('Failed to init WhatsApp settings tab:', err);
+    showToast('Error', 'Failed to load WhatsApp settings: ' + err.message, 'error');
+  }
+};
+
+window.saveWhatsAppSettings = async function() {
+  if (!ownerData) return;
+
+  const reminder_enabled = document.getElementById('wa-reminders-enabled').checked;
+  const reminder_days = parseInt(document.getElementById('wa-reminder-days').value, 10) || 2;
+  const api_mode = document.querySelector('input[name="wa-api-mode"]:checked')?.value || 'platform';
+  const meta_access_token = document.getElementById('wa-access-token').value.trim() || null;
+  const meta_phone_number_id = document.getElementById('wa-phone-number-id').value.trim() || null;
+
+  if (api_mode === 'personal') {
+    if (!meta_access_token || !meta_phone_number_id) {
+      showToast('Validation Error', 'Please provide Meta Access Token and Phone Number ID', 'warning');
+      return;
+    }
+  }
+
+  try {
+    const { error } = await supabase
+      .from('owner_whatsapp_settings')
+      .upsert({
+        owner_id: ownerData.id,
+        reminder_enabled,
+        reminder_days,
+        api_mode,
+        meta_access_token,
+        meta_phone_number_id,
+        updated_at: new Date().toISOString()
+      });
+
+    if (error) throw error;
+    showToast('Success', 'WhatsApp configuration saved successfully', 'success');
+
+  } catch (err) {
+    console.error('Failed to save WhatsApp settings:', err);
+    showToast('Error', 'Failed to save settings: ' + err.message, 'error');
+  }
+};
+
+window.renderWhatsAppLogs = async function() {
+  if (!ownerData) return;
+
+  const tbody = document.getElementById('wa-logs-tbody');
+  if (!tbody) return;
+
+  try {
+    const { data: logs, error } = await supabase
+      .from('whatsapp_reminder_logs')
+      .select('*')
+      .eq('owner_id', ownerData.id)
+      .order('sent_at', { ascending: false })
+      .limit(30);
+
+    if (error) throw error;
+
+    if (!logs || logs.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted" style="padding: 24px;">No logs found</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = logs.map(log => {
+      const statusClass = log.status === 'sent' ? 'badge-success' : 'badge-danger';
+      const formattedDate = new Date(log.sent_at).toLocaleString('en-IN', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      return `<tr>
+        <td style="white-space: nowrap;">${formattedDate}</td>
+        <td><strong>${log.tenant_name}</strong></td>
+        <td>${log.phone}</td>
+        <td style="font-family: monospace; font-size: 11px; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${log.message_preview || '—'}</td>
+        <td><span class="badge ${statusClass}">${log.status.toUpperCase()}</span></td>
+      </tr>`;
+    }).join('');
+
+  } catch (err) {
+    console.error('Failed to render WhatsApp logs:', err);
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger" style="padding: 24px;">Failed to load logs: ${err.message}</td></tr>`;
+  }
 };
 
